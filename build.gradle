@@ -38,3 +38,9 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// Spring Boot 2.5 이상의 버전에서는 빌드시 일반 jar 1개와 -plain.jar 파일 1개가 함께 생성된다.
+// 빌드시 plain jar 파일을 생성되지 않도록 아래의 내용 추가
+jar {
+	enabled = false
+}
