@@ -57,5 +57,5 @@ jobs:
       # (8) code deploy
       - name: code deploy
         run: |
-          aws deploy create-deployment -—application-name snack-exercise-code-deploy -—deployment-config-name CodeDeployDefault.AllAtOnce -—deployment-group-name snack-exercise-bg-deploy-group
+          aws deploy create-deployment -—application-name snack-exercise-code-deploy -—deployment-config-name CodeDeployDefault.AllAtOnce -—deployment-group-name snack-exercise-bg-deploy-group --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
 
