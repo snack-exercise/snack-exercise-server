@@ -1,0 +1,8 @@
+version: 0.0
+os: ubuntu
+
+hooks:
+  ApplicationStart:
+    - location: run.sh
+      timeout: 300
+      runas: root
