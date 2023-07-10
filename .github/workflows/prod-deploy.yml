@@ -43,7 +43,7 @@ jobs:
       - name: Docker build & push to DockerHub
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}:latest-prod
+          docker build -t ${{ secrets.DOCKER_REPO }}:latest-prod .
           docker push ${{ secrets.DOCKER_REPO }}:latest-prod
 
       # (7) aws 세팅
