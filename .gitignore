@@ -40,3 +40,4 @@ out/
 application-local.yml
 application-dev.yml
 application-prod.yml
+application-oauth.yml
