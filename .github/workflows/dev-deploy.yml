@@ -8,7 +8,7 @@ on:
       - devlop
 
 jobs:
-  production-cd:
+  develop-cd:
     runs-on: ubuntu-22.04 # 필수, 실행환경 지정
     steps:
 
@@ -23,7 +23,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      ## (3) application-prod.properties 생성
+      ## (3) application-dev.properties 생성
       - name: make application-dev.yml
         run: |
           cd ./src/main/resources
