@@ -5,7 +5,7 @@ name: dev deploy
 on:
   push:
     branches:
-      - devlop
+      - develop
 
 jobs:
   develop-cd:
