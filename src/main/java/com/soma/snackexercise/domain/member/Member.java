@@ -1,5 +1,6 @@
 package com.soma.snackexercise.domain.member;
 
+import com.soma.snackexercise.domain.BaseTimeEntity;
 import com.soma.snackexercise.util.constant.Gender;
 import com.soma.snackexercise.util.constant.Status;
 import jakarta.persistence.*;
@@ -9,12 +10,14 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-public class Member {
+public class Member extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String email;
+
+    private String password;
 
     private String profileImg;
 
@@ -43,7 +46,7 @@ public class Member {
     }
 
     @Builder
-    public Member(String email, String profileImg, String nickname, String name, Role role, SocialType socialType, String socialId, Integer birthYear, Gender gender) {
+    public Member(String email, String password, String profileImg, String nickname, String name, Role role, SocialType socialType, String socialId, Integer birthYear, Gender gender) {
         this.email = email;
         this.nickname = nickname;
         this.name = name;
