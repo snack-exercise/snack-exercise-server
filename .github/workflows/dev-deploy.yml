@@ -23,13 +23,30 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      ## (3) application-dev.properties 생성
+      ## (3-1) application-dev.yml 생성
       - name: make application-dev.yml
         run: |
           cd ./src/main/resources
           touch ./application-dev.yml
           echo "${{ secrets.APPLICATION_DEV_YML }}" > ./application-dev.yml
         shell: bash
+
+      ## (3-2) application-jwt.yml 생성
+      - name: make application-jwt.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-jwt.yml
+          echo "${{ secrets.APPLICATION_JWT_YML }}" > ./application-jwt.yml
+        shell: bash
+
+      ## (3) application-oauth.yml 생성
+      - name: make application-oauth.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-oauth.yml
+          echo "${{ secrets.APPLICATION_OAUTH_YML }}" > ./application-oauth.yml
+        shell: bash
+
 
       # (4) ./gradlew 권한 설정
       - name: ./gradlew 권한 설정
@@ -68,4 +85,4 @@ jobs:
             sudo docker rm spring-dev
             sudo docker image rm ${{ secrets.DOCKER_REPO }}
             sudo docker pull ${{ secrets.DOCKER_REPO }}:latest-dev
-            sudo docker run -d --name spring-dev -p 8080:8080 ${{ secrets.DOCKER_REPO }}:latest-dev
+            sudo docker run -d --name spring-dev -p 8080:8080 -e spring.profiles.active=dev-env ${{ secrets.DOCKER_REPO }}:latest-dev
