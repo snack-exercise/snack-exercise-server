@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.1'
     id 'io.spring.dependency-management' version '1.1.0'
+
+    id 'jacoco'
 }
 
 group = 'com.soma'
@@ -57,4 +59,45 @@ tasks.named('test') {
 // 빌드시 plain jar 파일을 생성되지 않도록 아래의 내용 추가
 jar {
 	enabled = false
+}
+
+// jacoco
+
+test{
+    finalizedBy jacocoTestReport // test 작업이 끝나고 jacocoTestReport를 실행
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+// test 결과를 report로 생성
+jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHTML')
+    }
+    // dependsOn : 이 작업에 지정된 종속성을 추가
+    dependsOn test // jacocoTestReport 에 test라는 종속성을 추가
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+// jacocoTestReport 결과를 바탕으로 coverage가 만족되었는지를 체크
+jacocoTestCoverageVerification {
+    violationRules {
+
+        rule {
+            enabled = true
+            //코드 버커리지 체크 기준
+            element = 'CLASS'
+
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.5
+            }
+        }
+    }
 }
