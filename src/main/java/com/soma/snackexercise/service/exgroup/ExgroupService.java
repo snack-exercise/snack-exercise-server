@@ -5,8 +5,10 @@ import com.soma.snackexercise.domain.exgroup.Exgroup;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.joinlist.JoinType;
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.dto.exgroup.PostCreateExgroupRequest;
-import com.soma.snackexercise.dto.exgroup.PostCreateExgroupResponse;
+import com.soma.snackexercise.dto.exgroup.response.GetOneExgroupResponse;
+import com.soma.snackexercise.dto.exgroup.request.PostCreateExgroupRequest;
+import com.soma.snackexercise.dto.exgroup.response.PostCreateExgroupResponse;
+import com.soma.snackexercise.exception.ExgroupNotFoundException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
 import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
@@ -73,5 +75,28 @@ public class ExgroupService {
 
         joinListRepository.save(joinRequest);
         return new PostCreateExgroupResponse(newGroup.getId(), newGroup.getName());
+    }
+
+    public GetOneExgroupResponse findGroup(Long groupId){
+
+        Exgroup exgroup = exgroupRepository.findById(groupId).orElseThrow(ExgroupNotFoundException::new);
+
+        return GetOneExgroupResponse.builder()
+                .name(exgroup.getName())
+                .emozi(exgroup.getEmozi())
+                .color(exgroup.getColor())
+                .description(exgroup.getDescription())
+                .maxMemberNum(exgroup.getMaxMemberNum())
+                .goalRelayNum(exgroup.getGoalRelayNum())
+                .startTime(exgroup.getStartTime())
+                .endTime(exgroup.getEndTime())
+                .penalty(exgroup.getPenalty())
+                .code(exgroup.getCode())
+                .missionIntervalTime(exgroup.getMissionIntervalTime())
+                .checkIntervalTime(exgroup.getCheckIntervalTime())
+                .checkMaxNum(exgroup.getCheckMaxNum())
+                .startDate(exgroup.getStartDate())
+                .endDate(exgroup.getEndDate())
+                .build();
     }
 }
