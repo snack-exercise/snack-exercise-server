@@ -1,7 +1,7 @@
 package com.soma.snackexercise.controller.exgroup;
 
 
-import com.soma.snackexercise.dto.exgroup.PostCreateExgroupRequest;
+import com.soma.snackexercise.dto.exgroup.request.PostCreateExgroupRequest;
 import com.soma.snackexercise.service.exgroup.ExgroupService;
 import com.soma.snackexercise.util.response.Response;
 import lombok.RequiredArgsConstructor;

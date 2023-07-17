@@ -1,4 +1,4 @@
-package com.soma.snackexercise.dto.exgroup;
+package com.soma.snackexercise.dto.exgroup.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

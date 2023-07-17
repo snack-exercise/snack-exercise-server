@@ -1,4 +1,4 @@
-package com.soma.snackexercise.dto.exgroup;
+package com.soma.snackexercise.dto.exgroup.request;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
