@@ -45,6 +45,13 @@ public class Member extends BaseTimeEntity {
         this.status = Status.INACTIVE;
     }
 
+    public void signupMemberInfo(String name, Gender gender, Integer birthYear) {
+        this.name = name;
+        this.gender = gender;
+        this.birthYear = birthYear;
+        this.role = Role.USER;
+    }
+
     @Builder
     public Member(String email, String password, String profileImg, String nickname, String name, Role role, SocialType socialType, String socialId, Integer birthYear, Gender gender) {
         this.email = email;

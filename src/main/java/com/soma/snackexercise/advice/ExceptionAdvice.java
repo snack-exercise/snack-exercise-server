@@ -4,10 +4,10 @@ import com.soma.snackexercise.exception.ExgroupNotFoundException;
 import com.soma.snackexercise.util.response.Response;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import static com.soma.snackexercise.advice.ErrorCode.NOT_FOUND_EXGROUP;
 
 @RestControllerAdvice
+@Slf4j
 public class ExceptionAdvice {
     @ExceptionHandler(ExgroupNotFoundException.class)
     public Response exgroupNotFoundExceptionHandler(ExgroupNotFoundException e){

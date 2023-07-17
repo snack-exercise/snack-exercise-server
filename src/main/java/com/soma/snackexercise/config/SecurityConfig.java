@@ -1,12 +1,14 @@
 package com.soma.snackexercise.config;
 
 import com.soma.snackexercise.auth.jwt.filter.JwtAuthenticationProcessingFilter;
+import com.soma.snackexercise.auth.jwt.handler.JwtAccessDeniedHandler;
 import com.soma.snackexercise.auth.jwt.service.JwtService;
 import com.soma.snackexercise.auth.oauth.CustomOAuth2User;
 import com.soma.snackexercise.auth.oauth.handler.OAuth2LoginFailureHandler;
 import com.soma.snackexercise.auth.oauth.handler.OAuth2LoginSuccessHandler;
 import com.soma.snackexercise.auth.oauth.service.CustomOAuth2UserService;
 import com.soma.snackexercise.repository.member.MemberRepository;
+import com.soma.snackexercise.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +31,8 @@ public class SecurityConfig {
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOauth2UserService;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final RedisUtil redisUtil;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -40,19 +43,20 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request.requestMatchers(
-                        "/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**", "/sign-up").permitAll()
-                                .anyRequest().authenticated())
+                                "/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**", "/sign-up", "/api/auth/**").permitAll()
+                        .anyRequest().authenticated())
                 .oauth2Login(oauth2Login -> oauth2Login.successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
                         .userInfoEndpoint(userInfoEndPoint -> userInfoEndPoint.userService(customOauth2UserService)))
-                .addFilterAfter(jwtAuthenticationProcessingFilter(), LogoutFilter.class);
+                .addFilterAfter(jwtAuthenticationProcessingFilter(), LogoutFilter.class)
+                .exceptionHandling(exception -> exception.accessDeniedHandler(jwtAccessDeniedHandler));
 
         return http.build();
     }
 
     @Bean
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
-        JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter = new JwtAuthenticationProcessingFilter(jwtService, memberRepository, redisTemplate);
+        JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter = new JwtAuthenticationProcessingFilter(jwtService, memberRepository, redisUtil);
         return jwtAuthenticationProcessingFilter;
     }
 }

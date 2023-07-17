@@ -4,6 +4,7 @@ import com.soma.snackexercise.auth.jwt.service.JwtService;
 import com.soma.snackexercise.auth.jwt.util.PasswordUtil;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.repository.member.MemberRepository;
+import com.soma.snackexercise.util.RedisUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,10 +41,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisUtil redisUtil;
 
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -59,6 +59,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
          */
         String refreshToken = jwtService.extractRefreshToken(request)
                 .filter(jwtService::isTokenValid)
+                .filter(jwtService::isRefreshTokenMatch)
                 .orElse(null);
 
         /*
@@ -96,7 +97,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
      */
     private String reIssueRefreshToken(String email) {
         String reIssuedRefreshToken = jwtService.createRefreshToken(email);
-        redisTemplate.opsForValue().set(email, reIssuedRefreshToken);
+        redisUtil.set(email, reIssuedRefreshToken, jwtService.getRefreshTokenExpirationPeriod());
         return reIssuedRefreshToken;
     }
 
@@ -113,28 +114,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
                 .filter(jwtService::isTokenValid)
                 .ifPresent(accessToken -> jwtService.extractEmail(accessToken)
                         .ifPresent(email -> memberRepository.findByEmail(email)
-                                .ifPresent(this::saveAuthentication)));
+                                .ifPresent(jwtService::saveAuthentication)));
 
         filterChain.doFilter(request, response);
     }
 
-    public void saveAuthentication(Member myMember) {
-        log.info("saveAuthentication() 호출");
-        String password = myMember.getPassword();
-
-        if (password == null) {
-            password = PasswordUtil.generateRandomPassword();
-        }
-
-        UserDetails userDetailsUser = User.builder()
-                .username(myMember.getEmail())
-                .password(password)
-                .roles(myMember.getRole().name())
-                .build();
-
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsUser, null,
-                authoritiesMapper.mapAuthorities(userDetailsUser.getAuthorities()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
 }
