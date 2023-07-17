@@ -1,6 +1,7 @@
 package com.soma.snackexercise.util.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.soma.snackexercise.advice.ErrorCode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class Response {
         return new Response(true, 0, new Success<>(data));
     }
 
-    public static <T> Response failure(int code, String message) {
-        return new Response(false, code, new Failure(message));
+    public static Response failure(ErrorCode errorCode) {
+        return new Response(false, errorCode.getCode(), new Failure(errorCode.getMessage()));
     }
 }

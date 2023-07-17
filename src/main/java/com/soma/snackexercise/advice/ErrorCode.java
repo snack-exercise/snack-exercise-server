@@ -6,8 +6,14 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-    INTERNAL_SERVER_ERROR(-1000),
-    MEMBER_NOT_FOUND(-1001),
-    MEMBER_NAME_ALREADY_EXISTS(-1002);
-    private final int code;
+    /* Exgroup */
+    NOT_FOUND_EXGROUP(1200, "운동 그룹이 존재하지 않습니다.");
+    
+    ErrorCode(int code, String message){
+        this.code = code;
+        this.message = message;
+    }
+
+    private int code;
+    private String message;
 }
