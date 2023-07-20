@@ -1,8 +1,11 @@
 package com.soma.snackexercise.domain.exgroup;
 
 
-import com.soma.snackexercise.util.constant.Status;
-import jakarta.persistence.*;
+import com.soma.snackexercise.domain.BaseEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,7 +15,7 @@ import java.time.LocalTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-public class Exgroup {
+public class Exgroup extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,9 +52,6 @@ public class Exgroup {
 
     private Long currentDoingMemberId; // 현재 미션 수행 중인 회원의 ID
 
-    private Status status; // 상태 (INACTIVE = 삭제)
-
-
     @Builder
     public Exgroup(String name, String emozi, String color, String description,
                    Integer maxMemberNum, Integer goalRelayNum, LocalTime startTime,
@@ -73,12 +73,7 @@ public class Exgroup {
         this.checkMaxNum = checkMaxNum;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.status = Status.ACTIVE;
+        active();
     }
-
-    public void inActive(){
-        this.status = Status.INACTIVE;
-    }
-
 
 }
