@@ -2,6 +2,7 @@ package com.soma.snackexercise.advice;
 
 import com.soma.snackexercise.exception.ExgroupNotFoundException;
 import com.soma.snackexercise.util.response.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import static com.soma.snackexercise.advice.ErrorCode.NOT_FOUND_EXGROUP;
