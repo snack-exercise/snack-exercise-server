@@ -1,9 +1,8 @@
 package com.soma.snackexercise.domain.joinlist;
 
-import com.soma.snackexercise.domain.BaseTimeEntity;
+import com.soma.snackexercise.domain.BaseEntity;
 import com.soma.snackexercise.domain.exgroup.Exgroup;
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.util.constant.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-public class JoinList extends BaseTimeEntity {
+public class JoinList extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,11 +28,6 @@ public class JoinList extends BaseTimeEntity {
 
     private Integer outCount;
 
-    private Status status;
-
-    public void inActive() {
-        this.status = Status.INACTIVE;
-    }
 
     @Builder
     public JoinList(Member member, Exgroup exgroup, JoinType joinType) {
@@ -41,6 +35,6 @@ public class JoinList extends BaseTimeEntity {
         this.exgroup = exgroup;
         this.joinType = joinType;
         this.outCount = 0;
-        this.status = Status.ACTIVE;
+        active();
     }
 }

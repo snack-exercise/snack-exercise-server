@@ -1,8 +1,7 @@
 package com.soma.snackexercise.domain.member;
 
-import com.soma.snackexercise.domain.BaseTimeEntity;
+import com.soma.snackexercise.domain.BaseEntity;
 import com.soma.snackexercise.util.constant.Gender;
-import com.soma.snackexercise.util.constant.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-public class Member extends BaseTimeEntity {
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,9 +25,6 @@ public class Member extends BaseTimeEntity {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
-
-    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Enumerated(EnumType.STRING)
@@ -41,9 +37,7 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    public void inActive() {
-        this.status = Status.INACTIVE;
-    }
+
 
     public void signupMemberInfo(String name, Gender gender, Integer birthYear) {
         this.name = name;
@@ -62,6 +56,6 @@ public class Member extends BaseTimeEntity {
         this.socialId = socialId;
         this.birthYear = birthYear;
         this.gender = gender;
-        this.status = Status.ACTIVE;
+        active();
     }
 }
