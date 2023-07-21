@@ -2,7 +2,10 @@ package com.soma.snackexercise.repository.member;
 
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.member.SocialType;
+import com.soma.snackexercise.dto.member.JoinListMemberDto;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,4 +17,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
 
     boolean existsByName(String name);
+
+    @Query("SELECT new com.soma.snackexercise.dto.member.JoinListMemberDto(m, jl) FROM JoinList jl JOIN FETCH Member m ON jl.member = m WHERE jl.exgroup.id = :groupId")
+    List<JoinListMemberDto> findAllGroupMembers(@Param("groupId") Long groupId);
 }
