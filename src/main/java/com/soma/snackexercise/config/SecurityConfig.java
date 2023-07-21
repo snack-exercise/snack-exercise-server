@@ -3,7 +3,6 @@ package com.soma.snackexercise.config;
 import com.soma.snackexercise.auth.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.soma.snackexercise.auth.jwt.handler.JwtAccessDeniedHandler;
 import com.soma.snackexercise.auth.jwt.service.JwtService;
-import com.soma.snackexercise.auth.oauth.CustomOAuth2User;
 import com.soma.snackexercise.auth.oauth.handler.OAuth2LoginFailureHandler;
 import com.soma.snackexercise.auth.oauth.handler.OAuth2LoginSuccessHandler;
 import com.soma.snackexercise.auth.oauth.service.CustomOAuth2UserService;
@@ -13,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -34,6 +31,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final RedisUtil redisUtil;
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -43,7 +41,8 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request.requestMatchers(
-                                "/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**", "/sign-up", "/api/auth/**").permitAll()
+                        "/error", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
+                        "/sign-up", "/api/auth/**", "/health").permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2Login -> oauth2Login.successHandler(oAuth2LoginSuccessHandler)
                         .failureHandler(oAuth2LoginFailureHandler)
