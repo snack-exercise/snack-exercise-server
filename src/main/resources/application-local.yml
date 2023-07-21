@@ -8,7 +8,9 @@ spring:
     properties:
       hibernate.format_sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
   h2:
     console:

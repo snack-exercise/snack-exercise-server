@@ -18,7 +18,7 @@ public class Member extends BaseEntity {
 
     private String password;
 
-    private String profileImg;
+    private String profileImage;
 
     private String nickname;
 
@@ -37,6 +37,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    private String fcmToken;
 
 
     public void signupMemberInfo(String name, Gender gender, Integer birthYear) {
