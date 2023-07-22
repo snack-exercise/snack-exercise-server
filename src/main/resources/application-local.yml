@@ -11,6 +11,7 @@ spring:
       hbm2ddl.auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    defer-datasource-initialization: true
 
   h2:
     console:
