@@ -8,9 +8,9 @@ spring:
     properties:
       hibernate.format_sql: true
     hibernate:
-      hbm2ddl.auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: create
     defer-datasource-initialization: true
 
   h2:
