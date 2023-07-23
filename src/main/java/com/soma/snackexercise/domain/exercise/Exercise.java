@@ -1,10 +1,7 @@
 package com.soma.snackexercise.domain.exercise;
 
 import com.soma.snackexercise.domain.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -18,6 +15,7 @@ public class Exercise extends BaseEntity {
 
     private String name;
 
+    @Enumerated(EnumType.STRING)
     private ExerciseCategory exerciseCategory;
 
     private String videoLink;
