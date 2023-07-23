@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soma.snackexercise.auth.jwt.util.PasswordUtil;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.exception.ExpiredJwtException;
@@ -60,6 +61,7 @@ public class JwtService {
     private final MemberRepository memberRepository;
     private final RedisUtil redisUtil;
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public String createAccessToken(String email) {
         Date now = new Date();
@@ -89,8 +91,16 @@ public class JwtService {
         log.info("재발급된 Access Token : {}", accessToken);
     }
 
+    public void sendRefreshToken(HttpServletResponse response, String refreshToken) {
+
+    }
+
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+
+        //JWT DTO 만들기
 
         response.setHeader(accessHeader, accessToken);
         response.setHeader(refreshHeader, refreshToken);
@@ -160,6 +170,7 @@ public class JwtService {
         try {
             JWT.require(Algorithm.HMAC512(secretKey)).build().verify(token);
 
+            // TODO : 매 요청마다 블랙리스트 여부 확인 괜찮은걸까
             if (redisUtil.hasKeyBlackList(token)) {
                 throw new UnauthorizedException("이미 로그아웃한 회원입니다");
             }
@@ -181,6 +192,9 @@ public class JwtService {
         return false;
     }
 
+    /*
+    RefreshToken이 DB에 저장된 RefreshToken과 일치한지 확인
+     */
     public boolean isRefreshTokenMatch(String refreshToken) {
         String email = extractEmail(refreshToken).orElseThrow(InvalidRefreshTokenException::new);
         if (redisUtil.get(email).equals(refreshToken)) {

@@ -59,7 +59,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
          */
         String refreshToken = jwtService.extractRefreshToken(request)
                 .filter(jwtService::isTokenValid)
-                .filter(jwtService::isRefreshTokenMatch)
                 .orElse(null);
 
         /*
