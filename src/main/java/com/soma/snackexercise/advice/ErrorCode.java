@@ -13,12 +13,17 @@ public enum ErrorCode {
     MEMBER_NAME_ALREADY_EXISTS_EXCEPTION(-1100, "유저 이름이 이미 존재합니다."),
 
     /* Exgroup */
-    NOT_FOUND_EXGROUP(1200, "운동 그룹이 존재하지 않습니다.");
-    
+    NOT_FOUND_EXGROUP(1200, "운동 그룹이 존재하지 않습니다."),
+
+    /* QueryParam */
+    WRONG_QUERYPARAM(1900, "잘못된 Query Param입니다.");
+
     ErrorCode(int code, String message){
         this.code = code;
         this.message = message;
     }
+
+
 
     private int code;
     private String message;
