@@ -11,6 +11,7 @@ import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
 import com.soma.snackexercise.repository.mission.MissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class MissionService {
@@ -26,13 +28,13 @@ public class MissionService {
     private final MissionRepository missionRepository;
     private final ExgroupRepository exgroupRepository;
 
-    public TodayMissionCurrentResultDto getTodayMissionResults(Long exgroupId) {
+    public TodayMissionCurrentResultDto readTodayMissionResults(Long exgroupId) {
         // 1. 그룹의 종료일자
         Exgroup exgroup = exgroupRepository.findById(exgroupId).orElseThrow(ExgroupNotFoundException::new);
 
         // 2. 그룹이 현재 완료한 릴레이 횟수
         LocalDateTime now = LocalDateTime.now();// 현재 날짜와 시간 가져오기
-        LocalDateTime todayMidnight = now.with(LocalTime.MIN);// 오늘 자정 구하기
+        LocalDateTime todayMidnight = now.with(LocalTime.MIN);// 오늘 자정 구일하기
         LocalDateTime tomorrowMidnight = now.plusDays(1).with(LocalTime.MIN);// 내일 자정 구하기
 
         Integer currentFinishedRelayCount = missionRepository.findCurrentFinishedRelayCountByGroupId(exgroupId, todayMidnight, tomorrowMidnight);
@@ -44,8 +46,8 @@ public class MissionService {
         return new TodayMissionCurrentResultDto(missionFlow, currentFinishedRelayCount, exgroup.getEndDate());
     }
 
-    public Object getTodayMissionRank(Long exgroupId) {
-        Exgroup exgroup = exgroupRepository.findById(exgroupId).orElseThrow(ExgroupNotFoundException::new); // 존재하는 exgroupId인지 검증
+    public Object readTodayMissionRank(Long exgroupId) {
+        Exgroup exgroup = exgroupRepository.findById(exgroupId).orElseThrow(ExgroupNotFoundException::new); // 존재하는 exgroupId인지 검증 TODO 로컬 변수 exgroup을 사용하지는 않지만, 입력받은 exgroupId가 존재하는 그룹의 Id인지 검증로직을 이렇게 짜도 괜찮을지
 
         // 1. 오늘 날짜의 모든 미션 조회
         LocalDateTime now = LocalDateTime.now().minusDays(1);// 현재 날짜와 시간 가져오기
@@ -54,18 +56,18 @@ public class MissionService {
 
         List<Mission> missions = missionRepository.findAllExecutedMissionByGroupIdAndCreatedAt(exgroupId, todayMidnight, tomorrowMidnight);
 
-        return getRankingList(missions);
+        return calcRankFromMissionList(missions);
     }
 
-    public Object getCumulativeMissionRank(Long exgroupId) {
+    public Object readCumulativeMissionRank(Long exgroupId) {
         Exgroup exgroup = exgroupRepository.findById(exgroupId).orElseThrow(ExgroupNotFoundException::new);
 
         List<Mission> missions = missionRepository.findAllExecutedMissionByGroupIdAndCreatedAt(exgroupId, exgroup.getStartDate().atStartOfDay(), exgroup.getEndDate().atStartOfDay().plusDays(1));
 
-        return getRankingList(missions);
+        return calcRankFromMissionList(missions);
     }
 
-    private static List<RankingResponseDto> getRankingList(List<Mission> missions) {
+    private static List<RankingResponseDto> calcRankFromMissionList(List<Mission> missions) {
         // 1. memberId 별로 평균 속도 계산
         Map<Long, RankingResponseDto> todayRankingMap = new HashMap<>();
 

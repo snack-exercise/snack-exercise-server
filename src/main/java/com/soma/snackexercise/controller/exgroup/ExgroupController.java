@@ -33,7 +33,7 @@ public class ExgroupController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Response createGroup(@RequestBody PostCreateExgroupRequest groupCreateRequest, @AuthenticationPrincipal UserDetails loginUser){
-        return Response.success(exGroupService.createGroup(groupCreateRequest, loginUser.getUsername()));
+        return Response.success(exGroupService.create(groupCreateRequest, loginUser.getUsername()));
     }
 
 

@@ -35,7 +35,7 @@ public class ExgroupService {
 
 
     @Transactional
-    public PostCreateExgroupResponse createGroup(PostCreateExgroupRequest groupCreateRequest, String email){
+    public PostCreateExgroupResponse create(PostCreateExgroupRequest groupCreateRequest, String email){
 
         // 1. 그룹 생성할 회원 조회
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
@@ -71,7 +71,7 @@ public class ExgroupService {
 
         exgroupRepository.save(newGroup);
 
-        // 5. 회원이 그룹 연결
+        // 5. 회원과 그룹 연결
         JoinList joinRequest = JoinList.builder()
                 .member(member)
                 .exgroup(newGroup)

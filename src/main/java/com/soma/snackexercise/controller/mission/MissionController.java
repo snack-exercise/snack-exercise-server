@@ -23,7 +23,7 @@ public class MissionController {
     @Parameter(name = "exgroupId", description = "조회할 운동 그룹 ID")
     @GetMapping("/exgroups/{exgroupId}/missions")
     public Response getTodayMissionResults(@PathVariable("exgroupId") Long exgroupId){
-        return Response.success(missionService.getTodayMissionResults(exgroupId));
+        return Response.success(missionService.readTodayMissionResults(exgroupId));
     }
 
 
@@ -33,9 +33,9 @@ public class MissionController {
     @GetMapping("/exgroups/{exgroupId}/missions/rank")
     public Response getMissionRank(@PathVariable("exgroupId") Long exgroupId, @RequestParam String filter){
         if(filter.equals("today")){
-            return Response.success(missionService.getTodayMissionRank(exgroupId));
+            return Response.success(missionService.readTodayMissionRank(exgroupId));
         }else if(filter.equals("total")){
-            return Response.success(missionService.getCumulativeMissionRank(exgroupId));
+            return Response.success(missionService.readCumulativeMissionRank(exgroupId));
         }
         throw new WrongRequestParamException();
     }
