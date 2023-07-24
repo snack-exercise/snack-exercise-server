@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class RankingResponseDto {
+public class RankingResponse {
     private String nickname;
     private String profileImage;
     private long avgMissionExecutionTime; // 미션 평균 반응 속도

@@ -4,8 +4,8 @@ import com.soma.snackexercise.domain.exgroup.Exgroup;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
 import com.soma.snackexercise.dto.mission.response.MemberMissionDto;
-import com.soma.snackexercise.dto.mission.response.RankingResponseDto;
-import com.soma.snackexercise.dto.mission.response.TodayMissionCurrentResultDto;
+import com.soma.snackexercise.dto.mission.response.RankingResponse;
+import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
 import com.soma.snackexercise.exception.ExgroupNotFoundException;
 import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
 import com.soma.snackexercise.repository.mission.MissionRepository;
@@ -28,7 +28,7 @@ public class MissionService {
     private final MissionRepository missionRepository;
     private final ExgroupRepository exgroupRepository;
 
-    public TodayMissionCurrentResultDto readTodayMissionResults(Long exgroupId) {
+    public TodayMissionResultResponse readTodayMissionResults(Long exgroupId) {
         // 1. 그룹의 종료일자
         Exgroup exgroup = exgroupRepository.findById(exgroupId).orElseThrow(ExgroupNotFoundException::new);
 
@@ -43,7 +43,7 @@ public class MissionService {
         List<Mission> missions = missionRepository.findAllMissionByGroupIdAndCreatedAt(exgroupId, todayMidnight, tomorrowMidnight);
         List<MemberMissionDto> missionFlow = missions.stream().map(mission -> new MemberMissionDto(mission.getMember().getId(), mission.getMember().getNickname(), mission.getMember().getProfileImage(), mission.getCreatedAt(), mission.getEndAt())).toList();
 
-        return new TodayMissionCurrentResultDto(missionFlow, currentFinishedRelayCount, exgroup.getEndDate());
+        return new TodayMissionResultResponse(missionFlow, currentFinishedRelayCount, exgroup.getEndDate());
     }
 
     public Object readTodayMissionRank(Long exgroupId) {
@@ -67,9 +67,9 @@ public class MissionService {
         return calcRankFromMissionList(missions);
     }
 
-    private static List<RankingResponseDto> calcRankFromMissionList(List<Mission> missions) {
+    private static List<RankingResponse> calcRankFromMissionList(List<Mission> missions) {
         // 1. memberId 별로 평균 속도 계산
-        Map<Long, RankingResponseDto> todayRankingMap = new HashMap<>();
+        Map<Long, RankingResponse> todayRankingMap = new HashMap<>();
 
         for (Mission mission : missions) {
             Long memberId = mission.getMember().getId();
@@ -77,7 +77,7 @@ public class MissionService {
 
             if(!todayRankingMap.containsKey(memberId)){
                 Member member = mission.getMember();
-                todayRankingMap.put(memberId, new RankingResponseDto(member.getName(), member.getProfileImage(), minutesDiffBetweenCreateAndStart, 1));
+                todayRankingMap.put(memberId, new RankingResponse(member.getName(), member.getProfileImage(), minutesDiffBetweenCreateAndStart, 1));
             }else{
                 todayRankingMap.get(memberId).addTime(minutesDiffBetweenCreateAndStart);
             }
