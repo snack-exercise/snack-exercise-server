@@ -32,6 +32,10 @@ public class JoinList extends BaseEntity {
         this.outCount += 1;
     }
 
+    public void promoteToHost() {
+        this.joinType = JoinType.HOST;
+    }
+
     @Builder
     public JoinList(Member member, Exgroup exgroup, JoinType joinType) {
         this.member = member;
