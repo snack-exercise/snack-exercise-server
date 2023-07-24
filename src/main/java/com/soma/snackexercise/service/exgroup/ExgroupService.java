@@ -99,20 +99,37 @@ public class ExgroupService {
     @Transactional
     public ExgroupResponse update(Long groupId, String email, ExgroupUpdateRequest request) {
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+
         // 1. 사용자가 해당 그룹의 방장인지 확인
-        if (!joinListRepository.existsByIdAndMemberAndJoinTypeAndStatus(groupId, member, JoinType.HOST, Status.ACTIVE)) {
+        if (!joinListRepository.existsByExgroupAndMemberAndJoinTypeAndStatus(exgroup, member, JoinType.HOST, Status.ACTIVE) {
             throw new NotHostException();
         }
 
-        // 2. 그룹을 찾음
-        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
-
-        // 3. 그룹 최대 참여 인원 수 >= 현재 인원 수인지 판별
+        // 2. 그룹 최대 참여 인원 수 >= 현재 인원 수인지 판별
         exgroup.updateMaxMemberNum(joinListRepository.countByExgroupAndOutCountLessThanOneAndStatusEqualsActive(exgroup), request.getMaxMemberNum());
         exgroup.update(request);
 
         return ExgroupResponse.toDto(exgroup);
     }
 
+    /*
+    회원 강퇴
+    방장인지 확인
+    joinList inActive로 수정
+    JoinList outCount + 1
+     */
+     // TODO : 만약 미션 수행 중인 회원이 탈퇴당한다면 -> 다음 사람으로 로직 추가
+    @Transactional
+    public void deleteMember(Long groupId, Long memberId, String email) {
+        Member currentMember = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+        // 1. 사용자가 해당 그룹의 방장인지 확인
+        if (!joinListRepository.existsByIdAndMemberAndJoinTypeAndStatus(groupId, currentMember, JoinType.HOST, Status.ACTIVE)) {
+            throw new NotHostException();
+        }
 
+        // 2. 타겟 회원이 해당 그룹에 있으면서 MEMBER 역할이면서 ACTIVE한 상태인지 확인
+        Member targetMember = memberRepository.findByIdAndStatus(memberId, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+
+    }
 }
