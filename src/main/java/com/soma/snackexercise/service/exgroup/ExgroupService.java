@@ -40,7 +40,7 @@ public class ExgroupService {
     public PostCreateExgroupResponse createGroup(PostCreateExgroupRequest groupCreateRequest, String email){
 
         // 1. 그룹 생성할 회원 조회
-        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
 
         // 2. 그룹 코드 생성
         String groupCode = CreateExgroupCode.createGroupCode();
@@ -98,7 +98,7 @@ public class ExgroupService {
 
     @Transactional
     public ExgroupResponse update(Long groupId, String email, ExgroupUpdateRequest request) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
         // 1. 사용자가 해당 그룹의 방장인지 확인
         if (!joinListRepository.existsByIdAndMemberAndJoinTypeAndStatus(groupId, member, JoinType.HOST, Status.ACTIVE)) {
             throw new NotHostException();
