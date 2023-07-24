@@ -8,13 +8,15 @@ import com.soma.snackexercise.util.constant.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface JoinListRepository extends JpaRepository<JoinList, Long> {
-    Boolean existsByExgroupAndMemberAndJoinTypeAndStatus(Exgroup exgroup, Member member, JoinType joinType, Status status);
+import java.util.Optional;
 
+public interface JoinListRepository extends JpaRepository<JoinList, Long> {
     void deleteByMember(Member member);
+
+    Optional<JoinList> findByExgroupAndMemberAndStatus(Exgroup exgroup, Member member, Status status);
+
+    Boolean existsByExgroupAndMemberAndJoinTypeAndStatus(Exgroup exgroup, Member member, JoinType joinType, Status status);
 
     @Query("SELECT count(*) FROM JoinList j WHERE j.exgroup = :exgroup AND j.outCount <= 1 AND j.status = 'ACTIVE'")
     Integer countByExgroupAndOutCountLessThanOneAndStatusEqualsActive(Exgroup exgroup);
-
-    Boolean existsBy
 }
