@@ -28,6 +28,9 @@ public class JoinList extends BaseEntity {
 
     private Integer outCount;
 
+    public void addOneOutCount() {
+        this.outCount += 1;
+    }
 
     @Builder
     public JoinList(Member member, Exgroup exgroup, JoinType joinType) {
