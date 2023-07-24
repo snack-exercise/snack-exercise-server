@@ -32,21 +32,29 @@ public class MemberController {
     }
 
     // TODO : UserId는 민감한 정보이므로 URL에 직접 포함하지 않는 것이 좋은듯
-    @Operation(summary = "멤버 수정",
-            description = "멤버 한명을 수정합니다.",
+    @Operation(summary = "회원 수정",
+            description = "회원 한명을 수정합니다.",
             security = { @SecurityRequirement(name = "bearer-key") },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "멤버 수정 성공", content = @Content(schema = @Schema(implementation = MemberResponse.class)))
+                    @ApiResponse(responseCode = "200", description = "회원 수정 성공", content = @Content(schema = @Schema(implementation = MemberResponse.class)))
             })
-    @Parameter(name = "memberId", description = "수정할 멤버 ID", required = true,  in = ParameterIn.PATH)
+    @Parameter(name = "memberId", description = "수정할 회원 ID", required = true,  in = ParameterIn.PATH)
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public Response update(@RequestBody MemberUpdateRequest request, @AuthenticationPrincipal UserDetails loginUser) {
         return Response.success(memberService.update(loginUser.getUsername(), request));
     }
 
+    @Operation(summary = "회원 탈퇴",
+            description = "한명의 회원을 삭제합니다.",
+            security = { @SecurityRequirement(name = "bearer-key") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "한명의 회원 삭제 성공", content = @Content(schema = @Schema(implementation = Response.class))),
+            })
     @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
     public Response delete(@AuthenticationPrincipal UserDetails loginUser) {
-
+        memberService.delete(loginUser.getUsername());
+        return Response.success();
     }
 }
