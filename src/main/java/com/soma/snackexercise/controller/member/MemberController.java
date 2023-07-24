@@ -14,12 +14,15 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 
 @Tag(name = "Member", description = "회원 API")
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/members")
 public class MemberController {
     private final MemberService memberService;
 
@@ -28,6 +31,7 @@ public class MemberController {
         return "jwtTest 요청 성공";
     }
 
+    // TODO : UserId는 민감한 정보이므로 URL에 직접 포함하지 않는 것이 좋은듯
     @Operation(summary = "멤버 수정",
             description = "멤버 한명을 수정합니다.",
             security = { @SecurityRequirement(name = "bearer-key") },
@@ -35,9 +39,14 @@ public class MemberController {
                     @ApiResponse(responseCode = "200", description = "멤버 수정 성공", content = @Content(schema = @Schema(implementation = MemberResponse.class)))
             })
     @Parameter(name = "memberId", description = "수정할 멤버 ID", required = true,  in = ParameterIn.PATH)
-    @PutMapping("/members/{id}")
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public Response update(@PathVariable Long id, @RequestBody MemberUpdateRequest request) {
-        return Response.success(memberService.update(id, request));
+    public Response update(@RequestBody MemberUpdateRequest request, @AuthenticationPrincipal UserDetails loginUser) {
+        return Response.success(memberService.update(loginUser.getUsername(), request));
+    }
+
+    @DeleteMapping
+    public Response delete(@AuthenticationPrincipal UserDetails loginUser) {
+
     }
 }

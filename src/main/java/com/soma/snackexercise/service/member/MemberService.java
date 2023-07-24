@@ -18,8 +18,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public MemberResponse update(Long id, MemberUpdateRequest request) {
-        Member member = memberRepository.findByIdAndStatus(id, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+    public MemberResponse update(String email, MemberUpdateRequest request) {
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
 
         if (!member.getName().equals(request.getName())) {
             validateDuplicateName(request.getName());
@@ -36,14 +36,15 @@ public class MemberService {
     }
 
 
-    // TODO : 탈퇴한 회원이 다시 그룹 가입하면
+    // TODO : 방장이 회원 탈퇴하거나 회원이 그룹에서 나가면 joinList만 inActive해서 개인랭킹에서 보여지도록
     /*
     회원 탈퇴하기
-    그룹이 존재하면? -> joinlist 모두 inActive로 변경
-    관련 알림 모두 inActive
-    관련 회원_운동 inActive
-
-
-    회원_운동 데이터는?
+    그룹이 존재하면? -> joinlist 모두 삭제 (joinList가 inActive가 되는 시점은 그룹 탈퇴)
+    관련 알림 모두 삭제
+    관련 회원_운동 삭제
+    회원_운동 모두 삭제
      */
+    public void delete() {
+
+    }
 }
