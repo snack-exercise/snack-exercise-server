@@ -18,7 +18,7 @@ public interface MisssionRepository extends JpaRepository<Mission, Long> {
     Integer findCurrentFinishedRelayCountByGroupId(@Param("exgroupId") Long exgroupId, @Param("today") LocalDateTime today, @Param("nextday") LocalDateTime nextday);
 
     @Query("SELECT m" +
-            "   FROM Mission m" +
+            "   FROM Mission m JOIN FETCH m.member" +
             "   WHERE m.exgroup.id = :exgroupId AND :today <= m.createdAt AND m.createdAt < :nextday" +
             "   ORDER BY m.createdAt")
     List<Mission> findAllMissionByGroupIdAndCreatedAt(@Param("exgroupId") Long exgroupId, @Param("today") LocalDateTime today, @Param("nextday") LocalDateTime nextday);
