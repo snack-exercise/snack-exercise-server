@@ -1,6 +1,7 @@
 package com.soma.snackexercise.domain.exercise;
 
 import com.soma.snackexercise.domain.BaseEntity;
+import com.soma.snackexercise.dto.exercise.request.ExerciseUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,14 @@ public class Exercise extends BaseEntity {
     private String description;
 
     private Integer minPerKcal;
+
+    public void update(ExerciseUpdateRequest request) {
+        this.name = request.getName();
+        this.exerciseCategory = request.getExerciseCategory();
+        this.videoLink = request.getVideoLink();
+        this.description = request.getDescription();
+        this.minPerKcal = request.getMinPerKcal();
+    }
 
     @Builder
     public Exercise(String name, ExerciseCategory exerciseCategory, String videoLink, String description, Integer minPerKcal) {
