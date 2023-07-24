@@ -43,6 +43,7 @@ public class MemberService {
     joinList 모두 삭제
     관련 알림 모두 삭제
     관련 회원_운동 삭제
+    관련 미션 모두 삭제
      */
     public void delete(String email) {
         memberDeletionService.deleteMember(email);
