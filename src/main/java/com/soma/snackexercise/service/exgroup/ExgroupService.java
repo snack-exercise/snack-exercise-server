@@ -5,21 +5,26 @@ import com.soma.snackexercise.domain.exgroup.Exgroup;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.joinlist.JoinType;
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.dto.exgroup.response.GetOneExgroupResponse;
+import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
 import com.soma.snackexercise.dto.exgroup.request.PostCreateExgroupRequest;
+import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;
 import com.soma.snackexercise.dto.exgroup.response.PostCreateExgroupResponse;
 import com.soma.snackexercise.exception.ExgroupNotFoundException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
+import com.soma.snackexercise.exception.NotHostException;
 import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
-import jakarta.transaction.Transactional;
+import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+// TODO : jakarata Transactional과 spring Transactional의 차이는 뭘까
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class ExgroupService {
     private final ExgroupRepository exgroupRepository;
@@ -60,8 +65,6 @@ public class ExgroupService {
                 .missionIntervalTime(groupCreateRequest.getMissionIntervalTime())
                 .checkIntervalTime(groupCreateRequest.getCheckIntervalTime())
                 .checkMaxNum(groupCreateRequest.getCheckMaxNum())
-                .startDate(groupCreateRequest.getStartDate())
-                .endDate(groupCreateRequest.getEndDate())
                 .build();
 
         exgroupRepository.save(newGroup);
@@ -77,26 +80,29 @@ public class ExgroupService {
         return new PostCreateExgroupResponse(newGroup.getId(), newGroup.getName());
     }
 
-    public GetOneExgroupResponse findGroup(Long groupId){
-
+    public ExgroupResponse findGroup(Long groupId){
         Exgroup exgroup = exgroupRepository.findById(groupId).orElseThrow(ExgroupNotFoundException::new);
 
-        return GetOneExgroupResponse.builder()
-                .name(exgroup.getName())
-                .emozi(exgroup.getEmozi())
-                .color(exgroup.getColor())
-                .description(exgroup.getDescription())
-                .maxMemberNum(exgroup.getMaxMemberNum())
-                .goalRelayNum(exgroup.getGoalRelayNum())
-                .startTime(exgroup.getStartTime())
-                .endTime(exgroup.getEndTime())
-                .penalty(exgroup.getPenalty())
-                .code(exgroup.getCode())
-                .missionIntervalTime(exgroup.getMissionIntervalTime())
-                .checkIntervalTime(exgroup.getCheckIntervalTime())
-                .checkMaxNum(exgroup.getCheckMaxNum())
-                .startDate(exgroup.getStartDate())
-                .endDate(exgroup.getEndDate())
-                .build();
+        return ExgroupResponse.toDto(exgroup);
     }
+
+    @Transactional
+    public ExgroupResponse update(Long groupId, String email, ExgroupUpdateRequest request) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        // 1. 사용자가 해당 그룹의 방장인지 확인
+        if (!joinListRepository.existsByIdAndMemberAndJoinTypeAndStatus(groupId, member, JoinType.HOST, Status.ACTIVE)) {
+            throw new NotHostException();
+        }
+
+        // 2. 그룹을 찾음
+        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+
+        // 3. 그룹 최대 참여 인원 수 >= 현재 인원 수인지 판별
+        exgroup.updateMaxMemberNum(joinListRepository.countByExgroupAndOutCountLessThanOneAndStatusEqualsActive(exgroup), request.getMaxMemberNum());
+        exgroup.update(request);
+
+        return ExgroupResponse.toDto(exgroup);
+    }
+
+
 }
