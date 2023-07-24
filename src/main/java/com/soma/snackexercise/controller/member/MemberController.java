@@ -14,12 +14,15 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 
 @Tag(name = "Member", description = "회원 API")
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/members")
 public class MemberController {
     private final MemberService memberService;
 
@@ -28,24 +31,30 @@ public class MemberController {
         return "jwtTest 요청 성공";
     }
 
-
-    @Operation(summary = "하나의 운동 그룹에 속한 모든 회원 조회", description = "하나의 운동 그룹에 속한 모든 회원을 조회합니다.", security = { @SecurityRequirement(name = "bearer-key") })
-    @Parameter(name = "groupId", description = "조회할 운동 그룹 ID")
-    @GetMapping("/exgroups/{groupId}/members")
-    public Response getAllExgroupMembers(@PathVariable("groupId") Long groupId){
-        return Response.success(memberService.getAllExgroupMembers(groupId));
-    }
-
-    @Operation(summary = "멤버 수정",
-            description = "멤버 한명을 수정합니다.",
+    // TODO : UserId는 민감한 정보이므로 URL에 직접 포함하지 않는 것이 좋은듯
+    @Operation(summary = "회원 수정",
+            description = "회원 한명을 수정합니다.",
             security = { @SecurityRequirement(name = "bearer-key") },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "멤버 수정 성공", content = @Content(schema = @Schema(implementation = MemberResponse.class)))
+                    @ApiResponse(responseCode = "200", description = "회원 수정 성공", content = @Content(schema = @Schema(implementation = MemberResponse.class)))
             })
-    @Parameter(name = "memberId", description = "수정할 멤버 ID", required = true,  in = ParameterIn.PATH)
-    @PutMapping("/members/{id}")
+    @Parameter(name = "memberId", description = "수정할 회원 ID", required = true,  in = ParameterIn.PATH)
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public Response update(@PathVariable Long id, @RequestBody MemberUpdateRequest request) {
-        return Response.success(memberService.update(id, request));
+    public Response update(@RequestBody MemberUpdateRequest request, @AuthenticationPrincipal UserDetails loginUser) {
+        return Response.success(memberService.update(loginUser.getUsername(), request));
+    }
+
+    @Operation(summary = "회원 탈퇴",
+            description = "한명의 회원을 삭제합니다.",
+            security = { @SecurityRequirement(name = "bearer-key") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "한명의 회원 삭제 성공", content = @Content(schema = @Schema(implementation = Response.class))),
+            })
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    public Response delete(@AuthenticationPrincipal UserDetails loginUser) {
+        memberService.delete(loginUser.getUsername());
+        return Response.success();
     }
 }

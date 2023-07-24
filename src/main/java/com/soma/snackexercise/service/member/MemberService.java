@@ -1,9 +1,7 @@
 package com.soma.snackexercise.service.member;
 
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.request.MemberUpdateRequest;
-import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.dto.member.response.MemberResponse;
 import com.soma.snackexercise.exception.MemberNameAlreadyExistsException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
@@ -13,23 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
-
-    public List<GetOneGroupMemberResponse> getAllExgroupMembers(Long groupId){
-        List<JoinListMemberDto> allGroupMembers = memberRepository.findAllGroupMembers(groupId);
-
-        return allGroupMembers.stream().map(data -> new GetOneGroupMemberResponse(data.getMember().getProfileImage(), data.getMember().getNickname(), data.getJoinList().getJoinType(), data.getJoinList().getStatus())).toList();
-    }
+    private final MemberDeletionService memberDeletionService;
 
     @Transactional
-    public MemberResponse update(Long id, MemberUpdateRequest request) {
-        Member member = memberRepository.findByIdAndStatus(id, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+    public MemberResponse update(String email, MemberUpdateRequest request) {
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
 
         if (!member.getName().equals(request.getName())) {
             validateDuplicateName(request.getName());
@@ -43,5 +34,17 @@ public class MemberService {
         if (memberRepository.existsByName(name)) {
             throw new MemberNameAlreadyExistsException(name);
         }
+    }
+
+
+    // TODO : 방장이 회원 탈퇴하거나 회원이 그룹에서 나가면 joinList만 inActive해서 개인랭킹에서 보여지도록
+    /*
+    회원 탈퇴하기
+    joinList 모두 삭제
+    관련 알림 모두 삭제
+    관련 회원_운동 삭제
+     */
+    public void delete(String email) {
+        memberDeletionService.deleteMember(email);
     }
 }

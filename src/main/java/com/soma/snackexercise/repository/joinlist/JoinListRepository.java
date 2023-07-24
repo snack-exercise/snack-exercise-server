@@ -13,4 +13,6 @@ public interface JoinListRepository extends JpaRepository<JoinList, Long> {
 
     @Query("SELECT count(*) FROM JoinList j WHERE j.exgroup = :exgroup AND j.outCount <= 1 AND j.status = 'ACTIVE'")
     Integer countByExgroupAndOutCountLessThanOneAndStatusEqualsActive(Exgroup exgroup);
+
+    void deleteByMember(Member member);
 }

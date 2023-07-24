@@ -9,6 +9,8 @@ import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
 import com.soma.snackexercise.dto.exgroup.request.PostCreateExgroupRequest;
 import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;
 import com.soma.snackexercise.dto.exgroup.response.PostCreateExgroupResponse;
+import com.soma.snackexercise.dto.member.JoinListMemberDto;
+import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.exception.ExgroupNotFoundException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
 import com.soma.snackexercise.exception.NotHostException;
@@ -20,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 // TODO : jakarata Transactional과 spring Transactional의 차이는 뭘까
 @Slf4j
@@ -36,7 +40,7 @@ public class ExgroupService {
     public PostCreateExgroupResponse createGroup(PostCreateExgroupRequest groupCreateRequest, String email){
 
         // 1. 그룹 생성할 회원 조회
-        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
 
         // 2. 그룹 코드 생성
         String groupCode = CreateExgroupCode.createGroupCode();
@@ -86,9 +90,15 @@ public class ExgroupService {
         return ExgroupResponse.toDto(exgroup);
     }
 
+    public List<GetOneGroupMemberResponse> getAllExgroupMembers(Long groupId){
+        List<JoinListMemberDto> allGroupMembers = memberRepository.findAllGroupMembers(groupId);
+
+        return allGroupMembers.stream().map(data -> new GetOneGroupMemberResponse(data.getMember().getProfileImage(), data.getMember().getNickname(), data.getJoinList().getJoinType(), data.getJoinList().getStatus())).toList();
+    }
+
     @Transactional
     public ExgroupResponse update(Long groupId, String email, ExgroupUpdateRequest request) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
         // 1. 사용자가 해당 그룹의 방장인지 확인
         if (!joinListRepository.existsByIdAndMemberAndJoinTypeAndStatus(groupId, member, JoinType.HOST, Status.ACTIVE)) {
             throw new NotHostException();
