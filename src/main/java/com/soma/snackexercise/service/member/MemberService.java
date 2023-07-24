@@ -1,9 +1,7 @@
 package com.soma.snackexercise.service.member;
 
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.request.MemberUpdateRequest;
-import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.dto.member.response.MemberResponse;
 import com.soma.snackexercise.exception.MemberNameAlreadyExistsException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
@@ -13,19 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
-
-    public List<GetOneGroupMemberResponse> getAllExgroupMembers(Long groupId){
-        List<JoinListMemberDto> allGroupMembers = memberRepository.findAllGroupMembers(groupId);
-
-        return allGroupMembers.stream().map(data -> new GetOneGroupMemberResponse(data.getMember().getProfileImage(), data.getMember().getNickname(), data.getJoinList().getJoinType(), data.getJoinList().getStatus())).toList();
-    }
 
     @Transactional
     public MemberResponse update(Long id, MemberUpdateRequest request) {
@@ -44,4 +34,16 @@ public class MemberService {
             throw new MemberNameAlreadyExistsException(name);
         }
     }
+
+
+    // TODO : 탈퇴한 회원이 다시 그룹 가입하면
+    /*
+    회원 탈퇴하기
+    그룹이 존재하면? -> joinlist 모두 inActive로 변경
+    관련 알림 모두 inActive
+    관련 회원_운동 inActive
+
+
+    회원_운동 데이터는?
+     */
 }

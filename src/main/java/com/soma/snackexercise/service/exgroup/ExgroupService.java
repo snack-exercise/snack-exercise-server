@@ -9,6 +9,8 @@ import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
 import com.soma.snackexercise.dto.exgroup.request.PostCreateExgroupRequest;
 import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;
 import com.soma.snackexercise.dto.exgroup.response.PostCreateExgroupResponse;
+import com.soma.snackexercise.dto.member.JoinListMemberDto;
+import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.exception.ExgroupNotFoundException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
 import com.soma.snackexercise.exception.NotHostException;
@@ -20,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 // TODO : jakarata Transactional과 spring Transactional의 차이는 뭘까
 @Slf4j
@@ -84,6 +88,12 @@ public class ExgroupService {
         Exgroup exgroup = exgroupRepository.findById(groupId).orElseThrow(ExgroupNotFoundException::new);
 
         return ExgroupResponse.toDto(exgroup);
+    }
+
+    public List<GetOneGroupMemberResponse> getAllExgroupMembers(Long groupId){
+        List<JoinListMemberDto> allGroupMembers = memberRepository.findAllGroupMembers(groupId);
+
+        return allGroupMembers.stream().map(data -> new GetOneGroupMemberResponse(data.getMember().getProfileImage(), data.getMember().getNickname(), data.getJoinList().getJoinType(), data.getJoinList().getStatus())).toList();
     }
 
     @Transactional
