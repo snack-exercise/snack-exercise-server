@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface MisssionRepository extends JpaRepository<Mission, Long> {
+public interface MissionRepository extends JpaRepository<Mission, Long> {
     @Query("SELECT count(*) AS cnt" +
             "    FROM Mission m" +
             "    WHERE m.exgroup.id = :exgroupId AND :today <= m.createdAt AND m.createdAt < :nextday AND m.endAt IS NOT NULL" +

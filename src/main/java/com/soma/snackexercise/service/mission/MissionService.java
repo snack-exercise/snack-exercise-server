@@ -8,7 +8,7 @@ import com.soma.snackexercise.dto.mission.response.RankingResponseDto;
 import com.soma.snackexercise.dto.mission.response.TodayMissionCurrentResultDto;
 import com.soma.snackexercise.exception.ExgroupNotFoundException;
 import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
-import com.soma.snackexercise.repository.mission.MisssionRepository;
+import com.soma.snackexercise.repository.mission.MissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ import java.util.Map;
 @Service
 public class MissionService {
 
-    private final MisssionRepository misssionRepository;
+    private final MissionRepository missionRepository;
     private final ExgroupRepository exgroupRepository;
 
     public TodayMissionCurrentResultDto getTodayMissionResults(Long exgroupId) {
@@ -35,10 +35,10 @@ public class MissionService {
         LocalDateTime todayMidnight = now.with(LocalTime.MIN);// 오늘 자정 구하기
         LocalDateTime tomorrowMidnight = now.plusDays(1).with(LocalTime.MIN);// 내일 자정 구하기
 
-        Integer currentFinishedRelayCount = misssionRepository.findCurrentFinishedRelayCountByGroupId(exgroupId, todayMidnight, tomorrowMidnight);
+        Integer currentFinishedRelayCount = missionRepository.findCurrentFinishedRelayCountByGroupId(exgroupId, todayMidnight, tomorrowMidnight);
 
         // 3. 모든 그룹원의 오늘 수행한 미션 현황
-        List<Mission> missions = misssionRepository.findAllMissionByGroupIdAndCreatedAt(exgroupId, todayMidnight, tomorrowMidnight);
+        List<Mission> missions = missionRepository.findAllMissionByGroupIdAndCreatedAt(exgroupId, todayMidnight, tomorrowMidnight);
         List<MemberMissionDto> missionFlow = missions.stream().map(mission -> new MemberMissionDto(mission.getMember().getId(), mission.getMember().getNickname(), mission.getMember().getProfileImage(), mission.getCreatedAt(), mission.getEndAt())).toList();
 
         return new TodayMissionCurrentResultDto(missionFlow, currentFinishedRelayCount, exgroup.getEndDate());
@@ -52,7 +52,7 @@ public class MissionService {
         LocalDateTime todayMidnight = now.with(LocalTime.MIN);// 오늘 자정 구하기
         LocalDateTime tomorrowMidnight = now.plusDays(1).with(LocalTime.MIN);// 내일 자정 구하기
 
-        List<Mission> missions = misssionRepository.findAllExecutedMissionByGroupIdAndCreatedAt(exgroupId, todayMidnight, tomorrowMidnight);
+        List<Mission> missions = missionRepository.findAllExecutedMissionByGroupIdAndCreatedAt(exgroupId, todayMidnight, tomorrowMidnight);
 
         return getRankingList(missions);
     }
@@ -60,7 +60,7 @@ public class MissionService {
     public Object getCumulativeMissionRank(Long exgroupId) {
         Exgroup exgroup = exgroupRepository.findById(exgroupId).orElseThrow(ExgroupNotFoundException::new);
 
-        List<Mission> missions = misssionRepository.findAllExecutedMissionByGroupIdAndCreatedAt(exgroupId, exgroup.getStartDate().atStartOfDay(), exgroup.getEndDate().atStartOfDay().plusDays(1));
+        List<Mission> missions = missionRepository.findAllExecutedMissionByGroupIdAndCreatedAt(exgroupId, exgroup.getStartDate().atStartOfDay(), exgroup.getEndDate().atStartOfDay().plusDays(1));
 
         return getRankingList(missions);
     }
