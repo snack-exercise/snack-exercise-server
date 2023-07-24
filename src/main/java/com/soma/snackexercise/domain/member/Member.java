@@ -1,6 +1,7 @@
 package com.soma.snackexercise.domain.member;
 
 import com.soma.snackexercise.domain.BaseEntity;
+import com.soma.snackexercise.dto.member.request.MemberUpdateRequest;
 import com.soma.snackexercise.util.constant.Gender;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,6 +39,11 @@ public class Member extends BaseEntity {
     private Gender gender;
 
     private String fcmToken;
+
+    public void update(MemberUpdateRequest request) {
+        this.profileImage = request.getProfileImage();
+        this.name = request.getName();
+    }
 
 
     public void signupMemberInfo(String name, Gender gender, Integer birthYear) {
