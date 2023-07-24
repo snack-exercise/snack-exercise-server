@@ -57,6 +57,14 @@ public class MissionService {
         return getRankingList(missions);
     }
 
+    public Object getCumulativeMissionRank(Long exgroupId) {
+        Exgroup exgroup = exgroupRepository.findById(exgroupId).orElseThrow(ExgroupNotFoundException::new);
+
+        List<Mission> missions = misssionRepository.findAllExecutedMissionByGroupIdAndCreatedAt(exgroupId, exgroup.getStartDate().atStartOfDay(), exgroup.getEndDate().atStartOfDay().plusDays(1));
+
+        return getRankingList(missions);
+    }
+
     private static List<RankingResponseDto> getRankingList(List<Mission> missions) {
         // 1. memberId 별로 평균 속도 계산
         Map<Long, RankingResponseDto> todayRankingMap = new HashMap<>();
@@ -77,9 +85,7 @@ public class MissionService {
         todayRankingMap.forEach((k, v) -> v.calcAvgTime());
 
         // 3. 평균 속도 기준 오름차순 정렬
-        List<RankingResponseDto> rankingList = todayRankingMap.values().stream()
+        return todayRankingMap.values().stream()
                 .sorted((a, b) -> (int) (a.getAvgMissionExecutionTime() - b.getAvgMissionExecutionTime())).toList();
-
-        return rankingList;
     }
 }
