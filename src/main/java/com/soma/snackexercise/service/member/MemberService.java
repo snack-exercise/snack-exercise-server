@@ -1,7 +1,9 @@
 package com.soma.snackexercise.service.member;
 
 import com.soma.snackexercise.domain.member.Member;
+import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.request.MemberUpdateRequest;
+import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.dto.member.response.MemberResponse;
 import com.soma.snackexercise.exception.MemberNameAlreadyExistsException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
@@ -10,6 +12,8 @@ import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
