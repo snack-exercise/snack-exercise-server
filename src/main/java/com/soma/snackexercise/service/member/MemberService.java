@@ -11,10 +11,12 @@ import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -25,6 +27,7 @@ public class MemberService {
         return allGroupMembers.stream().map(data -> new GetOneGroupMemberResponse(data.getMember().getProfileImage(), data.getMember().getNickname(), data.getJoinList().getJoinType(), data.getJoinList().getStatus())).toList();
     }
 
+    @Transactional
     public MemberResponse update(Long id, MemberUpdateRequest request) {
         Member member = memberRepository.findByIdAndStatus(id, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
 
