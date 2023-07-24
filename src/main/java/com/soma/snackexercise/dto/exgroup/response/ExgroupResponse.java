@@ -2,15 +2,14 @@ package com.soma.snackexercise.dto.exgroup.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.soma.snackexercise.domain.exgroup.Exgroup;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 
 
-@Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,4 +42,22 @@ public class ExgroupResponse {
     private Integer checkIntervalTime; // 미션 수행 체크 시간 간격
 
     private Integer checkMaxNum; // 일별 미션 수행 체크 최대 횟수
+
+    public static ExgroupResponse toDto(Exgroup exgroup) {
+        return new ExgroupResponse(
+                exgroup.getName(),
+                exgroup.getEmozi(),
+                exgroup.getColor(),
+                exgroup.getDescription(),
+                exgroup.getMaxMemberNum(),
+                exgroup.getGoalRelayNum(),
+                exgroup.getStartTime(),
+                exgroup.getEndTime(),
+                exgroup.getPenalty(),
+                exgroup.getCode(),
+                exgroup.getMissionIntervalTime(),
+                exgroup.getCheckIntervalTime(),
+                exgroup.getCheckMaxNum()
+        );
+    }
 }
