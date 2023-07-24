@@ -3,6 +3,7 @@ package com.soma.snackexercise.advice;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.soma.snackexercise.exception.ExgroupNotFoundException;
 import com.soma.snackexercise.exception.MemberNameAlreadyExistsException;
+import com.soma.snackexercise.exception.WrongRequestParamException;
 import com.soma.snackexercise.util.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,5 +37,13 @@ public class ExceptionAdvice {
     @ExceptionHandler(ExgroupNotFoundException.class)
     public Response exgroupNotFoundExceptionHandler(ExgroupNotFoundException e){
         return Response.failure(NOT_FOUND_EXGROUP);
+    }
+
+    /*
+    Query Param
+     */
+    @ExceptionHandler(WrongRequestParamException.class)
+    public Response wrongRequestParamExceptionHandler(WrongRequestParamException e){
+        return Response.failure(WRONG_QUERYPARAM);
     }
 }
