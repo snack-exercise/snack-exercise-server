@@ -32,12 +32,10 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
             if (oAuth2User.getRole() == Role.GUEST) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-                response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
+                jwtService.sendAccessToken(response, accessToken);
                 response.sendRedirect("jwt-test");
 
-                jwtService.sendAccessAndRefreshToken(response, accessToken, null);
-
-                log.info("OAuth2 Login 성공 -> sendAccessAndRefreshToken 호출");
+                log.info("OAuth2 Login 성공");
             }else{
                 loginSuccess(response, oAuth2User);
             }
@@ -49,10 +47,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException {
         String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
         String refreshToken = jwtService.createRefreshToken(oAuth2User.getEmail());
-        response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-        response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
 
-        jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        jwtService.sendAccessToken(response, accessToken);
+        jwtService.sendRefreshToken(response, refreshToken);
         jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
     }
 }

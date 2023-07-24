@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RestController("/api/auth")
+@RestController
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/reissue")
+    @PostMapping("/api/auth/reissue")
+    @ResponseStatus(HttpStatus.OK)
     public Response reissue(HttpServletRequest request, HttpServletResponse response) {
-        authService.reissue(request, response);
-        return Response.success();
+        return Response.success(authService.reissue(request, response));
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/api/auth/logout")
     @ResponseStatus(HttpStatus.OK)
     public Response logout(HttpServletRequest request) {
         authService.logout(request);
