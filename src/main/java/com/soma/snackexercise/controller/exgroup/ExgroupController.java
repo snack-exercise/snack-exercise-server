@@ -77,8 +77,21 @@ public class ExgroupController {
     @Parameter(name = "memberId", description = "탈퇴시킬 회원 ID", required = true,  in = ParameterIn.PATH)
     @DeleteMapping("/{groupId}/members/{memberId}")
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteMember(@PathVariable Long groupId, @PathVariable Long memberId, @AuthenticationPrincipal UserDetails loginUser) {
-        exGroupService.deleteMember(groupId, memberId, loginUser.getUsername());
+    public Response deleteMemberByHost(@PathVariable Long groupId, @PathVariable Long memberId, @AuthenticationPrincipal UserDetails loginUser) {
+        exGroupService.deleteMemberByHost(groupId, memberId, loginUser.getUsername());
+        return Response.success();
+    }
+
+    @Operation(summary = "회원이 운동 그룹 탈퇴",
+            description = "회원이 운동 그룹을 탈퇴합니다.",
+            security = { @SecurityRequirement(name = "bearer-key") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "회원 탈퇴 처리 성공", content = @Content(schema = @Schema(implementation = Response.class)))
+            })
+    @Parameter(name = "groupId", description = "운동 그룹 ID", required = true,  in = ParameterIn.PATH)
+    @DeleteMapping("/{groupId}")
+    public Response leaveGroupByMember(@PathVariable Long groupId, @AuthenticationPrincipal UserDetails loginUser) {
+        exGroupService.leaveGroupByMember(groupId, loginUser.getUsername());
         return Response.success();
     }
 }

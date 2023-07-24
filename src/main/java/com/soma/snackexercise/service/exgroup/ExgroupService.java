@@ -111,9 +111,9 @@ public class ExgroupService {
         return ExgroupResponse.toDto(exgroup);
     }
 
-     // TODO : 만약 미션 수행 중인 회원이 탈퇴당한다면 -> 다음 사람으로 로직 추가
+    // 방장이 회원 강퇴
     @Transactional
-    public void deleteMember(Long groupId, Long memberId, String email) {
+    public void deleteMemberByHost(Long groupId, Long memberId, String email) {
         Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
         Member currentMember = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
         Member targetMember = memberRepository.findByIdAndStatus(memberId, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
@@ -134,5 +134,38 @@ public class ExgroupService {
 
         // 4. joinList outCount + 1
         joinList.addOneOutCount();
+
+        // TODO :  만약 미션 수행 중인 회원이 탈퇴당한다면 -> 다음 사람으로 로직 추가, 미션 상태 변경
+        if (exgroup.getCurrentDoingMemberId().equals(currentMember.getId())) {
+
+        }
+    }
+
+    // 회원이 그룹 탈퇴
+    @Transactional
+    public void leaveGroupByMember(Long groupId, String email) {
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new); // TODO : ActiveExgroupNotFoundException로 이름 변경?
+        JoinList joinList = joinListRepository.findByExgroupAndMemberAndStatus(exgroup, member, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
+
+        joinList.inActive();
+
+        // 만약 그룹에 남은 사람이 없다면 그룹 폭파
+        if (!joinListRepository.existsByExgroupAndStatus(exgroup, Status.ACTIVE)) {
+            exgroup.inActive();
+            return;
+        }
+
+        // 만약 방장이 탈퇴한거면 방장을 누군가에게 위임하는 로직
+        // 현재 그룹에 남은 멤버들 중 가장 오래된 멤버에게 방장 위임
+        if (joinList.getJoinType().equals(JoinType.HOST)) {
+            JoinList oldestMemberJoinList = joinListRepository.findFirstByExgroupAndStatusOrderByCreatedAtAsc(exgroup, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
+            oldestMemberJoinList.promoteToHost();
+        }
+
+        // TODO :  만약 미션 수행 중인 회원이 탈퇴당한다면 -> 다음 사람으로 로직 추가, 미션 상태 변경
+        if (exgroup.getCurrentDoingMemberId().equals(member.getId())) {
+
+        }
     }
 }
