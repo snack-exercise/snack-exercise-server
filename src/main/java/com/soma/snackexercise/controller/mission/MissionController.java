@@ -29,6 +29,7 @@ public class MissionController {
 
     @Operation(summary = "당일 미션 랭킹 조회", description = "미션 랭킹을 조회합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @Parameter(name = "exgroupId", description = "조회할 운동 그룹 ID")
+    @Parameter(name = "filter", description = "당일 랭킹 : today, 누적 랭킹 : total")
     @GetMapping("/exgroups/{exgroupId}/missions/rank")
     public Response getMissionRank(@PathVariable("exgroupId") Long exgroupId, @RequestParam String filter){
         if(filter.equals("today")){
