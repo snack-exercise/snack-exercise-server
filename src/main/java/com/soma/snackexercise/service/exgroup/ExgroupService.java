@@ -81,8 +81,8 @@ public class ExgroupService {
         return ExgroupCreateResponse.toDto(newGroup);
     }
 
-    public ExgroupResponse findGroup(Long groupId){
-        Exgroup exgroup = exgroupRepository.findById(groupId).orElseThrow(ExgroupNotFoundException::new);
+    public ExgroupResponse read(Long groupId){
+        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
 
         return ExgroupResponse.toDto(exgroup);
     }

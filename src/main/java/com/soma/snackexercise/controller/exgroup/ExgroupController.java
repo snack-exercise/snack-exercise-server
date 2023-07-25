@@ -42,7 +42,7 @@ public class ExgroupController {
     @GetMapping("/{groupId}")
     @ResponseStatus(HttpStatus.OK)
     public Response findGroup(@PathVariable("groupId") Long groupId){
-        return Response.success(exGroupService.findGroup(groupId));
+        return Response.success(exGroupService.read(groupId));
     }
 
     @Operation(summary = "하나의 운동 그룹에 속한 모든 회원 조회", description = "하나의 운동 그룹에 속한 모든 회원을 조회합니다.", security = { @SecurityRequirement(name = "bearer-key") })
