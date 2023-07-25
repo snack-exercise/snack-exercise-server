@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Exgroup", description = "운동 그룹 API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/exgroups")
+@RequestMapping("/api/exgroups")
 public class ExgroupController {
 
     private final ExgroupService exGroupService;
@@ -93,5 +93,13 @@ public class ExgroupController {
     public Response leaveGroupByMember(@PathVariable Long groupId, @AuthenticationPrincipal UserDetails loginUser) {
         exGroupService.leaveGroupByMember(groupId, loginUser.getUsername());
         return Response.success();
+    }
+
+    @Operation(summary = "운동 그룹 시작", description = "운동 그룹을 시작합니다.", security = { @SecurityRequirement(name = "bearer-key") })
+    @Parameter(name = "groupId", description = "시작할 운동 그룹 ID")
+    @PatchMapping("/{groupId}/initiation")
+    @ResponseStatus(HttpStatus.OK)
+    public Response startGroup(@PathVariable("groupId") Long groupId, @AuthenticationPrincipal UserDetails loginUser){
+        return Response.success(exGroupService.startGroup(groupId, loginUser.getUsername()));
     }
 }
