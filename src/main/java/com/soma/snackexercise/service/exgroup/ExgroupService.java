@@ -168,4 +168,20 @@ public class ExgroupService {
 
         }
     }
+    @Transactional
+    public ExgroupResponse startGroup(Long groupId, String email){
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+
+        // 1. 사용자가 해당 그룹의 방장인지 확인
+        if (!joinListRepository.existsByExgroupAndMemberAndJoinTypeAndStatus(exgroup, member, JoinType.HOST, Status.ACTIVE)) {
+            throw new NotExgroupHostException();
+
+        }
+
+        // 2. 그룹의 시작일자, 끝일자 기록
+        exgroup.updateStartDateAndEndDate();
+
+        return ExgroupResponse.toDto(exgroup);
+    }
 }

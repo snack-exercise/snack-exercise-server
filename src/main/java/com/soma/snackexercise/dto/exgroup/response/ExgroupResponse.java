@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 
@@ -14,6 +15,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExgroupResponse {
+    private Long id;
 
     private String name; // 그룹 이름
 
@@ -33,6 +35,12 @@ public class ExgroupResponse {
     @JsonSerialize(using = LocalTimeSerializer.class)
     private LocalTime endTime; // 종료 시간
 
+    private Integer existDays; // 그룹 목표 일수
+
+    private LocalDate startDate; // 시작 기간
+
+    private LocalDate endDate; // 종료 기간
+
     private String penalty; // 벌칙
 
     private String code; // 그룹 입장 코드
@@ -45,6 +53,7 @@ public class ExgroupResponse {
 
     public static ExgroupResponse toDto(Exgroup exgroup) {
         return new ExgroupResponse(
+                exgroup.getId(),
                 exgroup.getName(),
                 exgroup.getEmozi(),
                 exgroup.getColor(),
@@ -53,6 +62,9 @@ public class ExgroupResponse {
                 exgroup.getGoalRelayNum(),
                 exgroup.getStartTime(),
                 exgroup.getEndTime(),
+                exgroup.getExistDays(),
+                exgroup.getStartDate(),
+                exgroup.getEndDate(),
                 exgroup.getPenalty(),
                 exgroup.getCode(),
                 exgroup.getMissionIntervalTime(),

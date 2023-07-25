@@ -7,6 +7,7 @@ import com.soma.snackexercise.exception.MemberNameAlreadyExistsException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
 import com.soma.snackexercise.repository.member.MemberRepository;
 
+import com.soma.snackexercise.util.constant.Status;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class SignupService {
 
     public void signup(SignupRequest request, HttpServletResponse response, String email) {
         validateSignup(request);
-        Member findMember = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        Member findMember = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
         findMember.signupMemberInfo(request.getName(), request.getGender(), request.getBirthYear());
 
         String newRefreshToken = jwtService.createRefreshToken(email);

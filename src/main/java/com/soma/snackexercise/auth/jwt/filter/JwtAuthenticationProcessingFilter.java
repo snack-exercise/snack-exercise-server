@@ -3,6 +3,7 @@ package com.soma.snackexercise.auth.jwt.filter;
 import com.soma.snackexercise.auth.jwt.service.JwtService;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.util.RedisUtil;
+import com.soma.snackexercise.util.constant.Status;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
         if (jwtService.isTokenValid(accessToken)) {
             jwtService.extractEmail(accessToken)
-                    .ifPresent(email -> memberRepository.findByEmail(email)
+                    .ifPresent(email -> memberRepository.findByEmailAndStatus(email, Status.ACTIVE)
                             .ifPresent(jwtService::saveAuthentication));
         }
         filterChain.doFilter(request, response);
