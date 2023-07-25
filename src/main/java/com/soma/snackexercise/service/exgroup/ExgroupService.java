@@ -6,9 +6,9 @@ import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.joinlist.JoinType;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
-import com.soma.snackexercise.dto.exgroup.request.PostCreateExgroupRequest;
+import com.soma.snackexercise.dto.exgroup.request.ExgroupCreateRequest;
 import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;
-import com.soma.snackexercise.dto.exgroup.response.PostCreateExgroupResponse;
+import com.soma.snackexercise.dto.exgroup.response.ExgroupCreateResponse;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.exception.*;
@@ -35,7 +35,7 @@ public class ExgroupService {
 
 
     @Transactional
-    public PostCreateExgroupResponse create(PostCreateExgroupRequest groupCreateRequest, String email){
+    public ExgroupCreateResponse create(ExgroupCreateRequest groupCreateRequest, String email){
 
         // 1. 그룹 생성할 회원 조회
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
@@ -79,7 +79,7 @@ public class ExgroupService {
                 .build();
 
         joinListRepository.save(joinRequest);
-        return PostCreateExgroupResponse.toDto(newGroup);
+        return ExgroupCreateResponse.toDto(newGroup);
     }
 
     public ExgroupResponse findGroup(Long groupId){

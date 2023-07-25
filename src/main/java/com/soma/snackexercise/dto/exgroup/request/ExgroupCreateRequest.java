@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostCreateExgroupRequest {
+public class ExgroupCreateRequest {
     private String name; // 그룹 이름
 
     private String emozi; // 그룹 대표 이모지
