@@ -41,7 +41,7 @@ public class MissionService {
 
         // 3. 모든 그룹원의 오늘 수행한 미션 현황
         List<Mission> missions = missionRepository.findAllMissionByGroupIdAndCreatedAt(exgroupId, todayMidnight, tomorrowMidnight);
-        List<MemberMissionDto> missionFlow = missions.stream().map(mission -> new MemberMissionDto(mission.getMember().getId(), mission.getMember().getNickname(), mission.getMember().getProfileImage(), mission.getCreatedAt(), mission.getEndAt())).toList();
+        List<MemberMissionDto> missionFlow = missions.stream().map(mission -> MemberMissionDto.toDto(mission)).toList();
 
         return new TodayMissionResultResponse(missionFlow, currentFinishedRelayCount, exgroup.getEndDate());
     }

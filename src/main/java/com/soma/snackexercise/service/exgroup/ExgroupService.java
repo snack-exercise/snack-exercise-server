@@ -79,7 +79,7 @@ public class ExgroupService {
                 .build();
 
         joinListRepository.save(joinRequest);
-        return new PostCreateExgroupResponse(newGroup.getId(), newGroup.getName());
+        return PostCreateExgroupResponse.toDto(newGroup);
     }
 
     public ExgroupResponse findGroup(Long groupId){
@@ -91,7 +91,7 @@ public class ExgroupService {
     public List<GetOneGroupMemberResponse> getAllExgroupMembers(Long groupId){
         List<JoinListMemberDto> allGroupMembers = memberRepository.findAllGroupMembers(groupId);
 
-        return allGroupMembers.stream().map(data -> new GetOneGroupMemberResponse(data.getMember().getProfileImage(), data.getMember().getNickname(), data.getJoinList().getJoinType(), data.getJoinList().getStatus())).toList();
+        return allGroupMembers.stream().map(data -> GetOneGroupMemberResponse.toDto(data.getMember(), data.getJoinList())).toList();
     }
 
     @Transactional
