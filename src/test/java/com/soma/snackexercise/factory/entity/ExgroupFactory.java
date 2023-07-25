@@ -18,7 +18,6 @@ public class ExgroupFactory {
                 .existDays(5)
                 .penalty("커피 사기")
                 .code("code")
-                .missionIntervalTime(30)
                 .checkIntervalTime(10)
                 .checkMaxNum(2)
                 .build();
@@ -37,7 +36,6 @@ public class ExgroupFactory {
                 .existDays(5)
                 .penalty("커피 사기")
                 .code("code")
-                .missionIntervalTime(30)
                 .checkIntervalTime(10)
                 .checkMaxNum(2)
                 .build();

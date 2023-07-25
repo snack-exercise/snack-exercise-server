@@ -64,7 +64,6 @@ public class ExgroupService {
                 .endTime(groupCreateRequest.getEndTime())
                 .penalty(groupCreateRequest.getPenalty())
                 .code(groupCode)
-                .missionIntervalTime(groupCreateRequest.getMissionIntervalTime())
                 .checkIntervalTime(groupCreateRequest.getCheckIntervalTime())
                 .checkMaxNum(groupCreateRequest.getCheckMaxNum())
                 .build();
