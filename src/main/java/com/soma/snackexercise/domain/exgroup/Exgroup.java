@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
@@ -36,6 +37,12 @@ public class Exgroup extends BaseEntity {
     private LocalTime startTime; // 시작 시간
 
     private LocalTime endTime; // 종료 시간
+
+    private Integer existDays; // 그룹 목표 일수 // TODO 이름 가독성 괜찮은지
+
+    private LocalDate startDate; // 시작 기간
+
+    private LocalDate endDate; // 종료 기간
 
     private String penalty; // 벌칙
 
@@ -71,10 +78,15 @@ public class Exgroup extends BaseEntity {
         this.checkMaxNum = this.getCheckMaxNum();
     }
 
+    public void updateStartDateAndEndDate(){
+        this.startDate = LocalDate.now();
+        this.endDate = startDate.plusDays(existDays);
+    }
+
     @Builder
     public Exgroup(String name, String emozi, String color, String description,
                    Integer maxMemberNum, Integer goalRelayNum, LocalTime startTime,
-                   LocalTime endTime, String penalty, String code, Integer missionIntervalTime,
+                   LocalTime endTime, Integer existDays, String penalty, String code, Integer missionIntervalTime,
                    Integer checkIntervalTime, Integer checkMaxNum) {
         this.name = name;
         this.emozi = emozi;
@@ -84,6 +96,7 @@ public class Exgroup extends BaseEntity {
         this.goalRelayNum = goalRelayNum;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.existDays = existDays;
         this.penalty = penalty;
         this.code = code;
         this.missionIntervalTime = missionIntervalTime;
