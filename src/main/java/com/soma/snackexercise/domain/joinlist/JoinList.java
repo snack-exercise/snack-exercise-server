@@ -28,6 +28,8 @@ public class JoinList extends BaseEntity {
 
     private Integer outCount;
 
+    private Integer executedMissionCount;
+
     public void addOneOutCount() {
         this.outCount += 1;
     }
@@ -42,6 +44,7 @@ public class JoinList extends BaseEntity {
         this.exgroup = exgroup;
         this.joinType = joinType;
         this.outCount = 0;
+        this.executedMissionCount = 0;
         active();
     }
 }
