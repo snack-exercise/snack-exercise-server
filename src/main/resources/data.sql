@@ -11,8 +11,7 @@ INSERT INTO Member (id, name, profileImage, nickname, gender, socialType, email,
 INSERT INTO Exgroup (id, name, emozi, color, maxMemberNum, startTime, endTime, description, penalty, code, createdAt, updatedAt, currentDoingMemberId, checkIntervalTime, checkMaxNum, startDate, endDate, goalRelayNum, existDays, status) VALUES (2, '운동하자', '', '#101010', 6, '09:00:00', '18:00:00', '저희 그룹은 2주동안 매일매일 운동하는 것을 목표로합니다.', '꼴등이 1등한테 스벅 깊티 쏘기
 ', '105236', '2023-07-21 23:55:26', '2023-07-21 23:55:26', null, 10, 2, NULL, NULL, 14, 14, 'ACTIVE');
 INSERT INTO Exgroup (id, name, emozi, color, maxMemberNum, startTime, endTime, description, penalty, code, createdAt, updatedAt, currentDoingMemberId, checkIntervalTime, checkMaxNum, startDate, endDate, goalRelayNum, existDays, status) VALUES (3, '짧고굵게', '', '#638391', 4, '10:00:00', '16:00:00', '짧고 굵게 딱 1주일 동안 운동하자!
-', '꼴등 스쿼트 50개 영상찍어 올리기
-', '156398', '2023-07-21 23:58:14', '2023-07-21 23:55:26', null, 10, 3, NULL, NULL, 14, 8, 'ACTIVE');
+', '꼴등 스쿼트 50개 영상찍어 올리기', '156398', '2023-07-21 23:58:14', '2023-07-21 23:55:26', null, 10, 3, NULL, NULL, 14, 8, 'ACTIVE');
 
 -- INSERT JOINLIST
 INSERT INTO JoinList (id, memberId, exgroupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (1, 1, 2, '2023-07-21 15:05:14', 'HOST', '2023-07-21 15:05:14', 0, 'ACTIVE', 0);
