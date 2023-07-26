@@ -135,9 +135,9 @@ public class ExgroupService {
         joinList.addOneOutCount();
 
         // TODO :  만약 미션 수행 중인 회원이 탈퇴당한다면 -> 다음 사람으로 로직 추가, 미션 상태 변경
-        if (exgroup.getCurrentDoingMemberId().equals(currentMember.getId())) {
+        //if (exgroup.getCurrentDoingMemberId().equals(currentMember.getId())) {
 
-        }
+        //}
     }
 
     // 회원이 그룹 탈퇴
@@ -163,9 +163,9 @@ public class ExgroupService {
         }
 
         // TODO :  만약 미션 수행 중인 회원이 탈퇴당한다면 -> 다음 사람으로 로직 추가, 미션 상태 변경
-        if (exgroup.getCurrentDoingMemberId().equals(member.getId())) {
+        //if (exgroup.getCurrentDoingMemberId().equals(member.getId())) {
 
-        }
+        //}
     }
     @Transactional
     public ExgroupResponse startGroup(Long groupId, String email){

@@ -47,6 +47,7 @@ class JoinListRepositoryTest {
         member = memberRepository.save(createMember());
         exgroup = exgroupRepository.save(createExgroup());
         joinList = joinListRepository.save(createJoinListForMember(member, exgroup));
+        clear();
     }
 
     @Test
