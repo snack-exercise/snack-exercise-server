@@ -4,9 +4,9 @@ import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.member.SocialType;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.util.constant.Status;
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +18,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmailAndStatus(String email, Status status);
 
     boolean existsByName(String name);
-
+    // TODO : joinList에서 ACTIVE 조건 붙여야 될듯
     @Query("SELECT new com.soma.snackexercise.dto.member.JoinListMemberDto(m, jl) FROM JoinList jl JOIN FETCH Member m ON jl.member = m WHERE jl.exgroup.id = :groupId")
     List<JoinListMemberDto> findAllGroupMembers(@Param("groupId") Long groupId);
 
