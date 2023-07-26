@@ -79,7 +79,7 @@ class JoinListRepositoryTest {
         JoinList foundJoinList = joinListRepository.findByExgroupAndMemberAndStatus(exgroup, member, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
 
         // then
-        assertThat(joinList).isEqualTo(foundJoinList);
+        assertThat(joinList.getId()).isEqualTo(foundJoinList.getId());
     }
 
     @Test
