@@ -21,7 +21,7 @@ public class MemberFactory {
                 .build();
     }
 
-    public static Member createMember(String email) {
+    public static Member createMemberWithEmail(String email) {
         return Member.builder()
                 .email(email)
                 .nickname("nickname")
@@ -29,6 +29,36 @@ public class MemberFactory {
                 .role(Role.USER)
                 .socialType(SocialType.KAKAO)
                 .socialId("1111")
+                .password("1111")
+                .profileImg("profile.jpg")
+                .gender(Gender.MALE)
+                .birthYear(1999)
+                .build();
+    }
+
+    public static Member createMemberWithName(String name) {
+        return Member.builder()
+                .email("test@naver.com")
+                .nickname("nickname")
+                .name(name)
+                .role(Role.USER)
+                .socialType(SocialType.KAKAO)
+                .socialId("1111")
+                .password("1111")
+                .profileImg("profile.jpg")
+                .gender(Gender.MALE)
+                .birthYear(1999)
+                .build();
+    }
+
+    public static Member createMemberWithSocialTypeAndSocialId(SocialType socialType, String socialId) {
+        return Member.builder()
+                .email("test@naver.com")
+                .nickname("nickname")
+                .name("name")
+                .role(Role.USER)
+                .socialType(socialType)
+                .socialId(socialId)
                 .password("1111")
                 .profileImg("profile.jpg")
                 .gender(Gender.MALE)
