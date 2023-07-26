@@ -6,9 +6,9 @@ import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.joinlist.JoinType;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
-import com.soma.snackexercise.dto.exgroup.request.PostCreateExgroupRequest;
+import com.soma.snackexercise.dto.exgroup.request.ExgroupCreateRequest;
 import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;
-import com.soma.snackexercise.dto.exgroup.response.PostCreateExgroupResponse;
+import com.soma.snackexercise.dto.exgroup.response.ExgroupCreateResponse;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.exception.*;
@@ -35,7 +35,7 @@ public class ExgroupService {
 
 
     @Transactional
-    public PostCreateExgroupResponse create(PostCreateExgroupRequest groupCreateRequest, String email){
+    public ExgroupCreateResponse create(ExgroupCreateRequest groupCreateRequest, String email){
 
         // 1. 그룹 생성할 회원 조회
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
@@ -64,7 +64,6 @@ public class ExgroupService {
                 .endTime(groupCreateRequest.getEndTime())
                 .penalty(groupCreateRequest.getPenalty())
                 .code(groupCode)
-                .missionIntervalTime(groupCreateRequest.getMissionIntervalTime())
                 .checkIntervalTime(groupCreateRequest.getCheckIntervalTime())
                 .checkMaxNum(groupCreateRequest.getCheckMaxNum())
                 .build();
@@ -79,11 +78,11 @@ public class ExgroupService {
                 .build();
 
         joinListRepository.save(joinRequest);
-        return PostCreateExgroupResponse.toDto(newGroup);
+        return ExgroupCreateResponse.toDto(newGroup);
     }
 
-    public ExgroupResponse findGroup(Long groupId){
-        Exgroup exgroup = exgroupRepository.findById(groupId).orElseThrow(ExgroupNotFoundException::new);
+    public ExgroupResponse read(Long groupId){
+        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
 
         return ExgroupResponse.toDto(exgroup);
     }
@@ -136,9 +135,9 @@ public class ExgroupService {
         joinList.addOneOutCount();
 
         // TODO :  만약 미션 수행 중인 회원이 탈퇴당한다면 -> 다음 사람으로 로직 추가, 미션 상태 변경
-        if (exgroup.getCurrentDoingMemberId().equals(currentMember.getId())) {
+        //if (exgroup.getCurrentDoingMemberId().equals(currentMember.getId())) {
 
-        }
+        //}
     }
 
     // 회원이 그룹 탈퇴
@@ -164,9 +163,9 @@ public class ExgroupService {
         }
 
         // TODO :  만약 미션 수행 중인 회원이 탈퇴당한다면 -> 다음 사람으로 로직 추가, 미션 상태 변경
-        if (exgroup.getCurrentDoingMemberId().equals(member.getId())) {
+        //if (exgroup.getCurrentDoingMemberId().equals(member.getId())) {
 
-        }
+        //}
     }
     @Transactional
     public ExgroupResponse startGroup(Long groupId, String email){

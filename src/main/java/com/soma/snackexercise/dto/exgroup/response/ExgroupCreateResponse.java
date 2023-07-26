@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostCreateExgroupResponse {
+public class ExgroupCreateResponse {
     private Long id;
     private String name;
 
-    public static PostCreateExgroupResponse toDto(Exgroup exgroup) {
-        return new PostCreateExgroupResponse(
+    public static ExgroupCreateResponse toDto(Exgroup exgroup) {
+        return new ExgroupCreateResponse(
                 exgroup.getId(),
                 exgroup.getName()
         );

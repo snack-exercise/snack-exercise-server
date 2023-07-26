@@ -48,11 +48,9 @@ public class Exgroup extends BaseEntity {
 
     private String code; // 그룹 입장 코드
 
-    private Integer missionIntervalTime; // 미션 수행 시간 간격
+    private Integer checkIntervalTime; // 독촉 검사 시간 간격
 
-    private Integer checkIntervalTime; // 미션 수행 체크 시간 간격
-
-    private Integer checkMaxNum; // 일별 미션 수행 체크 최대 횟수
+    private Integer checkMaxNum; // 하루 독촉 검사 최대 횟수
 
     private Long currentDoingMemberId; // 현재 미션 수행 중인 회원의 ID
 
@@ -73,7 +71,6 @@ public class Exgroup extends BaseEntity {
         this.startTime = request.getStartTime();
         this.endTime = request.getEndTime();
         this.penalty = request.getPenalty();
-        this.missionIntervalTime = this.getMissionIntervalTime();
         this.checkIntervalTime = this.getCheckIntervalTime();
         this.checkMaxNum = this.getCheckMaxNum();
     }
@@ -86,7 +83,7 @@ public class Exgroup extends BaseEntity {
     @Builder
     public Exgroup(String name, String emozi, String color, String description,
                    Integer maxMemberNum, Integer goalRelayNum, LocalTime startTime,
-                   LocalTime endTime, Integer existDays, String penalty, String code, Integer missionIntervalTime,
+                   LocalTime endTime, Integer existDays, String penalty, String code,
                    Integer checkIntervalTime, Integer checkMaxNum) {
         this.name = name;
         this.emozi = emozi;
@@ -99,7 +96,6 @@ public class Exgroup extends BaseEntity {
         this.existDays = existDays;
         this.penalty = penalty;
         this.code = code;
-        this.missionIntervalTime = missionIntervalTime;
         this.checkIntervalTime = checkIntervalTime;
         this.checkMaxNum = checkMaxNum;
         active();

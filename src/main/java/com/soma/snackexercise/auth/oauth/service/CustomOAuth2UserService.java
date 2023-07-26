@@ -5,6 +5,7 @@ import com.soma.snackexercise.auth.oauth.OAuthAttributes;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.member.SocialType;
 import com.soma.snackexercise.repository.member.MemberRepository;
+import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,8 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Map;
-
-import static com.soma.snackexercise.domain.member.SocialType.KAKAO;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -81,8 +80,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     }
 
     private Member getMember(OAuthAttributes attributes, SocialType socialType) {
-        Member findMember = memberRepository.findBySocialTypeAndSocialId(socialType,
-                attributes.getOAuth2UserInfo().getId()).orElse(null);
+        Member findMember = memberRepository.findBySocialTypeAndSocialIdAndStatus(socialType,
+                attributes.getOAuth2UserInfo().getId(), Status.ACTIVE).orElse(null);
 
         if (findMember == null) {
             return saveMember(attributes, socialType);

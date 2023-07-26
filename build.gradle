@@ -66,8 +66,9 @@ jar {
 // jacoco
 
 test{
-    finalizedBy jacocoTestReport // test 작업이 끝나고 jacocoTestReport를 실행
+    //finalizedBy jacocoTestReport // test 작업이 끝나고 jacocoTestReport를 실행
 }
+
 
 jacoco {
     toolVersion = "0.8.8"

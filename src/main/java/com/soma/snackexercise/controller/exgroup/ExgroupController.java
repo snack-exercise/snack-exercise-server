@@ -2,7 +2,7 @@ package com.soma.snackexercise.controller.exgroup;
 
 
 import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
-import com.soma.snackexercise.dto.exgroup.request.PostCreateExgroupRequest;
+import com.soma.snackexercise.dto.exgroup.request.ExgroupCreateRequest;
 import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;
 import com.soma.snackexercise.service.exgroup.ExgroupService;
 import com.soma.snackexercise.util.response.Response;
@@ -32,7 +32,7 @@ public class ExgroupController {
     @Operation(summary = "운동 그룹 생성", description = "하나의 운동 그룹을 생성합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createGroup(@RequestBody PostCreateExgroupRequest groupCreateRequest, @AuthenticationPrincipal UserDetails loginUser){
+    public Response createGroup(@RequestBody ExgroupCreateRequest groupCreateRequest, @AuthenticationPrincipal UserDetails loginUser){
         return Response.success(exGroupService.create(groupCreateRequest, loginUser.getUsername()));
     }
 
@@ -42,7 +42,7 @@ public class ExgroupController {
     @GetMapping("/{groupId}")
     @ResponseStatus(HttpStatus.OK)
     public Response findGroup(@PathVariable("groupId") Long groupId){
-        return Response.success(exGroupService.findGroup(groupId));
+        return Response.success(exGroupService.read(groupId));
     }
 
     @Operation(summary = "하나의 운동 그룹에 속한 모든 회원 조회", description = "하나의 운동 그룹에 속한 모든 회원을 조회합니다.", security = { @SecurityRequirement(name = "bearer-key") })

@@ -45,8 +45,6 @@ public class ExgroupResponse {
 
     private String code; // 그룹 입장 코드
 
-    private Integer missionIntervalTime; // 미션 수행 시간 간격
-
     private Integer checkIntervalTime; // 미션 수행 체크 시간 간격
 
     private Integer checkMaxNum; // 일별 미션 수행 체크 최대 횟수
@@ -67,7 +65,6 @@ public class ExgroupResponse {
                 exgroup.getEndDate(),
                 exgroup.getPenalty(),
                 exgroup.getCode(),
-                exgroup.getMissionIntervalTime(),
                 exgroup.getCheckIntervalTime(),
                 exgroup.getCheckMaxNum()
         );
