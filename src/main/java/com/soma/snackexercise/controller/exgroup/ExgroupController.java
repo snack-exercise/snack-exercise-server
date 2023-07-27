@@ -47,8 +47,8 @@ public class ExgroupController {
 
     @Operation(summary = "하나의 운동 그룹에 속한 모든 회원 조회", description = "하나의 운동 그룹에 속한 모든 회원을 조회합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @Parameter(name = "groupId", description = "조회할 운동 그룹 ID")
-    @GetMapping("/exgroups/{groupId}/members")
-    public Response getAllExgroupMembers(@PathVariable("groupId") Long groupId){
+    @GetMapping("/{groupId}/members")
+    public Response getAllExgroupMembers정(@PathVariable("groupId") Long groupId){
         return Response.success(exGroupService.getAllExgroupMembers(groupId));
     }
 
