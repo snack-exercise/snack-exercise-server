@@ -57,7 +57,7 @@ class ExgroupControllerTest {
 
     @Test
     @DisplayName("운동 그룹 생성 메소드 동작 성공 테스트")
-    void createGroupTest() throws Exception {
+    void createTest() throws Exception {
         // given
         ExgroupCreateRequest request = createExgroupCreateRequest();
 
@@ -73,7 +73,7 @@ class ExgroupControllerTest {
 
     @Test
     @DisplayName("하나의 그룹 조회 메소드 동작 성공 테스트")
-    void findGroupTest() throws Exception {
+    void readTest() throws Exception {
         // given
         Long groupId = 1L;
 
@@ -87,7 +87,7 @@ class ExgroupControllerTest {
 
     @Test
     @DisplayName("하나의 운동 그룹에 속한 모든 회원 조회 메소드 동작 성공 테스트")
-    void getAllExgroupMembersTest() throws Exception {
+    void readAllMembersTest() throws Exception {
         // given
         Long groupId = 1L;
         List<GetOneGroupMemberResponse> groupMembers = Arrays.asList(createGetOneGroupMemberResponse(), createGetOneGroupMemberResponse());
