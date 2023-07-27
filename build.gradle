@@ -44,7 +44,7 @@ dependencies {
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // security test
-    // testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.security:spring-security-test'
     // jwt
     implementation 'com.auth0:java-jwt:4.2.1'
     // Spring Data Redis
