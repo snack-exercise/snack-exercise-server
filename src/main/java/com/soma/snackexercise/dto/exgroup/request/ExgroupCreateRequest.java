@@ -2,7 +2,9 @@ package com.soma.snackexercise.dto.exgroup.request;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,9 +27,11 @@ public class ExgroupCreateRequest {
 
     private Integer goalRelayNum; // 목표 릴레이 횟수
 
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @JsonSerialize(using = LocalTimeSerializer.class) // 객체 -> JSON
+    @JsonDeserialize(using = LocalTimeDeserializer.class) // JSON -> 객체
     private LocalTime startTime; // 시작 시간
 
+    @JsonSerialize(using = LocalTimeSerializer.class)
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     private LocalTime endTime; // 종료 시간
 
