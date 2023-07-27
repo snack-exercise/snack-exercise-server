@@ -32,7 +32,7 @@ public class ExgroupController {
     @Operation(summary = "운동 그룹 생성", description = "하나의 운동 그룹을 생성합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createGroup(@RequestBody ExgroupCreateRequest groupCreateRequest, @AuthenticationPrincipal UserDetails loginUser){
+    public Response create(@RequestBody ExgroupCreateRequest groupCreateRequest, @AuthenticationPrincipal UserDetails loginUser){
         return Response.success(exGroupService.create(groupCreateRequest, loginUser.getUsername()));
     }
 
@@ -41,14 +41,14 @@ public class ExgroupController {
     @Parameter(name = "groupId", description = "조회할 운동 그룹 ID")
     @GetMapping("/{groupId}")
     @ResponseStatus(HttpStatus.OK)
-    public Response findGroup(@PathVariable("groupId") Long groupId){
+    public Response read(@PathVariable("groupId") Long groupId){
         return Response.success(exGroupService.read(groupId));
     }
 
     @Operation(summary = "하나의 운동 그룹에 속한 모든 회원 조회", description = "하나의 운동 그룹에 속한 모든 회원을 조회합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @Parameter(name = "groupId", description = "조회할 운동 그룹 ID")
     @GetMapping("/{groupId}/members")
-    public Response getAllExgroupMembers(@PathVariable("groupId") Long groupId){
+    public Response readAllMembers(@PathVariable("groupId") Long groupId){
         return Response.success(exGroupService.getAllExgroupMembers(groupId));
     }
 
