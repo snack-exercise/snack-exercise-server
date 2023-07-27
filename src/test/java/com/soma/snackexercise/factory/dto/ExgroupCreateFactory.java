@@ -7,6 +7,6 @@ import java.time.LocalTime;
 public class ExgroupCreateFactory {
     public static ExgroupCreateRequest createExgroupCreateRequest() {
         return new ExgroupCreateRequest("name", "emozi", "color", "description", 3, 10,
-                LocalTime.now(), LocalTime.now().plusHours(1), "커피 쏘기", 20, 2, 10);
+                LocalTime.of(9, 0), LocalTime.of(10, 0), "커피 쏘기", 20, 2, 10);
     }
 }
