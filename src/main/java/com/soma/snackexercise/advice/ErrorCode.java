@@ -10,20 +10,25 @@ public enum ErrorCode {
     TOKEN_EXPIRED_EXCEPTION(-1000, "토큰이 만료되었습니다."),
 
     /* Member */
-    MEMBER_NAME_ALREADY_EXISTS_EXCEPTION(-1100, "유저 이름이 이미 존재합니다."),
+    MEMBER_NOT_FOUND_EXCEPTION(-1100, "사용자가 존재하지 않습니다."),
+    MEMBER_NAME_ALREADY_EXISTS_EXCEPTION(-1101, "유저 이름이 이미 존재합니다."),
 
     /* Exgroup */
-    NOT_FOUND_EXGROUP(1200, "운동 그룹이 존재하지 않습니다."),
+    // todo : 너무 에러메시지가 친절한가..?
+    EXGROUP_NOT_FOUND_EXCEPTION(-1200, "운동 그룹이 존재하지 않습니다."),
+    NOT_EXGROUP_HOST_EXCEPTION(-1201, "운동 그룹의 방장 권한이 아닙니다."),
+    NOT_EXGROUP_MEMBER_EXCEPTION(-1202, "운동 그룹의 멤버 권한이 아닙니다."),
+
+    /* JoinList */
+    JOIN_LIST_NOT_FOUND_EXCEPTION(-1300, "회원_운동그룹이 존재하지 않습니다."),
 
     /* QueryParam */
-    WRONG_QUERYPARAM(1900, "잘못된 Query Param입니다.");
+    WRONG_QUERY_PARAM_EXCEPTION(-1900, "잘못된 Query Param입니다.");
 
     ErrorCode(int code, String message){
         this.code = code;
         this.message = message;
     }
-
-
 
     private int code;
     private String message;
