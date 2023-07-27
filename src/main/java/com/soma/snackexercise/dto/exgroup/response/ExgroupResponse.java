@@ -1,6 +1,7 @@
 package com.soma.snackexercise.dto.exgroup.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.soma.snackexercise.domain.exgroup.Exgroup;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ public class ExgroupResponse {
 
     private Integer goalRelayNum; // 목표 릴레이 횟수
 
-    @JsonSerialize(using = LocalTimeSerializer.class)
+    @JsonSerialize(using = LocalTimeSerializer.class) // 객체 -> JSON
     private LocalTime startTime; // 시작 시간
 
     @JsonSerialize(using = LocalTimeSerializer.class)
@@ -37,8 +38,10 @@ public class ExgroupResponse {
 
     private Integer existDays; // 그룹 목표 일수
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate startDate; // 시작 기간
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate endDate; // 종료 기간
 
     private String penalty; // 벌칙
