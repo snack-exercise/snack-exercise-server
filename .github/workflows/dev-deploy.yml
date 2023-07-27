@@ -70,9 +70,19 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
+      
+      # (8) 로컬 docker-compose.yml 파일 EC2로 복사
+      - name: Copy docker-compose.yml to EC2 via SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: 22
+          source : "./docker-compose.yml"
+          target : "./snackApp"
 
-
-      # (8) 서버에 접속하여 도커 이미지를 pull 받고 실행하기
+      # (9) 서버에 접속하여 도커 이미지를 pull 받고 실행하기
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -82,5 +92,6 @@ jobs:
           port: 22
           script: |
             sudo docker-compose down
+            sudo docker-compose pull
             sudo docker image rm ${{ secrets.DOCKER_REPO }}
             sudo docker-compose up -d
