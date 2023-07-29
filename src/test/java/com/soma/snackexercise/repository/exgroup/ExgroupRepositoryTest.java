@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static com.soma.snackexercise.factory.entity.ExgroupFactory.createExgroup;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
@@ -35,7 +34,7 @@ class ExgroupRepositoryTest {
         String code = exgroup.getCode();
 
         // when
-        Boolean exists = exgroupRepository.existsByCode(code);
+        Boolean exists = exgroupRepository.existsByCodeAndStatus(code, Status.ACTIVE);
 
         // then
         assertThat(exists).isTrue();

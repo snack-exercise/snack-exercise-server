@@ -26,4 +26,15 @@ public class MissionFactory {
 
         return mission;
     }
+
+    public static Mission createInprogressMission(Exercise exercise, Member member, Exgroup exgroup) {
+        Mission mission = Mission.builder()
+                .exercise(exercise)
+                .member(member)
+                .exgroup(exgroup)
+                .build();
+
+        mission.startMission();
+        return mission;
+    }
 }

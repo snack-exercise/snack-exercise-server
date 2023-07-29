@@ -7,62 +7,77 @@ import com.soma.snackexercise.util.constant.Gender;
 
 public class MemberFactory {
     public static Member createMember() {
-        return Member.builder()
-                .email("test@naver.com")
-                .nickname("nickname")
-                .name("name")
-                .role(Role.USER)
-                .socialType(SocialType.KAKAO)
-                .socialId("1111")
-                .password("1111")
-                .profileImg("profile.jpg")
-                .gender(Gender.MALE)
-                .birthYear(1999)
-                .build();
+        return new Member(1L,
+                "test@naver.com",
+                "1111",
+                "profile.jpg",
+                "nickname",
+                "name",
+                Role.USER,
+                SocialType.KAKAO,
+                "1111",
+                1999,
+                Gender.MALE,
+                "token");
+    }
+
+    public static Member createMemberWithId(Long id) {
+        return new Member(id,
+                "test@naver.com",
+                "1111",
+                "profile.jpg",
+                "nickname",
+                "name",
+                Role.USER,
+                SocialType.KAKAO,
+                "1111",
+                1999,
+                Gender.MALE,
+                "token");
     }
 
     public static Member createMemberWithEmail(String email) {
-        return Member.builder()
-                .email(email)
-                .nickname("nickname")
-                .name("name")
-                .role(Role.USER)
-                .socialType(SocialType.KAKAO)
-                .socialId("1111")
-                .password("1111")
-                .profileImg("profile.jpg")
-                .gender(Gender.MALE)
-                .birthYear(1999)
-                .build();
+        return new Member(1L,
+                email,
+                "1111",
+                "profile.jpg",
+                "nickname",
+                "name",
+                Role.USER,
+                SocialType.KAKAO,
+                "1111",
+                1999,
+                Gender.MALE,
+                "token");
     }
 
     public static Member createMemberWithName(String name) {
-        return Member.builder()
-                .email("test@naver.com")
-                .nickname("nickname")
-                .name(name)
-                .role(Role.USER)
-                .socialType(SocialType.KAKAO)
-                .socialId("1111")
-                .password("1111")
-                .profileImg("profile.jpg")
-                .gender(Gender.MALE)
-                .birthYear(1999)
-                .build();
+        return new Member(1L,
+                "test@naver.com",
+                "1111",
+                "profile.jpg",
+                "nickname",
+                name,
+                Role.USER,
+                SocialType.KAKAO,
+                "1111",
+                1999,
+                Gender.MALE,
+                "token");
     }
 
     public static Member createMemberWithSocialTypeAndSocialId(SocialType socialType, String socialId) {
-        return Member.builder()
-                .email("test@naver.com")
-                .nickname("nickname")
-                .name("name")
-                .role(Role.USER)
-                .socialType(socialType)
-                .socialId(socialId)
-                .password("1111")
-                .profileImg("profile.jpg")
-                .gender(Gender.MALE)
-                .birthYear(1999)
-                .build();
+        return new Member(1L,
+                "test@naver.com",
+                "1111",
+                "profile.jpg",
+                "nickname",
+                "name",
+                Role.USER,
+                socialType,
+                socialId,
+                1999,
+                Gender.MALE,
+                "token");
     }
 }
