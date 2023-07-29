@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,13 +99,13 @@ public class MissionService {
 
         for (Mission mission : missions) {
             Long memberId = mission.getMember().getId();
-            long minutesDiffBetweenCreateAndStart = ChronoUnit.MINUTES.between(mission.getCreatedAt(), mission.getStartAt());
+            long minutesDiffBetweenCreateAndStart = mission.calculateMinutesDiffBetweenCreateAndStart();
 
             if(!todayRankingMap.containsKey(memberId)){
                 Member member = mission.getMember();
                 todayRankingMap.put(memberId, new RankingResponse(member.getName(), member.getProfileImage(), minutesDiffBetweenCreateAndStart, 1));
             }else{
-                todayRankingMap.get(memberId).addTime(minutesDiffBetweenCreateAndStart);
+                todayRankingMap.get(memberId).addMission(minutesDiffBetweenCreateAndStart);
             }
         }
 

@@ -5,10 +5,12 @@ import com.soma.snackexercise.domain.BaseTimeEntity;
 import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.domain.exgroup.Exgroup;
 import com.soma.snackexercise.domain.member.Member;
+import com.soma.snackexercise.exception.CalculateMinutesDiffException;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -55,5 +57,13 @@ public class Mission extends BaseTimeEntity {
     public void endMission(Integer calory){
         this.endAt = LocalDateTime.now();
         this.calory = calory;
+    }
+
+    public Long calculateMinutesDiffBetweenCreateAndStart() {
+        if(getStartAt() == null || getCreatedAt() == null){
+            throw new CalculateMinutesDiffException();
+        }
+
+        return ChronoUnit.MINUTES.between(getCreatedAt(), getStartAt());
     }
 }
