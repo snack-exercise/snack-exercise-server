@@ -11,17 +11,12 @@ public class RankingResponse {
     private long avgMissionExecutionTime; // 미션 평균 반응 속도
     private int missionCount; // 수행한 미션 개수
 
-    public void addTime(long missionExecutionTime){
+    public void addMission(long missionExecutionTime) {
         this.avgMissionExecutionTime += missionExecutionTime;
-    }
-
-    public long calcAvgTime(){
-        this.avgMissionExecutionTime /= this.missionCount;
-        return this.avgMissionExecutionTime;
-    }
-
-    public int addMissionCount(){
         this.missionCount += 1;
-        return this.missionCount;
+    }
+
+    public void calcAvgTime(){
+        this.avgMissionExecutionTime /= this.missionCount;
     }
 }
