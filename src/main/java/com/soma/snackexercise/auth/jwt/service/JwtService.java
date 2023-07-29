@@ -86,10 +86,10 @@ public class JwtService {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
 
-        AccessTokenResponse accessTokenResponse = new AccessTokenResponse(accessToken);
+        AccessTokenResponse accessTokenResponse = new AccessTokenResponse(BEARER + accessToken);
         String result = objectMapper.writeValueAsString(accessTokenResponse);
         response.getWriter().write(result);
-        response.setHeader(ACCESS_TOKEN_SUBJECT, accessToken);
+        response.setHeader(ACCESS_TOKEN_SUBJECT, BEARER + accessToken);
         log.info("sendAccessToken 실행");
     }
 
