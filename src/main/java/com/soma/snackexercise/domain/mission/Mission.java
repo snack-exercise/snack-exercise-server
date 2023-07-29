@@ -1,20 +1,22 @@
 package com.soma.snackexercise.domain.mission;
 
 
-import com.soma.snackexercise.domain.BaseEntity;
+import com.soma.snackexercise.domain.BaseTimeEntity;
 import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.domain.exgroup.Exgroup;
 import com.soma.snackexercise.domain.member.Member;
+import com.soma.snackexercise.exception.CalculateMinutesDiffException;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-public class Mission extends BaseEntity {
+public class Mission extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,7 +48,6 @@ public class Mission extends BaseEntity {
         this.member = member;
         this.exgroup = exgroup;
         this.alarmCount = 0;
-        active();
     }
 
     public void startMission(){
@@ -56,5 +57,13 @@ public class Mission extends BaseEntity {
     public void endMission(Integer calory){
         this.endAt = LocalDateTime.now();
         this.calory = calory;
+    }
+
+    public Long calculateMinutesDiffBetweenCreateAndStart() {
+        if(getStartAt() == null || getCreatedAt() == null){
+            throw new CalculateMinutesDiffException();
+        }
+
+        return ChronoUnit.MINUTES.between(getCreatedAt(), getStartAt());
     }
 }

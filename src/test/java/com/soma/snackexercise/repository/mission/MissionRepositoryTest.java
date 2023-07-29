@@ -82,7 +82,7 @@ class MissionRepositoryTest {
         clear();
 
         // when
-        List<Mission> missions = missionRepository.findAllMissionByGroupIdAndCreatedAt(exgroup.getId(), today, nextDay);
+        List<Mission> missions = missionRepository.findMissionsByGroupIdWithinDateRange(exgroup.getId(), today, nextDay);
 
         // then
         assertThat(missions.size()).isEqualTo(2);
@@ -101,7 +101,7 @@ class MissionRepositoryTest {
         clear();
 
         // when
-        List<Mission> missions = missionRepository.findAllExecutedMissionByGroupIdAndCreatedAt(exgroup.getId(), today, nextDay);
+        List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(exgroup.getId(), today, nextDay);
 
         // then
         assertThat(missions.size()).isEqualTo(1);

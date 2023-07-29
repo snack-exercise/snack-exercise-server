@@ -23,7 +23,7 @@ public class SignupService {
     public void signup(SignupRequest request, HttpServletResponse response, String email) {
         validateSignup(request);
         Member findMember = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
-        findMember.signupMemberInfo(request.getName(), request.getGender(), request.getBirthYear());
+        findMember.signupMemberInfo(request.getNickname(), request.getGender(), request.getBirthYear());
 
         String newRefreshToken = jwtService.createRefreshToken(email);
         jwtService.sendRefreshToken(response, newRefreshToken);
@@ -31,8 +31,8 @@ public class SignupService {
     }
 
     private void validateSignup(SignupRequest request) {
-        if (memberRepository.existsByName(request.getName())) {
-            throw new MemberNameAlreadyExistsException(request.getName());
+        if (memberRepository.existsByNickname(request.getNickname())) {
+            throw new MemberNameAlreadyExistsException(request.getNickname());
         }
     }
 }

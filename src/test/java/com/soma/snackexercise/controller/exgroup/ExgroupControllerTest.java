@@ -1,7 +1,7 @@
 package com.soma.snackexercise.controller.exgroup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.soma.snackexercise.config.TestUserArgumentResolver;
+import com.soma.snackexercise.utils.TestUserArgumentResolver;
 import com.soma.snackexercise.dto.exgroup.request.ExgroupCreateRequest;
 import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
 import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;

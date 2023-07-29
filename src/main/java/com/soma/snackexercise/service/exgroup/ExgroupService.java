@@ -42,12 +42,12 @@ public class ExgroupService {
 
         // 2. 그룹 코드 생성
         String groupCode = CreateExgroupCode.createGroupCode();
-        Boolean isDuplicatedGroupCode = exgroupRepository.existsByCode(groupCode); // 코드 중복 여부
+        Boolean isDuplicatedGroupCode = exgroupRepository.existsByCodeAndStatus(groupCode, Status.ACTIVE); // 코드 중복 여부
 
         // 3. 그룹 코드 중복 검사
         while(Boolean.TRUE.equals(isDuplicatedGroupCode)){ // 코드 중복 검사 불통과시 코드 재발급
             groupCode = CreateExgroupCode.createGroupCode();
-            isDuplicatedGroupCode = exgroupRepository.existsByCode(groupCode);
+            isDuplicatedGroupCode = exgroupRepository.existsByCodeAndStatus(groupCode, Status.ACTIVE);
         }
 
         log.info("generate group code : {}", groupCode);

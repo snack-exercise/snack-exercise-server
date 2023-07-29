@@ -61,7 +61,7 @@ class ExgroupServiceTest {
         //given
         ExgroupCreateRequest request = createExgroupCreateRequest();
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.of(createMember()));
-        given(exgroupRepository.existsByCode(anyString())).willReturn(Boolean.FALSE);
+        given(exgroupRepository.existsByCodeAndStatus(anyString(), ACTIVE)).willReturn(Boolean.FALSE);
 
         // when
         ExgroupCreateResponse response = exgroupService.create(request, email);
@@ -85,13 +85,13 @@ class ExgroupServiceTest {
     void createDuplicateGroupCodeTest() {
         // given
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.of(createMember()));
-        given(exgroupRepository.existsByCode(anyString())).willReturn(Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+        given(exgroupRepository.existsByCodeAndStatus(anyString(), ACTIVE)).willReturn(Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
 
         // when
         exgroupService.create(createExgroupCreateRequest(), email);
 
         // then
-        verify(exgroupRepository, times(3)).existsByCode(anyString());
+        verify(exgroupRepository, times(3)).existsByCodeAndStatus(anyString(), ACTIVE);
     }
 
     @Test
