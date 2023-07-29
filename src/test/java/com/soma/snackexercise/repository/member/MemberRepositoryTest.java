@@ -88,8 +88,8 @@ public class MemberRepositoryTest {
         clear();
 
         // when
-        Boolean isDuplicate = memberRepository.existsByName(duplicateName);
-        Boolean isUnique = memberRepository.existsByName(uniqueName);
+        Boolean isDuplicate = memberRepository.existsByNickname(duplicateName);
+        Boolean isUnique = memberRepository.existsByNickname(uniqueName);
 
         // then
         assertThat(isDuplicate).isTrue();

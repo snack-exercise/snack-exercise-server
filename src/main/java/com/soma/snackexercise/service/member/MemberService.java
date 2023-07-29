@@ -1,9 +1,7 @@
 package com.soma.snackexercise.service.member;
 
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.request.MemberUpdateRequest;
-import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.dto.member.response.MemberResponse;
 import com.soma.snackexercise.exception.MemberNameAlreadyExistsException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
@@ -12,8 +10,6 @@ import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -26,17 +22,17 @@ public class MemberService {
     public MemberResponse update(String email, MemberUpdateRequest request) {
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
 
-        if (!member.getName().equals(request.getName())) {
-            validateDuplicateName(request.getName());
+        if (!member.getName().equals(request.getNickname())) {
+            validateDuplicateNickname(request.getNickname());
         }
 
         member.update(request);
         return MemberResponse.toDto(member);
     }
 
-    private void validateDuplicateName(String name) {
-        if (memberRepository.existsByName(name)) {
-            throw new MemberNameAlreadyExistsException(name);
+    private void validateDuplicateNickname(String nickname) {
+        if (memberRepository.existsByNickname(nickname)) {
+            throw new MemberNameAlreadyExistsException(nickname);
         }
     }
 

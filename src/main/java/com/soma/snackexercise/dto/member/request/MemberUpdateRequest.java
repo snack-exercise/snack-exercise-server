@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberUpdateRequest {
     private String profileImage;
-    private String name;
+    private String nickname;
 }

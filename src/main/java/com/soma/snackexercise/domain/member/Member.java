@@ -42,12 +42,12 @@ public class Member extends BaseEntity {
 
     public void update(MemberUpdateRequest request) {
         this.profileImage = request.getProfileImage();
-        this.name = request.getName();
+        this.nickname = request.getNickname();
     }
 
 
-    public void signupMemberInfo(String name, Gender gender, Integer birthYear) {
-        this.name = name;
+    public void signupMemberInfo(String nickname, Gender gender, Integer birthYear) {
+        this.nickname = nickname;
         this.gender = gender;
         this.birthYear = birthYear;
         this.role = Role.USER;
