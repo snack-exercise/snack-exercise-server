@@ -49,6 +49,10 @@ public class Member extends BaseEntity {
         this.fcmToken = fcmToken;
     }
 
+    public void deleteFcmToken(){
+        this.fcmToken = null;
+    }
+
 
     public void signupMemberInfo(String name, Gender gender, Integer birthYear) {
         this.name = name;
