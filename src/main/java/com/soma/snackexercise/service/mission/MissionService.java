@@ -81,7 +81,7 @@ public class MissionService {
      * @return 누적 미션 순위
      */
     public Object readCumulativeMissionRank(Long exgroupId) {
-        Exgroup exgroup = exgroupRepository.findById(exgroupId).orElseThrow(ExgroupNotFoundException::new);
+        Exgroup exgroup = exgroupRepository.findByIdAndStatus(exgroupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
 
         List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(exgroupId, exgroup.getStartDate().atStartOfDay(), exgroup.getEndDate().atStartOfDay().plusDays(1));
 
@@ -103,7 +103,7 @@ public class MissionService {
 
             if(!todayRankingMap.containsKey(memberId)){
                 Member member = mission.getMember();
-                todayRankingMap.put(memberId, new RankingResponse(member.getName(), member.getProfileImage(), minutesDiffBetweenCreateAndStart, 1));
+                todayRankingMap.put(memberId, new RankingResponse(member.getNickname(), member.getProfileImage(), minutesDiffBetweenCreateAndStart, 1));
             }else{
                 todayRankingMap.get(memberId).addMission(minutesDiffBetweenCreateAndStart);
             }

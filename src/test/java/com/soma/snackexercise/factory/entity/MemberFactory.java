@@ -36,6 +36,21 @@ public class MemberFactory {
                 "token");
     }
 
+    public static Member createMemberWithIdAndNickname(Long id, String nickname) {
+        return new Member(id,
+                "test@naver.com",
+                "1111",
+                "profile.jpg",
+                nickname,
+                "name",
+                Role.USER,
+                SocialType.KAKAO,
+                "1111",
+                1999,
+                Gender.MALE,
+                "token");
+    }
+
     public static Member createMemberWithEmail(String email) {
         return new Member(1L,
                 email,
