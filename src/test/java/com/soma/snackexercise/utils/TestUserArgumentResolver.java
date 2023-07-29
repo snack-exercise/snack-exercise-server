@@ -1,4 +1,4 @@
-package com.soma.snackexercise.config;
+package com.soma.snackexercise.utils;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.userdetails.UserDetails;
