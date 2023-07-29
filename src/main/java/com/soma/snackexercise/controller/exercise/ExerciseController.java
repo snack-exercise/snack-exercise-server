@@ -46,10 +46,10 @@ public class ExerciseController {
                 @ApiResponse(responseCode = "404", description = "운동을 찾을 수 없음", content = @Content(schema = @Schema(implementation = Response.class)))
     })
     @Parameter(name = "exerciseId", description = "조회할 운동 ID", required = true, in = ParameterIn.PATH)
-    @GetMapping("/{id}")
+    @GetMapping("/{exerciseId}")
     @ResponseStatus(HttpStatus.OK)
-    public Response read(@PathVariable Long id) {
-        return Response.success(exerciseService.read(id));
+    public Response read(@PathVariable Long exerciseId) {
+        return Response.success(exerciseService.read(exerciseId));
     }
 
     @Operation(summary = "운동 수정",

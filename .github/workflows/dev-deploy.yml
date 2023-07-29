@@ -39,12 +39,28 @@ jobs:
           echo "${{ secrets.APPLICATION_JWT_YML }}" > ./application-jwt.yml
         shell: bash
 
-      ## (3) application-oauth.yml 생성
+      ## (3-3) application-oauth.yml 생성
       - name: make application-oauth.yml
         run: |
           cd ./src/main/resources
           touch ./application-oauth.yml
           echo "${{ secrets.APPLICATION_OAUTH_YML }}" > ./application-oauth.yml
+        shell: bash
+
+      ## (3-4) application-fcm.yml 생성
+      - name: make application-fcm.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-fcm.yml
+          echo "${{ secrets.APPLICATION_FCM_YML }}" > ./application-fcm.yml
+        shell: bash
+
+      ## (3-4) snackpot-fcm.json 생성
+      - name: make snackpot-fcm.json
+        run: |
+          cd ./src/main/resources
+          touch ./snackpot-fcm.json
+          echo "${{ secrets.FCM_JSON_SECRET }}" > ./snackpot-fcm.json
         shell: bash
 
 

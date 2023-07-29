@@ -33,6 +33,9 @@ public class JoinList extends BaseEntity {
     public void addOneOutCount() {
         this.outCount += 1;
     }
+    public void addOneExecutedMissionCountCount() {
+        this.executedMissionCount += 1;
+    }
 
     public void promoteToHost() {
         this.joinType = JoinType.HOST;
