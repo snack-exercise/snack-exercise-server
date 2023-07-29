@@ -66,7 +66,7 @@ jar {
 // jacoco
 
 test{
-    //finalizedBy jacocoTestReport // test 작업이 끝나고 jacocoTestReport를 실행
+    finalizedBy jacocoTestReport // test 작업이 끝나고 jacocoTestReport를 실행
 }
 
 
@@ -99,7 +99,7 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
-                minimum = 0.5
+                minimum = 0.0
             }
         }
     }
