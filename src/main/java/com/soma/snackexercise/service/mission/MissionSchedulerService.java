@@ -1,11 +1,15 @@
 package com.soma.snackexercise.service.mission;
 
+import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.domain.exgroup.Exgroup;
 import com.soma.snackexercise.domain.member.Member;
+import com.soma.snackexercise.domain.mission.Mission;
 import com.soma.snackexercise.exception.MemberNotFoundException;
+import com.soma.snackexercise.repository.exercise.ExerciseRepository;
 import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
+import com.soma.snackexercise.repository.mission.MissionRepository;
 import com.soma.snackexercise.service.notification.FirebaseCloudMessageService;
 import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,8 @@ public class MissionSchedulerService {
     private final MemberRepository memberRepository;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
     private final JoinListRepository joinListRepository;
+    private final ExerciseRepository exerciseRepository;
+    private final MissionRepository missionRepository;
 
     private static Random random = new Random();
 
@@ -54,6 +60,12 @@ public class MissionSchedulerService {
             Member targetMember = getMissionAllocatedMember(exgroup);
             tokenList.add(targetMember.getFcmToken());
 
+            missionRepository.save(Mission.builder()
+                    .exercise(getRandomExercise())
+                    .member(targetMember)
+                    .exgroup(exgroup)
+                    .build());
+
             log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", exgroup.getName(), targetMember.getName(), LocalDateTime.now());
         }
 
@@ -76,5 +88,15 @@ public class MissionSchedulerService {
             targetMember = minExecutedMemberList.get(randomIndex);
         }
         return targetMember;
+    }
+
+    /**
+     *
+     * @return 랜덤한 운동 1개를 반환합니다.
+     */
+    Exercise getRandomExercise(){
+        List<Exercise> exerciseList = exerciseRepository.findAll();
+        int randomIndex = random.nextInt(exerciseList.size());
+        return exerciseList.get(randomIndex);
     }
 }
