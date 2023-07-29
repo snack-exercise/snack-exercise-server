@@ -45,6 +45,10 @@ public class Member extends BaseEntity {
         this.name = request.getName();
     }
 
+    public void updateFcmToken(String fcmToken){
+        this.fcmToken = fcmToken;
+    }
+
 
     public void signupMemberInfo(String name, Gender gender, Integer birthYear) {
         this.name = name;
