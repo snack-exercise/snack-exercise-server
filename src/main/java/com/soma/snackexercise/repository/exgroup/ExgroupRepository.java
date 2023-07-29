@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ExgroupRepository extends JpaRepository<Exgroup, Long> {
-    Boolean existsByCode(String code);
+    Boolean existsByCodeAndStatus(String code, Status status);
+
+    Boolean existsByIdAndStatus(Long id, Status status);
 
     Optional<Exgroup> findByIdAndStatus(Long id, Status status);
 }
