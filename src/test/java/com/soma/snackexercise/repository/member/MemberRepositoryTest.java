@@ -79,17 +79,17 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    @DisplayName("이름 중복에서 참을 반환하는 테스트")
+    @DisplayName("닉네임 중복에서 참을 반환하는 테스트")
     void existsByNameTest() {
         // given
-        String duplicateName = "duplicate";
-        String uniqueName = "unique";
-        Member member = memberRepository.save(createMemberWithName(duplicateName));
+        String duplicateNickname = "duplicate";
+        String uniqueNickname = "unique";
+        Member member = memberRepository.save(createMemberWithNickname(duplicateNickname));
         clear();
 
         // when
-        Boolean isDuplicate = memberRepository.existsByNickname(duplicateName);
-        Boolean isUnique = memberRepository.existsByNickname(uniqueName);
+        Boolean isDuplicate = memberRepository.existsByNickname(duplicateNickname);
+        Boolean isUnique = memberRepository.existsByNickname(uniqueNickname);
 
         // then
         assertThat(isDuplicate).isTrue();
