@@ -10,3 +10,4 @@ spring:
     include:
       - jwt
       - oauth
+      - fcm
