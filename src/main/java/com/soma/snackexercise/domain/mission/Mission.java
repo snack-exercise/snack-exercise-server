@@ -1,7 +1,7 @@
 package com.soma.snackexercise.domain.mission;
 
 
-import com.soma.snackexercise.domain.BaseEntity;
+import com.soma.snackexercise.domain.BaseTimeEntity;
 import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.domain.exgroup.Exgroup;
 import com.soma.snackexercise.domain.member.Member;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-public class Mission extends BaseEntity {
+public class Mission extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,7 +46,6 @@ public class Mission extends BaseEntity {
         this.member = member;
         this.exgroup = exgroup;
         this.alarmCount = 0;
-        active();
     }
 
     public void startMission(){
