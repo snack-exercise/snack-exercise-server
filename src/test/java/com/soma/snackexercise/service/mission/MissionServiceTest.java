@@ -143,9 +143,10 @@ class MissionServiceTest {
     void readCumulativeMissionRankReturnsEmptyListWhenNoMissions() throws Exception {
         // given
         Exgroup exgroup = createExgroup();
+        exgroup.updateStartDateAndEndDate();
 
         given(exgroupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(exgroup));
-        given(missionRepository.findFinishedMissionsByGroupIdWithinDateRange(anyLong(), any(), any())).willReturn(null);
+        given(missionRepository.findFinishedMissionsByGroupIdWithinDateRange(anyLong(), any(), any())).willReturn(List.of());
 
         // when
         List<RankingResponse> response = (List<RankingResponse>) missionService.readCumulativeMissionRank(1L);

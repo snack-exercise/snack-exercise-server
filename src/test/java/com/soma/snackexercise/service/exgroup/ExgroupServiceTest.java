@@ -61,7 +61,7 @@ class ExgroupServiceTest {
         //given
         ExgroupCreateRequest request = createExgroupCreateRequest();
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.of(createMember()));
-        given(exgroupRepository.existsByCodeAndStatus(anyString(), ACTIVE)).willReturn(Boolean.FALSE);
+        given(exgroupRepository.existsByCodeAndStatus(anyString(), any())).willReturn(Boolean.FALSE);
 
         // when
         ExgroupCreateResponse response = exgroupService.create(request, email);
@@ -84,14 +84,15 @@ class ExgroupServiceTest {
     @DisplayName("운동 그룹 생성 메소드에서 그룹 코드 중복 검사 테스트")
     void createDuplicateGroupCodeTest() {
         // given
+        String groupCode = "code";
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.of(createMember()));
-        given(exgroupRepository.existsByCodeAndStatus(anyString(), ACTIVE)).willReturn(Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
+        given(exgroupRepository.existsByCodeAndStatus(any(), any())).willReturn(Boolean.TRUE, Boolean.TRUE, Boolean.FALSE);
 
         // when
         exgroupService.create(createExgroupCreateRequest(), email);
 
         // then
-        verify(exgroupRepository, times(3)).existsByCodeAndStatus(anyString(), ACTIVE);
+        verify(exgroupRepository, times(3)).existsByCodeAndStatus(any(), any());
     }
 
     @Test

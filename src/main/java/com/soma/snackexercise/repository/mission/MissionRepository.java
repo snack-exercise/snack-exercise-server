@@ -47,7 +47,7 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
             "   WHERE m.exgroup.id = :exgroupId AND :startDateTime <= m.createdAt AND m.createdAt < :endDateTime" +
             "   ORDER BY m.createdAt")
 
-    List<Mission> findAllMissionByGroupIdAndCreatedAt(@Param("exgroupId") Long exgroupId, @Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
+    List<Mission> findMissionsByGroupIdWithinDateRange(@Param("exgroupId") Long exgroupId, @Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
 
 
     /**
@@ -61,5 +61,5 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
             "   FROM Mission m JOIN FETCH m.member" +
             "   WHERE m.exgroup.id = :exgroupId AND :startDateTime <= m.createdAt AND m.createdAt < :endDateTime AND m.startAt IS NOT NULL" +
             "   ORDER BY m.createdAt")
-    List<Mission> findAllExecutedMissionByGroupIdAndCreatedAt(@Param("exgroupId") Long exgroupId, @Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
+    List<Mission> findFinishedMissionsByGroupIdWithinDateRange(@Param("exgroupId") Long exgroupId, @Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
 }
