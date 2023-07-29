@@ -43,7 +43,7 @@ public class Mission extends BaseTimeEntity {
 
 
     @Builder
-    public Mission(Exercise exercise, Member member, Exgroup exgroup, Integer alarmCount) {
+    public Mission(Exercise exercise, Member member, Exgroup exgroup) {
         this.exercise = exercise;
         this.member = member;
         this.exgroup = exgroup;

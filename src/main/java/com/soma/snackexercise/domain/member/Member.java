@@ -45,6 +45,14 @@ public class Member extends BaseEntity {
         this.nickname = request.getNickname();
     }
 
+    public void updateFcmToken(String fcmToken){
+        this.fcmToken = fcmToken;
+    }
+
+    public void deleteFcmToken(){
+        this.fcmToken = null;
+    }
+
 
     public void signupMemberInfo(String nickname, Gender gender, Integer birthYear) {
         this.nickname = nickname;
