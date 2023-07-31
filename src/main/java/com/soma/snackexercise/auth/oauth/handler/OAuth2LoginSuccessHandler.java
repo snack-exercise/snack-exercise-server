@@ -33,7 +33,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             if (oAuth2User.getRole() == Role.GUEST) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 jwtService.sendAccessToken(response, accessToken);
-                response.sendRedirect("jwt-test");
+                response.sendRedirect("http://localhost:3000/signup");
 
                 log.info("OAuth2 Login 성공");
             }else{
