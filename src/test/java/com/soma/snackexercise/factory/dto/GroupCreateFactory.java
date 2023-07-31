@@ -14,4 +14,8 @@ public class GroupCreateFactory {
     public static JoinFriendGroupRequest createJoinFriendGroupRequest() {
         return new JoinFriendGroupRequest("code");
     }
+
+    public static JoinFriendGroupRequest createJoinFriendGroupRequestWithCode(String code) {
+        return new JoinFriendGroupRequest(code);
+    }
 }

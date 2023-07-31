@@ -6,6 +6,7 @@ import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
+import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
 import com.soma.snackexercise.exception.GroupNotFoundException;
 import com.soma.snackexercise.exception.JoinListNotFoundException;
 import com.soma.snackexercise.init.TestInitDB;
@@ -29,9 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
+import static com.soma.snackexercise.factory.dto.GroupCreateFactory.*;
 import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
 import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroupWithCode;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForHost;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
@@ -228,6 +230,28 @@ public class GroupControllerIntegrationTest {
         Group updatedGroup = groupRepository.findByIdAndStatus(group.getId(), Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
         assertNotNull(updatedGroup.getStartDate());
         assertNotNull(updatedGroup.getEndDate());
+    }
+
+    @Test
+    @DisplayName("코드로 지인 그룹하는 API 테스트")
+    @WithMockUser(username = "test")
+    void joinFriendGroupTest() throws Exception {
+        // given
+        String code = "code";
+        groupRepository.save(createGroupWithCode(code));
+        JoinFriendGroupRequest request = createJoinFriendGroupRequestWithCode(code);
+        clear();
+
+        // when, then
+        mockMvc.perform(post("/api/groups/join/code")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        Group group = groupRepository.findByCodeAndStatus(code, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
+        Boolean exists = joinListRepository.existsByGroupAndMemberAndStatus(group, member, Status.ACTIVE);
+        assertThat(exists).isTrue();
     }
 
     void clear() {

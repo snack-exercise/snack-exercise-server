@@ -23,7 +23,7 @@ public class GroupFactory {
                 .build();
     }
 
-    public static Group createGroup(String name) {
+    public static Group createGroupWithName(String name) {
         return Group.builder()
                 .name(name)
                 .emozi("emozi")
@@ -36,6 +36,24 @@ public class GroupFactory {
                 .existDays(5)
                 .penalty("커피 사기")
                 .code("code")
+                .checkIntervalTime(10)
+                .checkMaxNum(2)
+                .build();
+    }
+
+    public static Group createGroupWithCode(String code) {
+        return Group.builder()
+                .name("name")
+                .emozi("emozi")
+                .color("red")
+                .description("desc")
+                .maxMemberNum(3)
+                .goalRelayNum(10)
+                .startTime(LocalTime.of(9, 0))
+                .endTime(LocalTime.of(18, 0))
+                .existDays(5)
+                .penalty("커피 사기")
+                .code(code)
                 .checkIntervalTime(10)
                 .checkMaxNum(2)
                 .build();

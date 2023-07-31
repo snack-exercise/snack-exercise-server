@@ -1,6 +1,7 @@
 package com.soma.snackexercise.controller.group;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
 import com.soma.snackexercise.utils.TestUserArgumentResolver;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
+import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createJoinFriendGroupRequest;
 import static com.soma.snackexercise.factory.dto.GroupReadFactory.createGroupResponse;
 import static com.soma.snackexercise.factory.dto.GroupReadFactory.createGetOneGroupMemberResponse;
 import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
@@ -162,7 +164,7 @@ class GroupControllerTest {
 
     @Test
     @DisplayName("운동 그룹 시작 메소드 동작 성공 테스트")
-    void startGroupTest() throws Exception{
+    void startGroupTest() throws Exception {
         // given
         Long groupId = 1L;
         GroupResponse response = createGroupResponse();
@@ -178,5 +180,21 @@ class GroupControllerTest {
         String actualResponseAsString = mvcResult.getResponse().getContentAsString();
         String expectedResponseAsString = objectMapper.writeValueAsString(Response.success(response));
         assertEquals(actualResponseAsString, expectedResponseAsString);
+    }
+
+    @Test
+    @DisplayName("코드로 지인 그룹 가입 메소드 동작 성공 테스트")
+    void joinFriendGroupTest() throws Exception {
+        // given
+        JoinFriendGroupRequest request = createJoinFriendGroupRequest();
+
+        // when, then
+        mockMvc.perform(
+                post("/api/groups/join/code")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpect(status().isOk());
+
+        verify(groupService, times(1)).joinFriendGroup(any(), anyString());
     }
 }
