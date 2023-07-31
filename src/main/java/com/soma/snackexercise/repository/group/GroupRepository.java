@@ -15,4 +15,6 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     Optional<Group> findByIdAndStatus(Long id, Status status);
 
     List<Group> findAllByStatus(Status status);
+
+    Optional<Group> findByCodeAndStatus(String code, Status status);
 }
