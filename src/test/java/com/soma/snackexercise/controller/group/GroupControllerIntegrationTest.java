@@ -1,15 +1,15 @@
-package com.soma.snackexercise.controller.exgroup;
+package com.soma.snackexercise.controller.group;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupCreateRequest;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
-import com.soma.snackexercise.exception.ExgroupNotFoundException;
+import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
+import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
+import com.soma.snackexercise.exception.GroupNotFoundException;
 import com.soma.snackexercise.exception.JoinListNotFoundException;
 import com.soma.snackexercise.init.TestInitDB;
-import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
+import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.util.constant.Status;
@@ -29,9 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static com.soma.snackexercise.factory.dto.ExgroupCreateFactory.createExgroupCreateRequest;
-import static com.soma.snackexercise.factory.dto.ExgroupUpdateFactory.createExgroupUpdateRequest;
-import static com.soma.snackexercise.factory.entity.ExgroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
+import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForHost;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
@@ -49,8 +49,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("ExgroupController 통합 테스트")
-public class ExgroupControllerIntegrationTest {
+@DisplayName("GroupController 통합 테스트")
+public class GroupControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -61,7 +61,7 @@ public class ExgroupControllerIntegrationTest {
     private EntityManager entityManager;
 
     @Autowired
-    private ExgroupRepository exgroupRepository;
+    private GroupRepository groupRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -96,19 +96,19 @@ public class ExgroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void createTest() throws Exception {
         // given
-        ExgroupCreateRequest request = createExgroupCreateRequest();
-        int beforeSize = exgroupRepository.findAll().size();
+        GroupCreateRequest request = createGroupCreateRequest();
+        int beforeSize = groupRepository.findAll().size();
         clear();
 
         // when, then
         mockMvc.perform(
-                        post("/api/exgroups")
+                        post("/api/groups")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andExpect(status().isCreated())
                 .andExpect(jsonPath("$.result.data.name").value(request.getName()));
 
-        int afterSize = exgroupRepository.findAll().size();
+        int afterSize = groupRepository.findAll().size();
         assertThat(afterSize).isEqualTo(beforeSize + 1);
     }
 
@@ -117,16 +117,16 @@ public class ExgroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void readTest() throws Exception {
         // given
-        Exgroup exgroup = exgroupRepository.save(createExgroup());
+        Group group = groupRepository.save(createExgroup());
         clear();
 
         // when, then
         mockMvc.perform(
-                        get("/api/exgroups/{groupId}", exgroup.getId())
+                        get("/api/groups/{groupId}", group.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.result.data.id").value(exgroup.getId()))
-                .andExpect(jsonPath("$.result.data.name").value(exgroup.getName()));
+                .andExpect(jsonPath("$.result.data.id").value(group.getId()))
+                .andExpect(jsonPath("$.result.data.name").value(group.getName()));
     }
 
     @Test
@@ -134,16 +134,16 @@ public class ExgroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void readAllMembersTest() throws Exception{
         // given
-        Exgroup exgroup = exgroupRepository.save(createExgroup());
+        Group group = groupRepository.save(createExgroup());
         Member member1 = memberRepository.save(createMember());
         Member member2 = memberRepository.save(createMember());
-        joinListRepository.save(createJoinListForHost(member1, exgroup));
-        joinListRepository.save(createJoinListForMember(member2, exgroup));
+        joinListRepository.save(createJoinListForHost(member1, group));
+        joinListRepository.save(createJoinListForMember(member2, group));
         clear();
 
         // when, then
         mockMvc.perform(
-                        get("/api/exgroups/{groupId}/members", exgroup.getId())
+                        get("/api/groups/{groupId}/members", group.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.data", hasSize(2)));
     }
@@ -153,14 +153,14 @@ public class ExgroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void updateTest() throws Exception {
         // given
-        Exgroup exgroup = exgroupRepository.save(createExgroup());
-        joinListRepository.save(createJoinListForHost(member, exgroup));
-        ExgroupUpdateRequest request = createExgroupUpdateRequest();
+        Group group = groupRepository.save(createExgroup());
+        joinListRepository.save(createJoinListForHost(member, group));
+        GroupUpdateRequest request = createGroupUpdateRequest();
         clear();
 
         // when, then
         mockMvc.perform(
-                        patch("/api/exgroups/{groupId}", exgroup.getId())
+                        patch("/api/groups/{groupId}", group.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andExpect(status().isOk())
@@ -172,15 +172,15 @@ public class ExgroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void deleteMemberByHostTest() throws Exception {
         // given
-        Exgroup exgroup = exgroupRepository.save(createExgroup());
+        Group group = groupRepository.save(createExgroup());
         Member targetMember = memberRepository.save(createMember());
-        JoinList hostJoinList = joinListRepository.save(createJoinListForHost(member, exgroup));
-        JoinList targetMemberJoinList = joinListRepository.save(createJoinListForMember(targetMember, exgroup));
+        JoinList hostJoinList = joinListRepository.save(createJoinListForHost(member, group));
+        JoinList targetMemberJoinList = joinListRepository.save(createJoinListForMember(targetMember, group));
         clear();
 
         // when, then
         mockMvc.perform(
-                        delete("/api/exgroups/{groupId}/members/{memberId}", exgroup.getId(), targetMember.getId())
+                        delete("/api/groups/{groupId}/members/{memberId}", group.getId(), targetMember.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
@@ -194,13 +194,13 @@ public class ExgroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void leaveGroupByMemberTest() throws Exception {
         // given
-        Exgroup exgroup = exgroupRepository.save(createExgroup());
-        JoinList joinList = joinListRepository.save(createJoinListForMember(member, exgroup));
+        Group group = groupRepository.save(createExgroup());
+        JoinList joinList = joinListRepository.save(createJoinListForMember(member, group));
         clear();
 
         // when, then
         mockMvc.perform(
-                        delete("/api/exgroups/{groupId}", exgroup.getId())
+                        delete("/api/groups/{groupId}", group.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
@@ -213,21 +213,21 @@ public class ExgroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void startGroupTest() throws Exception {
         // given
-        Exgroup exgroup = exgroupRepository.save(createExgroup());
-        joinListRepository.save(createJoinListForHost(member, exgroup));
+        Group group = groupRepository.save(createExgroup());
+        joinListRepository.save(createJoinListForHost(member, group));
         clear();
 
         // when, then
         mockMvc.perform(
-                        patch("/api/exgroups/{groupId}/initiation", exgroup.getId())
+                        patch("/api/groups/{groupId}/initiation", group.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.result.data.name").value(exgroup.getName()));
+                .andExpect(jsonPath("$.result.data.name").value(group.getName()));
 
-        assertNull(exgroup.getStartDate());
-        Exgroup updatedExgroup = exgroupRepository.findByIdAndStatus(exgroup.getId(), Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
-        assertNotNull(updatedExgroup.getStartDate());
-        assertNotNull(updatedExgroup.getEndDate());
+        assertNull(group.getStartDate());
+        Group updatedGroup = groupRepository.findByIdAndStatus(group.getId(), Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
+        assertNotNull(updatedGroup.getStartDate());
+        assertNotNull(updatedGroup.getEndDate());
     }
 
     void clear() {

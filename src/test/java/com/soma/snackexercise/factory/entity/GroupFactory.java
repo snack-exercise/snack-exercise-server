@@ -1,12 +1,12 @@
 package com.soma.snackexercise.factory.entity;
 
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 
 import java.time.LocalTime;
 
-public class ExgroupFactory {
-    public static Exgroup createExgroup() {
-        return Exgroup.builder()
+public class GroupFactory {
+    public static Group createExgroup() {
+        return Group.builder()
                 .name("name")
                 .emozi("emozi")
                 .color("red")
@@ -23,8 +23,8 @@ public class ExgroupFactory {
                 .build();
     }
 
-    public static Exgroup createExgroup(String name) {
-        return Exgroup.builder()
+    public static Group createExgroup(String name) {
+        return Group.builder()
                 .name(name)
                 .emozi("emozi")
                 .color("red")

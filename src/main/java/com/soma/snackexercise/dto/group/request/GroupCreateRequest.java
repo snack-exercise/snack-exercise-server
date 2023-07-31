@@ -1,4 +1,4 @@
-package com.soma.snackexercise.dto.exgroup.request;
+package com.soma.snackexercise.dto.group.request;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExgroupCreateRequest {
+public class GroupCreateRequest {
     private String name; // 그룹 이름
 
     private String emozi; // 그룹 대표 이모지

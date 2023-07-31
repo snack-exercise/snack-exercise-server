@@ -1,18 +1,18 @@
-package com.soma.snackexercise.service.exgroup;
+package com.soma.snackexercise.service.group;
 
-import com.soma.snackexercise.domain.exgroup.CreateExgroupCode;
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.CreateGroupCode;
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.joinlist.JoinType;
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupCreateRequest;
-import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;
-import com.soma.snackexercise.dto.exgroup.response.ExgroupCreateResponse;
+import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
+import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
+import com.soma.snackexercise.dto.group.response.GroupResponse;
+import com.soma.snackexercise.dto.group.response.GroupCreateResponse;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.exception.*;
-import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
+import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.util.constant.Status;
@@ -28,32 +28,32 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
-public class ExgroupService {
-    private final ExgroupRepository exgroupRepository;
+public class GroupService {
+    private final GroupRepository groupRepository;
     private final MemberRepository memberRepository;
     private final JoinListRepository joinListRepository;
 
 
     @Transactional
-    public ExgroupCreateResponse create(ExgroupCreateRequest groupCreateRequest, String email){
+    public GroupCreateResponse create(GroupCreateRequest groupCreateRequest, String email){
 
         // 1. 그룹 생성할 회원 조회
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
 
         // 2. 그룹 코드 생성
-        String groupCode = CreateExgroupCode.createGroupCode();
-        Boolean isDuplicatedGroupCode = exgroupRepository.existsByCodeAndStatus(groupCode, Status.ACTIVE); // 코드 중복 여부
+        String groupCode = CreateGroupCode.createGroupCode();
+        Boolean isDuplicatedGroupCode = groupRepository.existsByCodeAndStatus(groupCode, Status.ACTIVE); // 코드 중복 여부
 
         // 3. 그룹 코드 중복 검사
         while(Boolean.TRUE.equals(isDuplicatedGroupCode)){ // 코드 중복 검사 불통과시 코드 재발급
-            groupCode = CreateExgroupCode.createGroupCode();
-            isDuplicatedGroupCode = exgroupRepository.existsByCodeAndStatus(groupCode, Status.ACTIVE);
+            groupCode = CreateGroupCode.createGroupCode();
+            isDuplicatedGroupCode = groupRepository.existsByCodeAndStatus(groupCode, Status.ACTIVE);
         }
 
         log.info("generate group code : {}", groupCode);
 
         // 4. 새로운 그룹 생성
-        Exgroup newGroup = Exgroup.builder()
+        Group newGroup = Group.builder()
                 .name(groupCreateRequest.getName())
                 .emozi(groupCreateRequest.getEmozi())
                 .color(groupCreateRequest.getColor())
@@ -68,23 +68,23 @@ public class ExgroupService {
                 .checkMaxNum(groupCreateRequest.getCheckMaxNum())
                 .build();
 
-        exgroupRepository.save(newGroup);
+        groupRepository.save(newGroup);
 
         // 5. 회원과 그룹 연결
         JoinList joinRequest = JoinList.builder()
                 .member(member)
-                .exgroup(newGroup)
+                .group(newGroup)
                 .joinType(JoinType.HOST)
                 .build();
 
         joinListRepository.save(joinRequest);
-        return ExgroupCreateResponse.toDto(newGroup);
+        return GroupCreateResponse.toDto(newGroup);
     }
 
-    public ExgroupResponse read(Long groupId){
-        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+    public GroupResponse read(Long groupId){
+        Group group = groupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
 
-        return ExgroupResponse.toDto(exgroup);
+        return GroupResponse.toDto(group);
     }
 
     public List<GetOneGroupMemberResponse> getAllExgroupMembers(Long groupId){
@@ -94,38 +94,38 @@ public class ExgroupService {
     }
 
     @Transactional
-    public ExgroupResponse update(Long groupId, String email, ExgroupUpdateRequest request) {
-        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+    public GroupResponse update(Long groupId, String email, GroupUpdateRequest request) {
+        Group group = groupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
 
         // 1. 사용자가 해당 그룹의 방장인지 확인
-        if (!joinListRepository.existsByExgroupAndMemberAndJoinTypeAndStatus(exgroup, member, JoinType.HOST, Status.ACTIVE)) {
-            throw new NotExgroupHostException();
+        if (!joinListRepository.existsByGroupAndMemberAndJoinTypeAndStatus(group, member, JoinType.HOST, Status.ACTIVE)) {
+            throw new NotGroupHostException();
         }
 
         // 2. 그룹 최대 참여 인원 수 >= 현재 인원 수인지 판별
-        exgroup.updateMaxMemberNum(joinListRepository.countByExgroupAndOutCountLessThanOneAndStatusEqualsActive(exgroup), request.getMaxMemberNum());
-        exgroup.update(request);
+        group.updateMaxMemberNum(joinListRepository.countByGroupAndOutCountLessThanOneAndStatusEqualsActive(group), request.getMaxMemberNum());
+        group.update(request);
 
-        return ExgroupResponse.toDto(exgroup);
+        return GroupResponse.toDto(group);
     }
 
     // 방장이 회원 강퇴
     @Transactional
     public void deleteMemberByHost(Long groupId, Long memberId, String email) {
-        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+        Group group = groupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
         Member currentMember = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
         Member targetMember = memberRepository.findByIdAndStatus(memberId, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
-        JoinList joinList = joinListRepository.findByExgroupAndMemberAndStatus(exgroup, targetMember, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
+        JoinList joinList = joinListRepository.findByGroupAndMemberAndStatus(group, targetMember, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
 
         // 1. 사용자가 해당 그룹의 방장인지 확인
-        if (!joinListRepository.existsByExgroupAndMemberAndJoinTypeAndStatus(exgroup, currentMember, JoinType.HOST, Status.ACTIVE)) {
-            throw new NotExgroupHostException();
+        if (!joinListRepository.existsByGroupAndMemberAndJoinTypeAndStatus(group, currentMember, JoinType.HOST, Status.ACTIVE)) {
+            throw new NotGroupHostException();
         }
 
         // 2. 삭제 타겟 회원이 해당 그룹의 멤버인지 확인
-        if (!joinListRepository.existsByExgroupAndMemberAndJoinTypeAndStatus(exgroup, targetMember, JoinType.MEMBER, Status.ACTIVE)) {
-            throw new NotExgroupMemberException();
+        if (!joinListRepository.existsByGroupAndMemberAndJoinTypeAndStatus(group, targetMember, JoinType.MEMBER, Status.ACTIVE)) {
+            throw new NotGroupMemberException();
         }
 
         // 3. joinList inActive로 변경
@@ -144,21 +144,21 @@ public class ExgroupService {
     @Transactional
     public void leaveGroupByMember(Long groupId, String email) {
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
-        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new); // TODO : ActiveExgroupNotFoundException로 이름 변경?
-        JoinList joinList = joinListRepository.findByExgroupAndMemberAndStatus(exgroup, member, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
+        Group group = groupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new); // TODO : ActiveExgroupNotFoundException로 이름 변경?
+        JoinList joinList = joinListRepository.findByGroupAndMemberAndStatus(group, member, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
 
         joinList.inActive();
 
         // 만약 그룹에 남은 사람이 없다면 그룹 폭파
-        if (!joinListRepository.existsByExgroupAndStatus(exgroup, Status.ACTIVE)) {
-            exgroup.inActive();
+        if (!joinListRepository.existsByGroupAndStatus(group, Status.ACTIVE)) {
+            group.inActive();
             return;
         }
 
         // 만약 방장이 탈퇴한거면 방장을 누군가에게 위임하는 로직
         // 현재 그룹에 남은 멤버들 중 가장 오래된 멤버에게 방장 위임
         if (joinList.getJoinType().equals(JoinType.HOST)) {
-            JoinList oldestMemberJoinList = joinListRepository.findFirstByExgroupAndStatusOrderByCreatedAtAsc(exgroup, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
+            JoinList oldestMemberJoinList = joinListRepository.findFirstByGroupAndStatusOrderByCreatedAtAsc(group, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
             oldestMemberJoinList.promoteToHost();
         }
 
@@ -168,19 +168,19 @@ public class ExgroupService {
         //}
     }
     @Transactional
-    public ExgroupResponse startGroup(Long groupId, String email){
+    public GroupResponse startGroup(Long groupId, String email){
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
-        Exgroup exgroup = exgroupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+        Group group = groupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
 
         // 1. 사용자가 해당 그룹의 방장인지 확인
-        if (!joinListRepository.existsByExgroupAndMemberAndJoinTypeAndStatus(exgroup, member, JoinType.HOST, Status.ACTIVE)) {
-            throw new NotExgroupHostException();
+        if (!joinListRepository.existsByGroupAndMemberAndJoinTypeAndStatus(group, member, JoinType.HOST, Status.ACTIVE)) {
+            throw new NotGroupHostException();
 
         }
 
         // 2. 그룹의 시작일자, 끝일자 기록
-        exgroup.updateStartDateAndEndDate();
+        group.updateStartDateAndEndDate();
 
-        return ExgroupResponse.toDto(exgroup);
+        return GroupResponse.toDto(group);
     }
 }

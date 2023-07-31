@@ -1,12 +1,12 @@
 package com.soma.snackexercise.repository.member;
 
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.member.SocialType;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.exception.MemberNotFoundException;
-import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
+import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.util.constant.Status;
 import jakarta.persistence.EntityManager;
@@ -20,7 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static com.soma.snackexercise.factory.entity.ExgroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +34,7 @@ public class MemberRepositoryTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private ExgroupRepository exgroupRepository;
+    private GroupRepository groupRepository;
 
     @Autowired
     private JoinListRepository joinListRepository;
@@ -42,7 +42,7 @@ public class MemberRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private Exgroup exgroup;
+    private Group group;
     private JoinList joinList;
 
     @Test
@@ -102,13 +102,13 @@ public class MemberRepositoryTest {
         // given
         Member member1 = memberRepository.save(createMember());
         Member member2 = memberRepository.save(createMember());
-        exgroup = exgroupRepository.save(createExgroup());
-        joinList = joinListRepository.save(createJoinListForMember(member1, exgroup));
-        joinList = joinListRepository.save(createJoinListForMember(member2, exgroup));
+        group = groupRepository.save(createExgroup());
+        joinList = joinListRepository.save(createJoinListForMember(member1, group));
+        joinList = joinListRepository.save(createJoinListForMember(member2, group));
         clear();
 
         // when
-        List<JoinListMemberDto> joinListMemberDtos = memberRepository.findAllGroupMembers(exgroup.getId());
+        List<JoinListMemberDto> joinListMemberDtos = memberRepository.findAllGroupMembers(group.getId());
 
         // then
         assertThat(joinListMemberDtos).hasSize(2);

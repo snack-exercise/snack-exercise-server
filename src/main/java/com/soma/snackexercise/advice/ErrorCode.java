@@ -15,9 +15,9 @@ public enum ErrorCode {
 
     /* Exgroup */
     // todo : 너무 에러메시지가 친절한가..?
-    EXGROUP_NOT_FOUND_EXCEPTION(-1200, "운동 그룹이 존재하지 않습니다."),
-    NOT_EXGROUP_HOST_EXCEPTION(-1201, "운동 그룹의 방장 권한이 아닙니다."),
-    NOT_EXGROUP_MEMBER_EXCEPTION(-1202, "운동 그룹의 멤버 권한이 아닙니다."),
+    GROUP_NOT_FOUND_EXCEPTION(-1200, "운동 그룹이 존재하지 않습니다."),
+    NOT_GROUP_HOST_EXCEPTION(-1201, "운동 그룹의 방장 권한이 아닙니다."),
+    NOT_GROUP_MEMBER_EXCEPTION(-1202, "운동 그룹의 멤버 권한이 아닙니다."),
 
     /* JoinList */
     JOIN_LIST_NOT_FOUND_EXCEPTION(-1300, "회원_운동그룹이 존재하지 않습니다."),

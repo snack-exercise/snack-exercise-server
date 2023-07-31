@@ -1,11 +1,11 @@
 package com.soma.snackexercise.repository.mission;
 
 import com.soma.snackexercise.domain.exercise.Exercise;
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
 import com.soma.snackexercise.repository.exercise.ExerciseRepository;
-import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
+import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.soma.snackexercise.factory.entity.ExerciseFactory.createExercise;
-import static com.soma.snackexercise.factory.entity.ExgroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
 import static com.soma.snackexercise.factory.entity.MissionFactory.createCompleteMission;
 import static com.soma.snackexercise.factory.entity.MissionFactory.createNonCompleteMission;
@@ -36,21 +36,21 @@ class MissionRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
-    private ExgroupRepository exgroupRepository;
+    private GroupRepository groupRepository;
     @Autowired
     private ExerciseRepository exerciseRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    private Exgroup exgroup;
+    private Group group;
     private Member member;
     private Exercise exercise;
 
     @BeforeEach
     void setUp() {
         member = memberRepository.save(createMember());
-        exgroup = exgroupRepository.save(createExgroup());
+        group = groupRepository.save(createExgroup());
         exercise = exerciseRepository.save(createExercise());
     }
 
@@ -60,12 +60,12 @@ class MissionRepositoryTest {
         // given
         LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);// 오늘 자정 구일하기
         LocalDateTime nextDay = today.plusDays(1);// 내일 자정 구하기
-        Mission mission1 = missionRepository.save(createCompleteMission(exercise, member, exgroup));
-        Mission mission2 = missionRepository.save(createCompleteMission(exercise, member, exgroup));
+        Mission mission1 = missionRepository.save(createCompleteMission(exercise, member, group));
+        Mission mission2 = missionRepository.save(createCompleteMission(exercise, member, group));
         clear();
 
         // when
-        Integer count = missionRepository.findCurrentFinishedRelayCountByGroupId(exgroup.getId(), today, nextDay);
+        Integer count = missionRepository.findCurrentFinishedRelayCountByGroupId(group.getId(), today, nextDay);
 
         // then
         assertThat(count).isEqualTo(2);
@@ -77,12 +77,12 @@ class MissionRepositoryTest {
         // given
         LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);// 오늘 자정 구일하기
         LocalDateTime nextDay = today.plusDays(1);// 내일 자정 구하기
-        Mission completeMission = missionRepository.save(createCompleteMission(exercise, member, exgroup));
-        Mission nonCompleteMission = missionRepository.save(createNonCompleteMission(exercise, member, exgroup));
+        Mission completeMission = missionRepository.save(createCompleteMission(exercise, member, group));
+        Mission nonCompleteMission = missionRepository.save(createNonCompleteMission(exercise, member, group));
         clear();
 
         // when
-        List<Mission> missions = missionRepository.findMissionsByGroupIdWithinDateRange(exgroup.getId(), today, nextDay);
+        List<Mission> missions = missionRepository.findMissionsByGroupIdWithinDateRange(group.getId(), today, nextDay);
 
         // then
         assertThat(missions.size()).isEqualTo(2);
@@ -96,12 +96,12 @@ class MissionRepositoryTest {
         // given
         LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0);// 오늘 자정 구일하기
         LocalDateTime nextDay = today.plusDays(1);// 내일 자정 구하기
-        Mission completeMission = missionRepository.save(createCompleteMission(exercise, member, exgroup));
-        Mission nonCompleteMission = missionRepository.save(createNonCompleteMission(exercise, member, exgroup));
+        Mission completeMission = missionRepository.save(createCompleteMission(exercise, member, group));
+        Mission nonCompleteMission = missionRepository.save(createNonCompleteMission(exercise, member, group));
         clear();
 
         // when
-        List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(exgroup.getId(), today, nextDay);
+        List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(group.getId(), today, nextDay);
 
         // then
         assertThat(missions.size()).isEqualTo(1);

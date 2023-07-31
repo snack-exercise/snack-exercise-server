@@ -42,22 +42,22 @@ public class ExceptionAdvice {
     /*
     Exgroup
      */
-    @ExceptionHandler(ExgroupNotFoundException.class)
+    @ExceptionHandler(GroupNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response exgroupNotFoundExceptionHandler(ExgroupNotFoundException e){
-        return Response.failure(EXGROUP_NOT_FOUND_EXCEPTION);
+    public Response exgroupNotFoundExceptionHandler(GroupNotFoundException e){
+        return Response.failure(GROUP_NOT_FOUND_EXCEPTION);
     }
 
-    @ExceptionHandler(NotExgroupHostException.class)
+    @ExceptionHandler(NotGroupHostException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Response notExgroupHostExceptionHandler (NotExgroupHostException e){
-        return Response.failure(NOT_EXGROUP_HOST_EXCEPTION);
+    public Response notExgroupHostExceptionHandler (NotGroupHostException e){
+        return Response.failure(NOT_GROUP_HOST_EXCEPTION);
     }
 
-    @ExceptionHandler(NotExgroupMemberException.class)
+    @ExceptionHandler(NotGroupMemberException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Response notExgroupMemberExceptionHandler (NotExgroupMemberException e){
-        return Response.failure(NOT_EXGROUP_MEMBER_EXCEPTION);
+    public Response notExgroupMemberExceptionHandler (NotGroupMemberException e){
+        return Response.failure(NOT_GROUP_MEMBER_EXCEPTION);
     }
 
     /*

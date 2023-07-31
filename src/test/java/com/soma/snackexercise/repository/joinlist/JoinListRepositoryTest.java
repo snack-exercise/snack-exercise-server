@@ -1,11 +1,11 @@
 package com.soma.snackexercise.repository.joinlist;
 
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.joinlist.JoinType;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.exception.JoinListNotFoundException;
-import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
+import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.util.constant.Status;
 import jakarta.persistence.EntityManager;
@@ -20,7 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static com.soma.snackexercise.factory.entity.ExgroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,10 +34,10 @@ class JoinListRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
-    private ExgroupRepository exgroupRepository;
+    private GroupRepository groupRepository;
 
     private Member member;
-    private Exgroup exgroup;
+    private Group group;
     private JoinList joinList;
     @PersistenceContext
     private EntityManager entityManager;
@@ -45,8 +45,8 @@ class JoinListRepositoryTest {
     @BeforeEach
     void setUp() {
         member = memberRepository.save(createMember());
-        exgroup = exgroupRepository.save(createExgroup());
-        joinList = joinListRepository.save(createJoinListForMember(member, exgroup));
+        group = groupRepository.save(createExgroup());
+        joinList = joinListRepository.save(createJoinListForMember(member, group));
         clear();
     }
 
@@ -66,7 +66,7 @@ class JoinListRepositoryTest {
     @DisplayName("그룹과 Status가 주어질 때 joinList가 있다면 참을 반환하면 정상케이스이다.")
     void existsByExgroupAndStatusTest() {
         // given, when
-        Boolean exists = joinListRepository.existsByExgroupAndStatus(exgroup, Status.ACTIVE);
+        Boolean exists = joinListRepository.existsByGroupAndStatus(group, Status.ACTIVE);
 
         // then
         assertThat(exists).isTrue();
@@ -76,7 +76,7 @@ class JoinListRepositoryTest {
     @DisplayName("그룹과 멤버와 Status 정보가 주어질 때 joinList가 조회되면 정상케이스이다.")
     void findByExgroupAndMemberAndStatusTest() {
         // given, when
-        JoinList foundJoinList = joinListRepository.findByExgroupAndMemberAndStatus(exgroup, member, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
+        JoinList foundJoinList = joinListRepository.findByGroupAndMemberAndStatus(group, member, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
 
         // then
         assertThat(joinList.getId()).isEqualTo(foundJoinList.getId());
@@ -87,11 +87,11 @@ class JoinListRepositoryTest {
     void findFirstByExgroupAndStatusOrderByCreatedAtAscTest() {
         // given
         Member newMember = memberRepository.save(createMember());
-        JoinList newJoinList = joinListRepository.save(createJoinListForMember(newMember, exgroup));
+        JoinList newJoinList = joinListRepository.save(createJoinListForMember(newMember, group));
         clear();
 
         // when
-        JoinList foundJoinList = joinListRepository.findFirstByExgroupAndStatusOrderByCreatedAtAsc(exgroup, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
+        JoinList foundJoinList = joinListRepository.findFirstByGroupAndStatusOrderByCreatedAtAsc(group, Status.ACTIVE).orElseThrow(JoinListNotFoundException::new);
 
         // then
         assertThat(joinList.getCreatedAt()).isBefore(newJoinList.getCreatedAt());
@@ -103,7 +103,7 @@ class JoinListRepositoryTest {
     @DisplayName("그룹과 멤버와 유형과 Status가 주어질 때 존재한다면 정상케이스이다.")
     void existsByExgroupAndMemberAndJoinTypeAndStatusTest() {
         // given, when
-        Boolean exists = joinListRepository.existsByExgroupAndMemberAndJoinTypeAndStatus(exgroup, member, JoinType.MEMBER, Status.ACTIVE);
+        Boolean exists = joinListRepository.existsByGroupAndMemberAndJoinTypeAndStatus(group, member, JoinType.MEMBER, Status.ACTIVE);
 
         // then
         assertThat(exists).isTrue();
@@ -114,11 +114,11 @@ class JoinListRepositoryTest {
     void countByExgroupAndOutCountLessThanOneAndStatusEqualsActiveTest() {
         // given
         Member newMember = memberRepository.save(createMember());
-        JoinList newJoinList = joinListRepository.save(createJoinListForMember(newMember, exgroup));
+        JoinList newJoinList = joinListRepository.save(createJoinListForMember(newMember, group));
         clear();
 
         // when
-        Integer count = joinListRepository.countByExgroupAndOutCountLessThanOneAndStatusEqualsActive(exgroup);
+        Integer count = joinListRepository.countByGroupAndOutCountLessThanOneAndStatusEqualsActive(group);
 
         // then
         assertThat(count).isEqualTo(2);

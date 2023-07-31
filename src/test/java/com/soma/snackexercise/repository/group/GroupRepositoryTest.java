@@ -1,7 +1,7 @@
-package com.soma.snackexercise.repository.exgroup;
+package com.soma.snackexercise.repository.group;
 
-import com.soma.snackexercise.domain.exgroup.Exgroup;
-import com.soma.snackexercise.exception.ExgroupNotFoundException;
+import com.soma.snackexercise.domain.group.Group;
+import com.soma.snackexercise.exception.GroupNotFoundException;
 import com.soma.snackexercise.util.constant.Status;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -12,15 +12,15 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import static com.soma.snackexercise.factory.entity.ExgroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 @DisplayName("ExgroupRepository JPA 동작 테스트")
-class ExgroupRepositoryTest {
+class GroupRepositoryTest {
     @Autowired
-    private ExgroupRepository exgroupRepository;
+    private GroupRepository groupRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -29,12 +29,12 @@ class ExgroupRepositoryTest {
     @DisplayName("운동 그룹 코드 존재 여부 확인 테스트")
     void existsByCodeTest() {
         // given
-        Exgroup exgroup = exgroupRepository.save(createExgroup());
+        Group group = groupRepository.save(createExgroup());
         clear();
-        String code = exgroup.getCode();
+        String code = group.getCode();
 
         // when
-        Boolean exists = exgroupRepository.existsByCodeAndStatus(code, Status.ACTIVE);
+        Boolean exists = groupRepository.existsByCodeAndStatus(code, Status.ACTIVE);
 
         // then
         assertThat(exists).isTrue();
@@ -44,14 +44,14 @@ class ExgroupRepositoryTest {
     @DisplayName("운동 그룹 id와 status로 exgroup을 찾는 테스트")
     void findByIdAndStatusTest() {
         // given
-        Exgroup exgroup = exgroupRepository.save(createExgroup());
+        Group group = groupRepository.save(createExgroup());
         clear();
 
         // when
-        Exgroup foundExgroup = exgroupRepository.findByIdAndStatus(exgroup.getId(), Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+        Group foundGroup = groupRepository.findByIdAndStatus(group.getId(), Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
 
         // then
-        assertThat(exgroup.getId()).isEqualTo(foundExgroup.getId());
+        assertThat(group.getId()).isEqualTo(foundGroup.getId());
     }
 
     void clear() {

@@ -1,12 +1,12 @@
-package com.soma.snackexercise.controller.exgroup;
+package com.soma.snackexercise.controller.group;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soma.snackexercise.utils.TestUserArgumentResolver;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupCreateRequest;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
-import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;
+import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
+import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
+import com.soma.snackexercise.dto.group.response.GroupResponse;
 import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
-import com.soma.snackexercise.service.exgroup.ExgroupService;
+import com.soma.snackexercise.service.group.GroupService;
 import com.soma.snackexercise.util.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,10 +24,10 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.soma.snackexercise.factory.dto.ExgroupCreateFactory.createExgroupCreateRequest;
-import static com.soma.snackexercise.factory.dto.ExgroupReadFactory.createExgroupResponse;
-import static com.soma.snackexercise.factory.dto.ExgroupReadFactory.createGetOneGroupMemberResponse;
-import static com.soma.snackexercise.factory.dto.ExgroupUpdateFactory.createExgroupUpdateRequest;
+import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
+import static com.soma.snackexercise.factory.dto.GroupReadFactory.createGroupResponse;
+import static com.soma.snackexercise.factory.dto.GroupReadFactory.createGetOneGroupMemberResponse;
+import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -36,20 +36,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("ExgroupController 기능 동작 단위 테스트")
-class ExgroupControllerTest {
+@DisplayName("GroupController 기능 동작 단위 테스트")
+class GroupControllerTest {
     @InjectMocks
-    private ExgroupController exgroupController;
+    private GroupController groupController;
 
     @Mock
-    private ExgroupService exgroupService;
+    private GroupService groupService;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(exgroupController)
+        mockMvc = MockMvcBuilders.standaloneSetup(groupController)
                 .setCustomArgumentResolvers(new TestUserArgumentResolver())
                 .addFilter(new CharacterEncodingFilter("UTF-8", true))
                 .build();
@@ -59,16 +59,16 @@ class ExgroupControllerTest {
     @DisplayName("운동 그룹 생성 메소드 동작 성공 테스트")
     void createTest() throws Exception {
         // given
-        ExgroupCreateRequest request = createExgroupCreateRequest();
+        GroupCreateRequest request = createGroupCreateRequest();
 
         // when, then
         mockMvc.perform(
-                post("/api/exgroups")
+                post("/api/groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpect(status().isCreated());
 
-        verify(exgroupService, times(1)).create(any(), anyString());
+        verify(groupService, times(1)).create(any(), anyString());
     }
 
     @Test
@@ -79,10 +79,10 @@ class ExgroupControllerTest {
 
         // when, then
         mockMvc.perform(
-                get("/api/exgroups/{groupId}", groupId)
+                get("/api/groups/{groupId}", groupId)
         ).andExpect(status().isOk());
 
-        verify(exgroupService, times(1)).read(groupId);
+        verify(groupService, times(1)).read(groupId);
     }
 
     @Test
@@ -91,15 +91,15 @@ class ExgroupControllerTest {
         // given
         Long groupId = 1L;
         List<GetOneGroupMemberResponse> groupMembers = Arrays.asList(createGetOneGroupMemberResponse(), createGetOneGroupMemberResponse());
-        when(exgroupService.getAllExgroupMembers(groupId)).thenReturn(groupMembers);
+        when(groupService.getAllExgroupMembers(groupId)).thenReturn(groupMembers);
 
         // when, then
         MvcResult mvcResult = mockMvc.perform(
-                        get("/api/exgroups/{groupId}/members", groupId)
+                        get("/api/groups/{groupId}/members", groupId)
                 ).andExpect(status().isOk())
                 .andReturn();
 
-        verify(exgroupService, times(1)).getAllExgroupMembers(groupId);
+        verify(groupService, times(1)).getAllExgroupMembers(groupId);
 
         // 반환된 값 검증
         String actualResponseAsString = mvcResult.getResponse().getContentAsString();
@@ -112,19 +112,19 @@ class ExgroupControllerTest {
     void updateTest() throws Exception {
         // given
         Long groupId = 1L;
-        ExgroupUpdateRequest request = createExgroupUpdateRequest();
-        ExgroupResponse response = createExgroupResponse();
-        when(exgroupService.update(anyLong(), anyString(), any())).thenReturn(response);
+        GroupUpdateRequest request = createGroupUpdateRequest();
+        GroupResponse response = createGroupResponse();
+        when(groupService.update(anyLong(), anyString(), any())).thenReturn(response);
 
         // when, then
         MvcResult mvcResult = mockMvc.perform(
-                patch("/api/exgroups/{groupId}", groupId)
+                patch("/api/groups/{groupId}", groupId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn();
 
-        verify(exgroupService, times(1)).update(anyLong(), anyString(), any());
+        verify(groupService, times(1)).update(anyLong(), anyString(), any());
 
         String actualResponseAsString = mvcResult.getResponse().getContentAsString();
         String expectedResponseAsString = objectMapper.writeValueAsString(Response.success(response));
@@ -140,10 +140,10 @@ class ExgroupControllerTest {
 
         // when, then
         mockMvc.perform(
-                delete("/api/exgroups/{groupId}/members/{memberId}", groupId, memberId)
+                delete("/api/groups/{groupId}/members/{memberId}", groupId, memberId)
         ).andExpect(status().isOk());
 
-        verify(exgroupService, times(1)).deleteMemberByHost(anyLong(), anyLong(), anyString());
+        verify(groupService, times(1)).deleteMemberByHost(anyLong(), anyLong(), anyString());
     }
 
     @Test
@@ -154,10 +154,10 @@ class ExgroupControllerTest {
 
         // when, then
         mockMvc.perform(
-                delete("/api/exgroups/{groupId}", groupId)
+                delete("/api/groups/{groupId}", groupId)
         ).andExpect(status().isOk());
 
-        verify(exgroupService, times(1)).leaveGroupByMember(anyLong(), anyString());
+        verify(groupService, times(1)).leaveGroupByMember(anyLong(), anyString());
     }
 
     @Test
@@ -165,15 +165,15 @@ class ExgroupControllerTest {
     void startGroupTest() throws Exception{
         // given
         Long groupId = 1L;
-        ExgroupResponse response = createExgroupResponse();
-        when(exgroupService.startGroup(anyLong(), anyString())).thenReturn(response);
+        GroupResponse response = createGroupResponse();
+        when(groupService.startGroup(anyLong(), anyString())).thenReturn(response);
 
         // when, then
         MvcResult mvcResult = mockMvc.perform(
-                patch("/api/exgroups/{groupId}/initiation", groupId)
+                patch("/api/groups/{groupId}/initiation", groupId)
         ).andExpect(status().isOk()).andReturn();
 
-        verify(exgroupService, times(1)).startGroup(anyLong(), anyString());
+        verify(groupService, times(1)).startGroup(anyLong(), anyString());
 
         String actualResponseAsString = mvcResult.getResponse().getContentAsString();
         String expectedResponseAsString = objectMapper.writeValueAsString(Response.success(response));
