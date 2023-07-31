@@ -5,6 +5,7 @@ import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
+import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
 import com.soma.snackexercise.dto.group.response.GroupCreateResponse;
 import com.soma.snackexercise.dto.group.response.GroupResponse;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import static com.soma.snackexercise.domain.joinlist.JoinType.HOST;
 import static com.soma.snackexercise.domain.joinlist.JoinType.MEMBER;
 import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
+import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createJoinFriendGroupRequest;
 import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
 import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForHost;
@@ -42,7 +44,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("ExgroupService 비즈니스 로직 테스트")
+@DisplayName("GroupService 비즈니스 로직 테스트")
 class GroupServiceTest {
     @InjectMocks
     private GroupService groupService;
@@ -111,7 +113,7 @@ class GroupServiceTest {
 
     @Test
     @DisplayName("운동 그룹 조회 메소드에서 찾을 수 없을 때 예외 클래스 발생 테스트")
-    void readExceptionByExgroupNotFoundTest() {
+    void readExceptionByGroupNotFoundTest() {
         // given
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(null));
 
@@ -121,7 +123,7 @@ class GroupServiceTest {
 
     @Test
     @DisplayName("그룹에 속한 모든 멤버들을 조회하는 메소드 테스트")
-    void getAllExgroupMembersTest() {
+    void getAllGroupMembersTest() {
         // given
         Member member = createMember();
         Member host = createMember();
@@ -166,7 +168,7 @@ class GroupServiceTest {
 
     @Test
     @DisplayName("그룹 수정 메소드에서 방장 권한이 아닌 멤버일 때 예외 클래스 발생 테스트")
-    void updateExceptionByNotExgroupHostExceptionTest() {
+    void updateExceptionByNotGroupHostExceptionTest() {
         // given
         GroupUpdateRequest request = createGroupUpdateRequest();
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createGroup()));
@@ -218,7 +220,7 @@ class GroupServiceTest {
 
     @Test
     @DisplayName("방장이 회원 강퇴 메소드에서 현재 사용자가 방장 권한이 아닐 때 예외클래스 발생 테스트")
-    void deleteMemberByHostTestExceptionByNotExgroupHostExceptionTest() {
+    void deleteMemberByHostTestExceptionByNotGroupHostExceptionTest() {
         // given
         Member member = createMember();
         Group group = createGroup();
@@ -236,7 +238,7 @@ class GroupServiceTest {
 
     @Test
     @DisplayName("방장이 회원 강퇴 메소드에서 타겟 사용자가 멤버 권한이 아닐 때 예외클래스 발생 테스트")
-    void deleteMemberByHostTestExceptionByNotExgroupMemberExceptionTest() {
+    void deleteMemberByHostTestExceptionByNotGroupMemberExceptionTest() {
         // given
         Member member = createMember();
         Group group = createGroup();
@@ -340,7 +342,8 @@ class GroupServiceTest {
 
     @Test
     @DisplayName("방장이 그룹 시작하는 메소드에서 현재 사용자가 방장 권한이 아닐 때 예외 클래스 발생 테스트")
-    void startGroupByNotExgroupHostExceptionTest() {
+    void startGroupByNotGroupHostExceptionTest() {
+        // given
         Member member = createMember();
         Group group = createGroup();
 
@@ -350,5 +353,50 @@ class GroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> groupService.startGroup(1L, email)).isInstanceOf(NotGroupHostException.class);
+    }
+
+    @Test
+    @DisplayName("코드로 지인 그룹 가입 메소드 성공 테스트")
+    void joinFriendGroupTest() {
+        // given
+
+        JoinFriendGroupRequest request = createJoinFriendGroupRequest();
+        given(groupRepository.findByCodeAndStatus(anyString(), any())).willReturn(Optional.ofNullable(createGroup()));
+        given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(createMember()));
+        given(joinListRepository.existsByGroupAndMemberAndStatus(any(), any(), any())).willReturn(false);
+        given(joinListRepository.existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus(any(), any(), any(), any())).willReturn(false);
+
+        // when
+        groupService.joinFriendGroup(request, email);
+
+        // then
+        verify(joinListRepository, times(1)).save(any(JoinList.class));
+    }
+
+    @Test
+    @DisplayName("코드로 지인 그룹 가입 메소드 그룹에 이미 참여하고 있을 경우 예외 발생 테스트")
+    void joinFriendGroupAlreadyJoinedGroupExceptionTest() {
+        // given
+        JoinFriendGroupRequest request = createJoinFriendGroupRequest();
+        given(groupRepository.findByCodeAndStatus(anyString(), any())).willReturn(Optional.ofNullable(createGroup()));
+        given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(createMember()));
+        given(joinListRepository.existsByGroupAndMemberAndStatus(any(), any(), any())).willReturn(true);
+
+        // when, then
+        assertThatThrownBy(() -> groupService.joinFriendGroup(request, email)).isInstanceOf(AlreadyJoinedGroupException.class);
+    }
+
+    @Test
+    @DisplayName("코드로 지인 그룹 가입 메소드에서 그룹 강퇴 횟수가 2 이상인 경우 예외 발생 테스트")
+    void joinFriendGroupExceedsKickOutLimitExceptionTest() {
+        // given
+        JoinFriendGroupRequest request = createJoinFriendGroupRequest();
+        given(groupRepository.findByCodeAndStatus(anyString(), any())).willReturn(Optional.ofNullable(createGroup()));
+        given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(createMember()));
+        given(joinListRepository.existsByGroupAndMemberAndStatus(any(), any(), any())).willReturn(false);
+        given(joinListRepository.existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus(any(), any(), any(), any())).willReturn(true);
+
+        // when, then
+        assertThatThrownBy(() -> groupService.joinFriendGroup(request, email)).isInstanceOf(ExceedsKickOutLimitException.class);
     }
 }
