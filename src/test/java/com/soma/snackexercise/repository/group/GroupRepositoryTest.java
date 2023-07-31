@@ -12,7 +12,7 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -29,7 +29,7 @@ class GroupRepositoryTest {
     @DisplayName("운동 그룹 코드 존재 여부 확인 테스트")
     void existsByCodeTest() {
         // given
-        Group group = groupRepository.save(createExgroup());
+        Group group = groupRepository.save(createGroup());
         clear();
         String code = group.getCode();
 
@@ -44,7 +44,7 @@ class GroupRepositoryTest {
     @DisplayName("운동 그룹 id와 status로 exgroup을 찾는 테스트")
     void findByIdAndStatusTest() {
         // given
-        Group group = groupRepository.save(createExgroup());
+        Group group = groupRepository.save(createGroup());
         clear();
 
         // when

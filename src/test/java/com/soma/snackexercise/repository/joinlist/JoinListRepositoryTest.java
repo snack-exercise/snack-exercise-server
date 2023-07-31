@@ -20,7 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +45,7 @@ class JoinListRepositoryTest {
     @BeforeEach
     void setUp() {
         member = memberRepository.save(createMember());
-        group = groupRepository.save(createExgroup());
+        group = groupRepository.save(createGroup());
         joinList = joinListRepository.save(createJoinListForMember(member, group));
         clear();
     }
@@ -122,6 +122,49 @@ class JoinListRepositoryTest {
 
         // then
         assertThat(count).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("그룹과 멤버와 상태가 주어질 때 joinList의 존재 여부를 확인하는 테스트")
+    void existsByGroupAndMemberAndStatusTest() {
+        // given
+        Member member1 = memberRepository.save(createMember());
+        Member member2 = memberRepository.save(createMember());
+        Group group = groupRepository.save(createGroup());
+        joinListRepository.save(createJoinListForMember(member1, group));
+        JoinList joinList = joinListRepository.save(createJoinListForMember(member2, group));
+        joinList.inActive();
+        clear();
+
+        // when
+        Boolean exists = joinListRepository.existsByGroupAndMemberAndStatus(group, member1, Status.ACTIVE);
+        Boolean notExists = joinListRepository.existsByGroupAndMemberAndStatus(group, member2, Status.ACTIVE);
+
+
+        // then
+        assertThat(exists).isTrue();
+        assertThat(notExists).isFalse();
+    }
+
+    @Test
+    @DisplayName("그룹과 회원과 강퇴 횟수와 상태가 주어진 조건의 joinList의 존재 여부를 확인하는 테스트")
+    void existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus() {
+        // given
+        joinList.addOneOutCount();
+        joinList.addOneOutCount();
+        joinListRepository.save(joinList);
+        int outCount = joinList.getOutCount();
+
+        clear();
+
+
+        // when
+        Boolean exists = joinListRepository.existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus(group, member, outCount, Status.ACTIVE);
+        Boolean notExists = joinListRepository.existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus(group, member, outCount + 1, Status.ACTIVE);
+
+        // then
+        assertThat(exists).isTrue();
+        assertThat(notExists).isFalse();
     }
 
     void clear() {

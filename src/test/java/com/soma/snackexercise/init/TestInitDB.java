@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 
 @Component
 public class TestInitDB {
@@ -22,8 +22,8 @@ public class TestInitDB {
     }
 
     private void initExgroup() {
-        Group group1 = createExgroup();
-        Group group2 = createExgroup();
+        Group group1 = createGroup();
+        Group group2 = createGroup();
         groupRepository.saveAll(List.of(group1, group2));
     }
 }

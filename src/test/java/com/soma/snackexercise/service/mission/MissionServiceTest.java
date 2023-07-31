@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.soma.snackexercise.factory.entity.ExerciseFactory.createExercise;
-import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMemberWithIdAndNickname;
 import static com.soma.snackexercise.factory.entity.MissionFactory.createCompleteMission;
@@ -53,10 +53,10 @@ class MissionServiceTest {
         // given
         Member member1 = createMember();
         Member member2 = createMember();
-        Mission completeMission = createCompleteMission(createExercise(), member1, createExgroup());
-        Mission nonCompleteMission = createNonCompleteMission(createExercise(), member2, createExgroup());
+        Mission completeMission = createCompleteMission(createExercise(), member1, createGroup());
+        Mission nonCompleteMission = createNonCompleteMission(createExercise(), member2, createGroup());
 
-        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createExgroup()));
+        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createGroup()));
         given(missionRepository.findMissionsByGroupIdWithinDateRange(anyLong(), any(), any())).willReturn(List.of(completeMission, nonCompleteMission));
 
         // when
@@ -73,8 +73,8 @@ class MissionServiceTest {
         Member member1 = createMemberWithIdAndNickname(1L, "member1");
         Member member2 = createMemberWithIdAndNickname(2L, "member2");
 
-        Mission completeMission1 = createCompleteMission(createExercise(), member1, createExgroup());
-        Mission completeMission2 = createCompleteMission(createExercise(), member2, createExgroup());
+        Mission completeMission1 = createCompleteMission(createExercise(), member1, createGroup());
+        Mission completeMission2 = createCompleteMission(createExercise(), member2, createGroup());
 
         setCreatedAt(completeMission1, LocalDateTime.now());
         setCreatedAt(completeMission2, LocalDateTime.now().minusMinutes(10));
@@ -107,7 +107,7 @@ class MissionServiceTest {
         // given
         Member member1 = createMemberWithIdAndNickname(1L, "member1");
         Member member2 = createMemberWithIdAndNickname(2L, "member2");
-        Group group = createExgroup();
+        Group group = createGroup();
         group.updateStartDateAndEndDate();
 
         Mission completeMission1 = createCompleteMission(createExercise(), member1, group);
@@ -142,7 +142,7 @@ class MissionServiceTest {
     @DisplayName("누적 미션 순위를 조회하는 메소드에서 미션이 없는 경우 빈 리스트 반환 테스트")
     void readCumulativeMissionRankReturnsEmptyListWhenNoMissions() throws Exception {
         // given
-        Group group = createExgroup();
+        Group group = createGroup();
         group.updateStartDateAndEndDate();
 
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));

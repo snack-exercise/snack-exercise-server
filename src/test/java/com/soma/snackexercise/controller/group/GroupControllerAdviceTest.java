@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soma.snackexercise.advice.ExceptionAdvice;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
+import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
 import com.soma.snackexercise.exception.*;
 import com.soma.snackexercise.service.group.GroupService;
 import com.soma.snackexercise.utils.TestUserArgumentResolver;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static com.soma.snackexercise.advice.ErrorCode.*;
 import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
+import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createJoinFriendGroupRequest;
 import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -137,7 +139,7 @@ public class GroupControllerAdviceTest {
 
     @Test
     @DisplayName("회원이 운동 그룹을 탈퇴하는 메소드에서 JoinListNotFoundException 발싱시 적절한 응답을 반환하는지 테스트")
-    void leaveGroupByMemberJoinListNotFoundExceptionTest () throws Exception {
+    void leaveGroupByMemberJoinListNotFoundExceptionTest() throws Exception {
         // given
         Long groupId = 1L;
         doThrow(JoinListNotFoundException.class).when(groupService).leaveGroupByMember(anyLong(), anyString());
@@ -154,7 +156,7 @@ public class GroupControllerAdviceTest {
 
     @Test
     @DisplayName("운동 그룹 시작 메소드에서 NotExgroupHostException 발싱시 적절한 응답을 반환하는지 테스트")
-    void startGroupNotExgroupHostExceptionTest () throws Exception {
+    void startGroupNotExgroupHostExceptionTest() throws Exception {
         // given
         Long groupId = 1L;
         given(groupService.startGroup(anyLong(), anyString())).willThrow(NotGroupHostException.class);
@@ -167,5 +169,43 @@ public class GroupControllerAdviceTest {
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.code").value(NOT_GROUP_HOST_EXCEPTION.getCode()))
                 .andExpect(jsonPath("$.result.message").value(NOT_GROUP_HOST_EXCEPTION.getMessage()));
+    }
+
+    @Test
+    @DisplayName("코드로 지인 그룹 가입 메소드에서 AlreadyJoinedGroupException 발생시 적절한 응답을 반환하는지 테스트")
+    void joinFriendGroupAlreadyJoinedGroupExceptionTest() throws Exception {
+        // given
+        JoinFriendGroupRequest request = createJoinFriendGroupRequest();
+        doThrow(AlreadyJoinedGroupException.class).when(groupService).joinFriendGroup(any(), anyString());
+
+        // when, then
+        mockMvc.perform(
+                        post("/api/groups/join/code")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                ).andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.code").value(ALREADY_JOINED_GROUP_EXCEPTION.getCode()))
+                .andExpect(jsonPath("$.result.message").value(ALREADY_JOINED_GROUP_EXCEPTION.getMessage()));
+    }
+
+    @Test
+    @DisplayName("코드로 지인 그룹 가입 메소드에서 ExceedsKickOutLimitException 발생시 적절한 응답을 반환하는지 테스트")
+    void joinFriendGroupExceedsKickOutLimitExceptionTest() throws Exception {
+        // given
+        JoinFriendGroupRequest request = createJoinFriendGroupRequest();
+        doThrow(ExceedsKickOutLimitException.class).when(groupService).joinFriendGroup(any(), anyString());
+
+        // when, then
+        mockMvc.perform(
+                        post("/api/groups/join/code")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                ).andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.code").value(EXCEEDS_KICK_OUT_LIMIT_EXCEPTION.getCode()))
+                .andExpect(jsonPath("$.result.message").value(EXCEEDS_KICK_OUT_LIMIT_EXCEPTION.getMessage()));
     }
 }

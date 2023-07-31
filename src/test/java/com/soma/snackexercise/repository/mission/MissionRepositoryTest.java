@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.soma.snackexercise.factory.entity.ExerciseFactory.createExercise;
-import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
 import static com.soma.snackexercise.factory.entity.MissionFactory.createCompleteMission;
 import static com.soma.snackexercise.factory.entity.MissionFactory.createNonCompleteMission;
@@ -50,7 +50,7 @@ class MissionRepositoryTest {
     @BeforeEach
     void setUp() {
         member = memberRepository.save(createMember());
-        group = groupRepository.save(createExgroup());
+        group = groupRepository.save(createGroup());
         exercise = exerciseRepository.save(createExercise());
     }
 

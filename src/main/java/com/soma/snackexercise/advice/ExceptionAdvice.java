@@ -40,24 +40,42 @@ public class ExceptionAdvice {
     }
 
     /*
-    Exgroup
+    Group
      */
     @ExceptionHandler(GroupNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response exgroupNotFoundExceptionHandler(GroupNotFoundException e){
+    public Response groupNotFoundExceptionHandler(GroupNotFoundException e){
         return Response.failure(GROUP_NOT_FOUND_EXCEPTION);
     }
 
     @ExceptionHandler(NotGroupHostException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Response notExgroupHostExceptionHandler (NotGroupHostException e){
+    public Response notGroupHostExceptionHandler (NotGroupHostException e){
         return Response.failure(NOT_GROUP_HOST_EXCEPTION);
     }
 
     @ExceptionHandler(NotGroupMemberException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public Response notExgroupMemberExceptionHandler (NotGroupMemberException e){
+    public Response notGroupMemberExceptionHandler (NotGroupMemberException e){
         return Response.failure(NOT_GROUP_MEMBER_EXCEPTION);
+    }
+
+    @ExceptionHandler(InvalidGroupCodeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response invalidGroupCodeExceptionHandler (InvalidGroupCodeException e){
+        return Response.failure(INVALID_GROUP_CODE_EXCEPTION);
+    }
+
+    @ExceptionHandler(AlreadyJoinedGroupException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Response alreadyJoinedGroupExceptionHandler (AlreadyJoinedGroupException e){
+        return Response.failure(ALREADY_JOINED_GROUP_EXCEPTION);
+    }
+
+    @ExceptionHandler(ExceedsKickOutLimitException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Response exceedsKickOutLimitExceptionHandler (ExceedsKickOutLimitException e){
+        return Response.failure(EXCEEDS_KICK_OUT_LIMIT_EXCEPTION);
     }
 
     /*
