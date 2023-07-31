@@ -3,7 +3,7 @@ package com.soma.snackexercise.domain.mission;
 
 import com.soma.snackexercise.domain.BaseTimeEntity;
 import com.soma.snackexercise.domain.exercise.Exercise;
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.exception.CalculateMinutesDiffException;
 import jakarta.persistence.*;
@@ -30,8 +30,8 @@ public class Mission extends BaseTimeEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exgroupId")
-    private Exgroup exgroup;
+    @JoinColumn(name = "groupId")
+    private Group group;
 
     private Integer calory; // 소모 칼로리
 
@@ -43,10 +43,10 @@ public class Mission extends BaseTimeEntity {
 
 
     @Builder
-    public Mission(Exercise exercise, Member member, Exgroup exgroup) {
+    public Mission(Exercise exercise, Member member, Group group) {
         this.exercise = exercise;
         this.member = member;
-        this.exgroup = exgroup;
+        this.group = group;
         this.alarmCount = 0;
     }
 

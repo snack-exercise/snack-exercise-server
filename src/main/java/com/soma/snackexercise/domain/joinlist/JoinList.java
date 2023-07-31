@@ -1,7 +1,7 @@
 package com.soma.snackexercise.domain.joinlist;
 
 import com.soma.snackexercise.domain.BaseEntity;
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,7 +21,7 @@ public class JoinList extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exgroupId")
-    private Exgroup exgroup;
+    private Group group;
 
     @Enumerated(EnumType.STRING)
     private JoinType joinType;
@@ -42,9 +42,9 @@ public class JoinList extends BaseEntity {
     }
 
     @Builder
-    public JoinList(Member member, Exgroup exgroup, JoinType joinType) {
+    public JoinList(Member member, Group group, JoinType joinType) {
         this.member = member;
-        this.exgroup = exgroup;
+        this.group = group;
         this.joinType = joinType;
         this.outCount = 0;
         this.executedMissionCount = 0;

@@ -19,7 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsByNickname(String nickname);
     // TODO : joinList에서 ACTIVE 조건 붙여야 될듯
-    @Query("SELECT new com.soma.snackexercise.dto.member.JoinListMemberDto(m, jl) FROM JoinList jl JOIN FETCH Member m ON jl.member = m WHERE jl.exgroup.id = :groupId")
+    @Query("SELECT new com.soma.snackexercise.dto.member.JoinListMemberDto(m, jl) FROM JoinList jl JOIN FETCH Member m ON jl.member = m WHERE jl.group.id = :groupId")
     List<JoinListMemberDto> findAllGroupMembers(@Param("groupId") Long groupId);
 
     Optional<Member> findByIdAndStatus(Long id, Status status);

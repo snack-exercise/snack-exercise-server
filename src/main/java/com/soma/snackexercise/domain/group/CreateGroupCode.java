@@ -1,8 +1,8 @@
-package com.soma.snackexercise.domain.exgroup;
+package com.soma.snackexercise.domain.group;
 
 import java.util.Random;
 
-public class CreateExgroupCode {
+public class CreateGroupCode {
 
     private static Random random = new Random();
 

@@ -1,10 +1,10 @@
-package com.soma.snackexercise.controller.exgroup;
+package com.soma.snackexercise.controller.group;
 
 
-import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupCreateRequest;
-import com.soma.snackexercise.dto.exgroup.response.ExgroupResponse;
-import com.soma.snackexercise.service.exgroup.ExgroupService;
+import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
+import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
+import com.soma.snackexercise.dto.group.response.GroupResponse;
+import com.soma.snackexercise.service.group.GroupService;
 import com.soma.snackexercise.util.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,15 +24,15 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Exgroup", description = "운동 그룹 API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/exgroups")
-public class ExgroupController {
+@RequestMapping("/api/groups")
+public class GroupController {
 
-    private final ExgroupService exGroupService;
+    private final GroupService exGroupService;
 
     @Operation(summary = "운동 그룹 생성", description = "하나의 운동 그룹을 생성합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Response create(@RequestBody ExgroupCreateRequest groupCreateRequest, @AuthenticationPrincipal UserDetails loginUser){
+    public Response create(@RequestBody GroupCreateRequest groupCreateRequest, @AuthenticationPrincipal UserDetails loginUser){
         return Response.success(exGroupService.create(groupCreateRequest, loginUser.getUsername()));
     }
 
@@ -56,13 +56,13 @@ public class ExgroupController {
             description = "하나의 운동 그룹을 수정합니다.",
             security = { @SecurityRequirement(name = "bearer-key") },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "운동 그룹 수정 성공", content = @Content(schema = @Schema(implementation = ExgroupResponse.class)))
+                    @ApiResponse(responseCode = "200", description = "운동 그룹 수정 성공", content = @Content(schema = @Schema(implementation = GroupResponse.class)))
             })
     @Parameter(name = "groupId", description = "수정할 운동 그룹 ID", required = true,  in = ParameterIn.PATH)
     @PatchMapping("/{groupId}")
     @ResponseStatus(HttpStatus.OK)
     public Response update(@PathVariable Long groupId,
-                           @RequestBody ExgroupUpdateRequest request,
+                           @RequestBody GroupUpdateRequest request,
                            @AuthenticationPrincipal UserDetails loginUser) {
         return Response.success(exGroupService.update(groupId, loginUser.getUsername(), request));
     }
@@ -102,4 +102,7 @@ public class ExgroupController {
     public Response startGroup(@PathVariable("groupId") Long groupId, @AuthenticationPrincipal UserDetails loginUser){
         return Response.success(exGroupService.startGroup(groupId, loginUser.getUsername()));
     }
+
+//    @PostMapping("/")
+//    public Response joinFriendGroup()
 }

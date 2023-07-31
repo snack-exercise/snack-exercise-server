@@ -1,13 +1,13 @@
 package com.soma.snackexercise.service.mission;
 
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
 import com.soma.snackexercise.dto.mission.response.MemberMissionDto;
 import com.soma.snackexercise.dto.mission.response.RankingResponse;
 import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
-import com.soma.snackexercise.exception.ExgroupNotFoundException;
-import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
+import com.soma.snackexercise.exception.GroupNotFoundException;
+import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.mission.MissionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.soma.snackexercise.factory.entity.ExerciseFactory.createExercise;
-import static com.soma.snackexercise.factory.entity.ExgroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMemberWithIdAndNickname;
 import static com.soma.snackexercise.factory.entity.MissionFactory.createCompleteMission;
@@ -45,7 +45,7 @@ class MissionServiceTest {
     private MissionRepository missionRepository;
 
     @Mock
-    private ExgroupRepository exgroupRepository;
+    private GroupRepository groupRepository;
 
     @Test
     @DisplayName("오늘의 미션 결과를 조회하는 메소드 성공 테스트")
@@ -56,7 +56,7 @@ class MissionServiceTest {
         Mission completeMission = createCompleteMission(createExercise(), member1, createExgroup());
         Mission nonCompleteMission = createNonCompleteMission(createExercise(), member2, createExgroup());
 
-        given(exgroupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createExgroup()));
+        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createExgroup()));
         given(missionRepository.findMissionsByGroupIdWithinDateRange(anyLong(), any(), any())).willReturn(List.of(completeMission, nonCompleteMission));
 
         // when
@@ -79,7 +79,7 @@ class MissionServiceTest {
         setCreatedAt(completeMission1, LocalDateTime.now());
         setCreatedAt(completeMission2, LocalDateTime.now().minusMinutes(10));
 
-        given(exgroupRepository.existsByIdAndStatus(anyLong(), any())).willReturn(true);
+        given(groupRepository.existsByIdAndStatus(anyLong(), any())).willReturn(true);
         given(missionRepository.findFinishedMissionsByGroupIdWithinDateRange(anyLong(), any(), any())).willReturn(List.of(completeMission1, completeMission2));
 
         // when
@@ -95,10 +95,10 @@ class MissionServiceTest {
     @DisplayName("오늘의 미션 순위를 조회하는 메소드에서 그룹 조회 예외 클래스 발생 테스트")
     void readTodayMissionRankExgroupNotFoundExceptionTest() throws Exception {
         // given
-        given(exgroupRepository.existsByIdAndStatus(anyLong(), any())).willReturn(false);
+        given(groupRepository.existsByIdAndStatus(anyLong(), any())).willReturn(false);
 
         // when, then
-        assertThatThrownBy(() -> missionService.readTodayMissionRank(1L)).isInstanceOf(ExgroupNotFoundException.class);
+        assertThatThrownBy(() -> missionService.readTodayMissionRank(1L)).isInstanceOf(GroupNotFoundException.class);
     }
 
     @Test
@@ -107,16 +107,16 @@ class MissionServiceTest {
         // given
         Member member1 = createMemberWithIdAndNickname(1L, "member1");
         Member member2 = createMemberWithIdAndNickname(2L, "member2");
-        Exgroup exgroup = createExgroup();
-        exgroup.updateStartDateAndEndDate();
+        Group group = createExgroup();
+        group.updateStartDateAndEndDate();
 
-        Mission completeMission1 = createCompleteMission(createExercise(), member1, exgroup);
-        Mission completeMission2 = createCompleteMission(createExercise(), member2, exgroup);
+        Mission completeMission1 = createCompleteMission(createExercise(), member1, group);
+        Mission completeMission2 = createCompleteMission(createExercise(), member2, group);
 
         setCreatedAt(completeMission1, LocalDateTime.now());
         setCreatedAt(completeMission2, LocalDateTime.now().minusMinutes(10));
 
-        given(exgroupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(exgroup));
+        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));
         given(missionRepository.findFinishedMissionsByGroupIdWithinDateRange(anyLong(), any(), any())).willReturn(List.of(completeMission1, completeMission2));
 
         // when
@@ -132,20 +132,20 @@ class MissionServiceTest {
     @DisplayName("누적 미션 순위를 조회하는 메소드에서 그룹 조회 예외 클래스 발생 테스트")
     void readCumulativeMissionRankExgroupNotFoundExceptionTest() throws Exception {
         // given
-        given(exgroupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(null));
+        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(null));
 
         // when, then
-        assertThatThrownBy(() -> missionService.readCumulativeMissionRank(1L)).isInstanceOf(ExgroupNotFoundException.class);
+        assertThatThrownBy(() -> missionService.readCumulativeMissionRank(1L)).isInstanceOf(GroupNotFoundException.class);
     }
 
     @Test
     @DisplayName("누적 미션 순위를 조회하는 메소드에서 미션이 없는 경우 빈 리스트 반환 테스트")
     void readCumulativeMissionRankReturnsEmptyListWhenNoMissions() throws Exception {
         // given
-        Exgroup exgroup = createExgroup();
-        exgroup.updateStartDateAndEndDate();
+        Group group = createExgroup();
+        group.updateStartDateAndEndDate();
 
-        given(exgroupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(exgroup));
+        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));
         given(missionRepository.findFinishedMissionsByGroupIdWithinDateRange(anyLong(), any(), any())).willReturn(List.of());
 
         // when

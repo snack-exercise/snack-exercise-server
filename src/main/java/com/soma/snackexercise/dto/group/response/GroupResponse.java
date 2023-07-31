@@ -1,9 +1,9 @@
-package com.soma.snackexercise.dto.exgroup.response;
+package com.soma.snackexercise.dto.group.response;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExgroupResponse {
+public class GroupResponse {
     private Long id;
 
     private String name; // 그룹 이름
@@ -52,24 +52,24 @@ public class ExgroupResponse {
 
     private Integer checkMaxNum; // 일별 미션 수행 체크 최대 횟수
 
-    public static ExgroupResponse toDto(Exgroup exgroup) {
-        return new ExgroupResponse(
-                exgroup.getId(),
-                exgroup.getName(),
-                exgroup.getEmozi(),
-                exgroup.getColor(),
-                exgroup.getDescription(),
-                exgroup.getMaxMemberNum(),
-                exgroup.getGoalRelayNum(),
-                exgroup.getStartTime(),
-                exgroup.getEndTime(),
-                exgroup.getExistDays(),
-                exgroup.getStartDate(),
-                exgroup.getEndDate(),
-                exgroup.getPenalty(),
-                exgroup.getCode(),
-                exgroup.getCheckIntervalTime(),
-                exgroup.getCheckMaxNum()
+    public static GroupResponse toDto(Group group) {
+        return new GroupResponse(
+                group.getId(),
+                group.getName(),
+                group.getEmozi(),
+                group.getColor(),
+                group.getDescription(),
+                group.getMaxMemberNum(),
+                group.getGoalRelayNum(),
+                group.getStartTime(),
+                group.getEndTime(),
+                group.getExistDays(),
+                group.getStartDate(),
+                group.getEndDate(),
+                group.getPenalty(),
+                group.getCode(),
+                group.getCheckIntervalTime(),
+                group.getCheckMaxNum()
         );
     }
 }

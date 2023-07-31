@@ -1,12 +1,12 @@
-package com.soma.snackexercise.controller.exgroup;
+package com.soma.snackexercise.controller.group;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soma.snackexercise.advice.ExceptionAdvice;
-import com.soma.snackexercise.utils.TestUserArgumentResolver;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupCreateRequest;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
+import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
+import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.exception.*;
-import com.soma.snackexercise.service.exgroup.ExgroupService;
+import com.soma.snackexercise.service.group.GroupService;
+import com.soma.snackexercise.utils.TestUserArgumentResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static com.soma.snackexercise.advice.ErrorCode.*;
-import static com.soma.snackexercise.factory.dto.ExgroupCreateFactory.createExgroupCreateRequest;
-import static com.soma.snackexercise.factory.dto.ExgroupUpdateFactory.createExgroupUpdateRequest;
+import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
+import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
@@ -30,19 +30,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class ExgroupControllerAdviceTest {
+public class GroupControllerAdviceTest {
     @InjectMocks
-    private ExgroupController exgroupController;
+    private GroupController groupController;
 
     @Mock
-    private ExgroupService exgroupService;
+    private GroupService groupService;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(exgroupController)
+        mockMvc = MockMvcBuilders.standaloneSetup(groupController)
                 .setCustomArgumentResolvers(new TestUserArgumentResolver())
                 .setControllerAdvice(new ExceptionAdvice())
                 .build();
@@ -52,12 +52,12 @@ public class ExgroupControllerAdviceTest {
     @DisplayName("운동 그룹 생성 메소드에서 MemberNotFoundException 발생시 적절한 응답을 반환하는지 테스트")
     void createMemberNotFoundExceptionTest() throws Exception {
         // given
-        ExgroupCreateRequest request = createExgroupCreateRequest();
-        given(exgroupService.create(any(), anyString())).willThrow(MemberNotFoundException.class);
+        GroupCreateRequest request = createGroupCreateRequest();
+        given(groupService.create(any(), anyString())).willThrow(MemberNotFoundException.class);
 
         // when, then
         mockMvc.perform(
-                        post("/api/exgroups")
+                        post("/api/groups")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND_EXCEPTION.getCode()))
@@ -65,18 +65,18 @@ public class ExgroupControllerAdviceTest {
     }
 
     @Test
-    @DisplayName("운동 그룹 조회 메소드에서 ExgroupNotFoundExceptionTest 발생시 적절한 응답을 반환하는지 테스트")
+    @DisplayName("운동 그룹 조회 메소드에서 GroupNotFoundExceptionTest 발생시 적절한 응답을 반환하는지 테스트")
     void readExgroupNotFoundExceptionTest() throws Exception {
         // given
         Long groupId = 1L;
-        given(exgroupService.read(anyLong())).willThrow(ExgroupNotFoundException.class);
+        given(groupService.read(anyLong())).willThrow(GroupNotFoundException.class);
 
         // when, then
         mockMvc.perform(
-                        get("/api/exgroups/{groupId}", groupId)
+                        get("/api/groups/{groupId}", groupId)
                 ).andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.code").value(EXGROUP_NOT_FOUND_EXCEPTION.getCode()))
-                .andExpect(jsonPath("$.result.message").value(EXGROUP_NOT_FOUND_EXCEPTION.getMessage()));
+                .andExpect(jsonPath("$.code").value(GROUP_NOT_FOUND_EXCEPTION.getCode()))
+                .andExpect(jsonPath("$.result.message").value(GROUP_NOT_FOUND_EXCEPTION.getMessage()));
     }
 
     @Test
@@ -84,19 +84,19 @@ public class ExgroupControllerAdviceTest {
     void updateNotExgroupHostExceptionTest() throws Exception {
         // given
         Long groupId = 1L;
-        ExgroupUpdateRequest request = createExgroupUpdateRequest();
-        given(exgroupService.update(anyLong(), anyString(), any())).willThrow(NotExgroupHostException.class);
+        GroupUpdateRequest request = createGroupUpdateRequest();
+        given(groupService.update(anyLong(), anyString(), any())).willThrow(NotGroupHostException.class);
 
         // when, then
         mockMvc.perform(
-                        patch("/api/exgroups/{groupId}", groupId)
+                        patch("/api/groups/{groupId}", groupId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.code").value(NOT_EXGROUP_HOST_EXCEPTION.getCode()))
-                .andExpect(jsonPath("$.result.message").value(NOT_EXGROUP_HOST_EXCEPTION.getMessage()));
+                .andExpect(jsonPath("$.code").value(NOT_GROUP_HOST_EXCEPTION.getCode()))
+                .andExpect(jsonPath("$.result.message").value(NOT_GROUP_HOST_EXCEPTION.getMessage()));
     }
 
     @Test
@@ -105,11 +105,11 @@ public class ExgroupControllerAdviceTest {
         // given
         Long groupId = 1L;
         Long memberId = 1L;
-        doThrow(JoinListNotFoundException.class).when(exgroupService).deleteMemberByHost(anyLong(), anyLong(), anyString());
+        doThrow(JoinListNotFoundException.class).when(groupService).deleteMemberByHost(anyLong(), anyLong(), anyString());
 
         // when, then
         mockMvc.perform(
-                        delete("/api/exgroups/{groupId}/members/{memberId}", groupId, memberId)
+                        delete("/api/groups/{groupId}/members/{memberId}", groupId, memberId)
                 ).andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -123,16 +123,16 @@ public class ExgroupControllerAdviceTest {
         // given
         Long groupId = 1L;
         Long memberId = 1L;
-        doThrow(NotExgroupMemberException.class).when(exgroupService).deleteMemberByHost(anyLong(), anyLong(), anyString());
+        doThrow(NotGroupMemberException.class).when(groupService).deleteMemberByHost(anyLong(), anyLong(), anyString());
 
         // when, then
         mockMvc.perform(
-                        delete("/api/exgroups/{groupId}/members/{memberId}", groupId, memberId)
+                        delete("/api/groups/{groupId}/members/{memberId}", groupId, memberId)
                 ).andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.code").value(NOT_EXGROUP_MEMBER_EXCEPTION.getCode()))
-                .andExpect(jsonPath("$.result.message").value(NOT_EXGROUP_MEMBER_EXCEPTION.getMessage()));
+                .andExpect(jsonPath("$.code").value(NOT_GROUP_MEMBER_EXCEPTION.getCode()))
+                .andExpect(jsonPath("$.result.message").value(NOT_GROUP_MEMBER_EXCEPTION.getMessage()));
     }
 
     @Test
@@ -140,11 +140,11 @@ public class ExgroupControllerAdviceTest {
     void leaveGroupByMemberJoinListNotFoundExceptionTest () throws Exception {
         // given
         Long groupId = 1L;
-        doThrow(JoinListNotFoundException.class).when(exgroupService).leaveGroupByMember(anyLong(), anyString());
+        doThrow(JoinListNotFoundException.class).when(groupService).leaveGroupByMember(anyLong(), anyString());
 
         // when, then
         mockMvc.perform(
-                        delete("/api/exgroups/{groupId}", groupId)
+                        delete("/api/groups/{groupId}", groupId)
                 ).andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -157,15 +157,15 @@ public class ExgroupControllerAdviceTest {
     void startGroupNotExgroupHostExceptionTest () throws Exception {
         // given
         Long groupId = 1L;
-        given(exgroupService.startGroup(anyLong(), anyString())).willThrow(NotExgroupHostException.class);
+        given(groupService.startGroup(anyLong(), anyString())).willThrow(NotGroupHostException.class);
 
         // when, then
         mockMvc.perform(
-                        patch("/api/exgroups/{groupId}/initiation", groupId)
+                        patch("/api/groups/{groupId}/initiation", groupId)
                 ).andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.code").value(NOT_EXGROUP_HOST_EXCEPTION.getCode()))
-                .andExpect(jsonPath("$.result.message").value(NOT_EXGROUP_HOST_EXCEPTION.getMessage()));
+                .andExpect(jsonPath("$.code").value(NOT_GROUP_HOST_EXCEPTION.getCode()))
+                .andExpect(jsonPath("$.result.message").value(NOT_GROUP_HOST_EXCEPTION.getMessage()));
     }
 }

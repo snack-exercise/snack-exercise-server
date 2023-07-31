@@ -1,13 +1,13 @@
 package com.soma.snackexercise.service.mission;
 
-import com.soma.snackexercise.domain.exgroup.Exgroup;
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
 import com.soma.snackexercise.dto.mission.response.MemberMissionDto;
 import com.soma.snackexercise.dto.mission.response.RankingResponse;
 import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
-import com.soma.snackexercise.exception.ExgroupNotFoundException;
-import com.soma.snackexercise.repository.exgroup.ExgroupRepository;
+import com.soma.snackexercise.exception.GroupNotFoundException;
+import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.mission.MissionRepository;
 import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ import java.util.Map;
 public class MissionService {
 
     private final MissionRepository missionRepository;
-    private final ExgroupRepository exgroupRepository;
+    private final GroupRepository groupRepository;
 
     /**
      * 오늘의 미션 결과를 조회합니다.
@@ -39,7 +39,7 @@ public class MissionService {
      */
     public TodayMissionResultResponse readTodayMissionResults(Long exgroupId) {
         // 1. 그룹의 종료일자
-        Exgroup exgroup = exgroupRepository.findByIdAndStatus(exgroupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+        Group group = groupRepository.findByIdAndStatus(exgroupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
 
         // 2. 그룹이 현재 완료한 릴레이 횟수
         LocalDateTime now = LocalDateTime.now();// 현재 날짜와 시간 가져오기
@@ -52,7 +52,7 @@ public class MissionService {
         List<Mission> missions = missionRepository.findMissionsByGroupIdWithinDateRange(exgroupId, todayMidnight, tomorrowMidnight);
         List<MemberMissionDto> missionFlow = missions.stream().map(MemberMissionDto::toDto).toList();
 
-        return new TodayMissionResultResponse(missionFlow, currentFinishedRelayCount, exgroup.getEndDate());
+        return new TodayMissionResultResponse(missionFlow, currentFinishedRelayCount, group.getEndDate());
     }
 
     /**
@@ -61,8 +61,8 @@ public class MissionService {
      * @return 오늘의 미션 순위
      */
     public Object readTodayMissionRank(Long exgroupId) {
-        if(!exgroupRepository.existsByIdAndStatus(exgroupId, Status.ACTIVE)){
-            throw new ExgroupNotFoundException();
+        if(!groupRepository.existsByIdAndStatus(exgroupId, Status.ACTIVE)){
+            throw new GroupNotFoundException();
         }
 
         // 1. 오늘 날짜의 모든 미션 조회
@@ -81,9 +81,9 @@ public class MissionService {
      * @return 누적 미션 순위
      */
     public Object readCumulativeMissionRank(Long exgroupId) {
-        Exgroup exgroup = exgroupRepository.findByIdAndStatus(exgroupId, Status.ACTIVE).orElseThrow(ExgroupNotFoundException::new);
+        Group group = groupRepository.findByIdAndStatus(exgroupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
 
-        List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(exgroupId, exgroup.getStartDate().atStartOfDay(), exgroup.getEndDate().atStartOfDay().plusDays(1));
+        List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(exgroupId, group.getStartDate().atStartOfDay(), group.getEndDate().atStartOfDay().plusDays(1));
 
         return calcRankFromMissionList(missions);
     }

@@ -1,13 +1,10 @@
-package com.soma.snackexercise.domain.exgroup;
+package com.soma.snackexercise.domain.group;
 
 
 import com.soma.snackexercise.domain.BaseEntity;
-import com.soma.snackexercise.dto.exgroup.request.ExgroupUpdateRequest;
+import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.exception.MaxMemberNumLessThanCurrentException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,8 +13,9 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "Exgroup")
 @Entity
-public class Exgroup extends BaseEntity {
+public class Group extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -62,7 +60,7 @@ public class Exgroup extends BaseEntity {
         this.maxMemberNum = newMaxMemberNum;
     }
 
-    public void update(ExgroupUpdateRequest request) {
+    public void update(GroupUpdateRequest request) {
         this.name = request.getName();
         this.emozi = request.getEmozi();
         this.color = request.getColor();
@@ -81,10 +79,10 @@ public class Exgroup extends BaseEntity {
     }
 
     @Builder
-    public Exgroup(String name, String emozi, String color, String description,
-                   Integer maxMemberNum, Integer goalRelayNum, LocalTime startTime,
-                   LocalTime endTime, Integer existDays, String penalty, String code,
-                   Integer checkIntervalTime, Integer checkMaxNum) {
+    public Group(String name, String emozi, String color, String description,
+                 Integer maxMemberNum, Integer goalRelayNum, LocalTime startTime,
+                 LocalTime endTime, Integer existDays, String penalty, String code,
+                 Integer checkIntervalTime, Integer checkMaxNum) {
         this.name = name;
         this.emozi = emozi;
         this.color = color;
