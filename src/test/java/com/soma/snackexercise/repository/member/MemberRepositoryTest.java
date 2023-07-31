@@ -20,7 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -102,7 +102,7 @@ public class MemberRepositoryTest {
         // given
         Member member1 = memberRepository.save(createMember());
         Member member2 = memberRepository.save(createMember());
-        group = groupRepository.save(createExgroup());
+        group = groupRepository.save(createGroup());
         joinList = joinListRepository.save(createJoinListForMember(member1, group));
         joinList = joinListRepository.save(createJoinListForMember(member2, group));
         clear();

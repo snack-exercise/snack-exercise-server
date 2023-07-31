@@ -5,7 +5,7 @@ import com.soma.snackexercise.domain.group.Group;
 import java.time.LocalTime;
 
 public class GroupFactory {
-    public static Group createExgroup() {
+    public static Group createGroup() {
         return Group.builder()
                 .name("name")
                 .emozi("emozi")
@@ -23,7 +23,7 @@ public class GroupFactory {
                 .build();
     }
 
-    public static Group createExgroup(String name) {
+    public static Group createGroup(String name) {
         return Group.builder()
                 .name(name)
                 .emozi("emozi")

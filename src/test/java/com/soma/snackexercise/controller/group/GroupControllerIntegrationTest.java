@@ -31,7 +31,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
 import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
-import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForHost;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
@@ -117,7 +117,7 @@ public class GroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void readTest() throws Exception {
         // given
-        Group group = groupRepository.save(createExgroup());
+        Group group = groupRepository.save(createGroup());
         clear();
 
         // when, then
@@ -134,7 +134,7 @@ public class GroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void readAllMembersTest() throws Exception{
         // given
-        Group group = groupRepository.save(createExgroup());
+        Group group = groupRepository.save(createGroup());
         Member member1 = memberRepository.save(createMember());
         Member member2 = memberRepository.save(createMember());
         joinListRepository.save(createJoinListForHost(member1, group));
@@ -153,7 +153,7 @@ public class GroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void updateTest() throws Exception {
         // given
-        Group group = groupRepository.save(createExgroup());
+        Group group = groupRepository.save(createGroup());
         joinListRepository.save(createJoinListForHost(member, group));
         GroupUpdateRequest request = createGroupUpdateRequest();
         clear();
@@ -172,7 +172,7 @@ public class GroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void deleteMemberByHostTest() throws Exception {
         // given
-        Group group = groupRepository.save(createExgroup());
+        Group group = groupRepository.save(createGroup());
         Member targetMember = memberRepository.save(createMember());
         JoinList hostJoinList = joinListRepository.save(createJoinListForHost(member, group));
         JoinList targetMemberJoinList = joinListRepository.save(createJoinListForMember(targetMember, group));
@@ -194,7 +194,7 @@ public class GroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void leaveGroupByMemberTest() throws Exception {
         // given
-        Group group = groupRepository.save(createExgroup());
+        Group group = groupRepository.save(createGroup());
         JoinList joinList = joinListRepository.save(createJoinListForMember(member, group));
         clear();
 
@@ -213,7 +213,7 @@ public class GroupControllerIntegrationTest {
     @WithMockUser(username = "test")
     void startGroupTest() throws Exception {
         // given
-        Group group = groupRepository.save(createExgroup());
+        Group group = groupRepository.save(createGroup());
         joinListRepository.save(createJoinListForHost(member, group));
         clear();
 

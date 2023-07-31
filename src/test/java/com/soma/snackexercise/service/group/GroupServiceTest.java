@@ -28,7 +28,7 @@ import static com.soma.snackexercise.domain.joinlist.JoinType.HOST;
 import static com.soma.snackexercise.domain.joinlist.JoinType.MEMBER;
 import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
 import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
-import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForHost;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
@@ -99,7 +99,7 @@ class GroupServiceTest {
     @DisplayName("운동 그룹 조회 메소드 성공 테스트")
     void readTest() {
         // given
-        Group group = createExgroup();
+        Group group = createGroup();
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));
 
         // when
@@ -125,7 +125,7 @@ class GroupServiceTest {
         // given
         Member member = createMember();
         Member host = createMember();
-        Group group = createExgroup();
+        Group group = createGroup();
 
         given(memberRepository.findAllGroupMembers(anyLong())).willReturn(
                 Arrays.asList(
@@ -147,7 +147,7 @@ class GroupServiceTest {
     void updateTest() {
         // given
         GroupUpdateRequest request = createGroupUpdateRequest();
-        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createExgroup()));
+        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createGroup()));
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(createMember()));
         given(joinListRepository.existsByGroupAndMemberAndJoinTypeAndStatus(any(), any(), any(), any())).willReturn(true);
         given(joinListRepository.countByGroupAndOutCountLessThanOneAndStatusEqualsActive(any())).willReturn(request.getMaxMemberNum());
@@ -169,7 +169,7 @@ class GroupServiceTest {
     void updateExceptionByNotExgroupHostExceptionTest() {
         // given
         GroupUpdateRequest request = createGroupUpdateRequest();
-        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createExgroup()));
+        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createGroup()));
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(createMember()));
         given(joinListRepository.existsByGroupAndMemberAndJoinTypeAndStatus(any(), any(), any(), any())).willReturn(false);
 
@@ -182,7 +182,7 @@ class GroupServiceTest {
     void updateExceptionByMaxMemberNumLessThanCurrentExceptionTest() {
         // given
         GroupUpdateRequest request = createGroupUpdateRequest();
-        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createExgroup()));
+        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(createGroup()));
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(createMember()));
         given(joinListRepository.existsByGroupAndMemberAndJoinTypeAndStatus(any(), any(), any(), any())).willReturn(true);
         given(joinListRepository.countByGroupAndOutCountLessThanOneAndStatusEqualsActive(any())).willReturn(request.getMaxMemberNum() + 1);
@@ -196,7 +196,7 @@ class GroupServiceTest {
     void deleteMemberByHostTest() {
         // given
         Member member = createMember();
-        Group group = createExgroup();
+        Group group = createGroup();
         JoinList joinList = createJoinListForMember(member, group);
 
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));
@@ -221,7 +221,7 @@ class GroupServiceTest {
     void deleteMemberByHostTestExceptionByNotExgroupHostExceptionTest() {
         // given
         Member member = createMember();
-        Group group = createExgroup();
+        Group group = createGroup();
         JoinList joinList = createJoinListForMember(member, group);
 
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));
@@ -239,7 +239,7 @@ class GroupServiceTest {
     void deleteMemberByHostTestExceptionByNotExgroupMemberExceptionTest() {
         // given
         Member member = createMember();
-        Group group = createExgroup();
+        Group group = createGroup();
         JoinList joinList = createJoinListForMember(member, group);
 
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));
@@ -259,7 +259,7 @@ class GroupServiceTest {
     void leaveGroupByMemberTest() {
         // given
         Member member = createMember();
-        Group group = createExgroup();
+        Group group = createGroup();
         JoinList joinList = createJoinListForMember(member, group);
 
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(member));
@@ -283,7 +283,7 @@ class GroupServiceTest {
     void leaveGroupByMemberByHost() {
         // given
         Member member = createMember();
-        Group group = createExgroup();
+        Group group = createGroup();
         JoinList joinList = createJoinListForHost(member, group);
 
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(member));
@@ -304,7 +304,7 @@ class GroupServiceTest {
     void leaveGroupByMemberByHostExceptionByJoinListNotFoundException() {
         // given
         Member member = createMember();
-        Group group = createExgroup();
+        Group group = createGroup();
         JoinList joinList = createJoinListForHost(member, group);
 
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(member));
@@ -322,7 +322,7 @@ class GroupServiceTest {
     void startGroupTest() {
         // given
         Member member = createMember();
-        Group group = createExgroup();
+        Group group = createGroup();
 
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(member));
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));
@@ -342,7 +342,7 @@ class GroupServiceTest {
     @DisplayName("방장이 그룹 시작하는 메소드에서 현재 사용자가 방장 권한이 아닐 때 예외 클래스 발생 테스트")
     void startGroupByNotExgroupHostExceptionTest() {
         Member member = createMember();
-        Group group = createExgroup();
+        Group group = createGroup();
 
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(member));
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));

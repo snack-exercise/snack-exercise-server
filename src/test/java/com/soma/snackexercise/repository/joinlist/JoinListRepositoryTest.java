@@ -20,7 +20,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static com.soma.snackexercise.factory.entity.GroupFactory.createExgroup;
+import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
 import static com.soma.snackexercise.factory.entity.MemberFactory.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +45,7 @@ class JoinListRepositoryTest {
     @BeforeEach
     void setUp() {
         member = memberRepository.save(createMember());
-        group = groupRepository.save(createExgroup());
+        group = groupRepository.save(createGroup());
         joinList = joinListRepository.save(createJoinListForMember(member, group));
         clear();
     }
@@ -122,6 +122,14 @@ class JoinListRepositoryTest {
 
         // then
         assertThat(count).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("그룹과 멤버와 상태가 주어질 때 joinList의 존재 여부를 확인하는 테스트")
+    void existsByGroupAndMemberAndStatusTest() {
+        // given
+        Member member = memberRepository.save(createMember());
+        Group group = groupRepository.save(createGroup());
     }
 
     void clear() {
