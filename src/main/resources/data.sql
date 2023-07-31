@@ -1,3 +1,6 @@
+ALTER TABLE Exgroup CONVERT TO CHARACTER SET utf8mb4;
+ALTER TABLE Member CONVERT TO CHARACTER SET utf8mb4;
+
 -- INSERT MEMBER
 INSERT INTO Member (id, name, profileImage, nickname, gender, socialType, email, fcmToken, status, createdAt, updatedAt, birthYear) VALUES (1, '오진서', null, '진서', 'MALE', 'KAKAO', 'jinseo@gmail.com', null, 'ACTIVE', '2023-07-21 14:49:54', '2023-07-21 14:49:54', '1999');
 INSERT INTO Member (id, name, profileImage, nickname, gender, socialType, email, fcmToken, status, createdAt, updatedAt, birthYear) VALUES (2, '정희수', null, '희수', 'FEMALE', 'KAKAO', 'heesu@gmail.com', null, 'ACTIVE', '2023-07-21 14:53:29', '2023-07-21 14:53:29', '2001');
