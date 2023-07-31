@@ -1,8 +1,9 @@
 package com.soma.snackexercise.controller.group;
 
 
-import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
+import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
+import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
 import com.soma.snackexercise.dto.group.response.GroupResponse;
 import com.soma.snackexercise.service.group.GroupService;
 import com.soma.snackexercise.util.response.Response;
@@ -27,13 +28,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/groups")
 public class GroupController {
 
-    private final GroupService exGroupService;
+    private final GroupService groupService;
 
     @Operation(summary = "운동 그룹 생성", description = "하나의 운동 그룹을 생성합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Response create(@RequestBody GroupCreateRequest groupCreateRequest, @AuthenticationPrincipal UserDetails loginUser){
-        return Response.success(exGroupService.create(groupCreateRequest, loginUser.getUsername()));
+        return Response.success(groupService.create(groupCreateRequest, loginUser.getUsername()));
     }
 
 
@@ -42,14 +43,14 @@ public class GroupController {
     @GetMapping("/{groupId}")
     @ResponseStatus(HttpStatus.OK)
     public Response read(@PathVariable("groupId") Long groupId){
-        return Response.success(exGroupService.read(groupId));
+        return Response.success(groupService.read(groupId));
     }
 
     @Operation(summary = "하나의 운동 그룹에 속한 모든 회원 조회", description = "하나의 운동 그룹에 속한 모든 회원을 조회합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @Parameter(name = "groupId", description = "조회할 운동 그룹 ID")
     @GetMapping("/{groupId}/members")
     public Response readAllMembers(@PathVariable("groupId") Long groupId){
-        return Response.success(exGroupService.getAllExgroupMembers(groupId));
+        return Response.success(groupService.getAllExgroupMembers(groupId));
     }
 
     @Operation(summary = "운동 그룹 수정",
@@ -64,7 +65,7 @@ public class GroupController {
     public Response update(@PathVariable Long groupId,
                            @RequestBody GroupUpdateRequest request,
                            @AuthenticationPrincipal UserDetails loginUser) {
-        return Response.success(exGroupService.update(groupId, loginUser.getUsername(), request));
+        return Response.success(groupService.update(groupId, loginUser.getUsername(), request));
     }
 
     @Operation(summary = "운동 그룹에서 방장이 회원 탈퇴",
@@ -78,7 +79,7 @@ public class GroupController {
     @DeleteMapping("/{groupId}/members/{memberId}")
     @ResponseStatus(HttpStatus.OK)
     public Response deleteMemberByHost(@PathVariable Long groupId, @PathVariable Long memberId, @AuthenticationPrincipal UserDetails loginUser) {
-        exGroupService.deleteMemberByHost(groupId, memberId, loginUser.getUsername());
+        groupService.deleteMemberByHost(groupId, memberId, loginUser.getUsername());
         return Response.success();
     }
 
@@ -91,7 +92,7 @@ public class GroupController {
     @Parameter(name = "groupId", description = "운동 그룹 ID", required = true,  in = ParameterIn.PATH)
     @DeleteMapping("/{groupId}")
     public Response leaveGroupByMember(@PathVariable Long groupId, @AuthenticationPrincipal UserDetails loginUser) {
-        exGroupService.leaveGroupByMember(groupId, loginUser.getUsername());
+        groupService.leaveGroupByMember(groupId, loginUser.getUsername());
         return Response.success();
     }
 
@@ -100,9 +101,14 @@ public class GroupController {
     @PatchMapping("/{groupId}/initiation")
     @ResponseStatus(HttpStatus.OK)
     public Response startGroup(@PathVariable("groupId") Long groupId, @AuthenticationPrincipal UserDetails loginUser){
-        return Response.success(exGroupService.startGroup(groupId, loginUser.getUsername()));
+        return Response.success(groupService.startGroup(groupId, loginUser.getUsername()));
     }
 
-//    @PostMapping("/")
-//    public Response joinFriendGroup()
+    @Operation(summary = "코드로 지인 그룹 가입하기", description = "코드로 그룹을 가입합니다.", security = { @SecurityRequirement(name = "bearer-key") })
+    @PostMapping("/join/code")
+    @ResponseStatus(HttpStatus.OK)
+    public Response joinFriendGroup(@RequestBody JoinFriendGroupRequest request, @AuthenticationPrincipal UserDetails loginUser) {
+        groupService.joinFriendGroup(request, loginUser.getUsername());
+        return Response.success();
+    }
 }

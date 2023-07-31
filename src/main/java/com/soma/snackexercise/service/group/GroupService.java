@@ -7,6 +7,7 @@ import com.soma.snackexercise.domain.joinlist.JoinType;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
+import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
 import com.soma.snackexercise.dto.group.response.GroupResponse;
 import com.soma.snackexercise.dto.group.response.GroupCreateResponse;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
@@ -182,5 +183,33 @@ public class GroupService {
         group.updateStartDateAndEndDate();
 
         return GroupResponse.toDto(group);
+    }
+
+    @Transactional
+    public void joinFriendGroup(JoinFriendGroupRequest request, String email) {
+        Group group = groupRepository.findByCodeAndStatus(request.getCode(), Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+
+        validateJoinGroup(group, member);
+
+        joinListRepository.save(
+                JoinList.builder()
+                .member(member)
+                .group(group)
+                .joinType(JoinType.MEMBER).build());
+    }
+
+    private void validateJoinGroup(Group group, Member member) {
+        final int KICK_OUT_LIMIT = 2;
+
+        // 그룹에 이미 참여하고 있다면 예외 발생
+        if (joinListRepository.existsByGroupAndMemberAndStatus(group, member, Status.ACTIVE)) {
+            throw new AlreadyJoinedGroupException();
+        }
+
+        // 그룹 강퇴 횟수가 2이상이라면 예외 발생
+        if (joinListRepository.existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus(group, member, KICK_OUT_LIMIT, Status.INACTIVE)) {
+            throw new ExceedsKickOutLimitException();
+        }
     }
 }
