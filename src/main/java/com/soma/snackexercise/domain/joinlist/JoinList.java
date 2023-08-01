@@ -20,7 +20,7 @@ public class JoinList extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exgroupId")
+    @JoinColumn(name = "groupId")
     private Group group;
 
     @Enumerated(EnumType.STRING)
