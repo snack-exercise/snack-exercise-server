@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(originPatterns = "http://localhost:3000")
 public class SignupController {
     private final SignupService signupService;
 
