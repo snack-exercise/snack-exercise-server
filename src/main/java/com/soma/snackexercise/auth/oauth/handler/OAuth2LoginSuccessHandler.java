@@ -30,26 +30,20 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         try {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
+            String refreshToken = jwtService.createRefreshToken(oAuth2User.getEmail());
+            jwtService.sendRefreshToken(response, refreshToken);
+
             if (oAuth2User.getRole() == Role.GUEST) {
-                String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-                jwtService.sendAccessToken(response, accessToken);
                 response.sendRedirect("http://localhost:3000/signup");
 
-                log.info("OAuth2 Login 성공");
+                log.info("새로운 회원가입으로 분기");
             }else{
-                loginSuccess(response, oAuth2User);
+                response.sendRedirect("http://localhost:3000/login");
+                log.info("기존 회원으로 분기");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw e;
         }
-    }
-
-    private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User) throws IOException {
-        String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-        String refreshToken = jwtService.createRefreshToken(oAuth2User.getEmail());
-
-        jwtService.sendAccessToken(response, accessToken);
-        jwtService.sendRefreshToken(response, refreshToken);
-        jwtService.updateRefreshToken(oAuth2User.getEmail(), refreshToken);
     }
 }
