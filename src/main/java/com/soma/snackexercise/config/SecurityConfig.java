@@ -9,6 +9,7 @@ import com.soma.snackexercise.auth.oauth.service.CustomOAuth2UserService;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
