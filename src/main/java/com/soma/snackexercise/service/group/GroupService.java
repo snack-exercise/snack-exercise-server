@@ -5,11 +5,12 @@ import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.joinlist.JoinType;
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
+import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
-import com.soma.snackexercise.dto.group.response.GroupResponse;
 import com.soma.snackexercise.dto.group.response.GroupCreateResponse;
+import com.soma.snackexercise.dto.group.response.GroupResponse;
+import com.soma.snackexercise.dto.group.response.JoinGroupResponse;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.exception.*;
@@ -211,5 +212,15 @@ public class GroupService {
         if (joinListRepository.existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus(group, member, KICK_OUT_LIMIT, Status.INACTIVE)) {
             throw new ExceedsKickOutLimitException();
         }
+    }
+
+    public List<JoinGroupResponse> readAllJoinGroups(String email) {
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+
+        // 회원이 가입한 모든 그룹 조회
+        List<JoinList> joinLists = joinListRepository.findAllActiveJoinGroupsByMember(member);
+
+        // 그룹 ID, 그룹 명, 현재 미션 진행중인 회원의 ID 추출
+        return joinLists.stream().map(joinList -> JoinGroupResponse.toDto(joinList.getGroup())).toList();
     }
 }

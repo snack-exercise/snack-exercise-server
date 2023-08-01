@@ -111,4 +111,11 @@ public class GroupController {
         groupService.joinFriendGroup(request, loginUser.getUsername());
         return Response.success();
     }
+
+    @Operation(summary = "회원이 현재 가입되어있는 모든 그룹 조회하기", description = "가입된 모든 그룹을 조회합니다.", security = { @SecurityRequirement(name = "bearer-key") })
+    @GetMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readAllJoinGroups(@AuthenticationPrincipal UserDetails loginUser) {
+        return Response.success(groupService.readAllJoinGroups(loginUser.getUsername()));
+    }
 }
