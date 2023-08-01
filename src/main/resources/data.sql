@@ -1,5 +1,3 @@
-ALTER TABLE Exgroup CONVERT TO CHARACTER SET utf8mb4;
-ALTER TABLE Member CONVERT TO CHARACTER SET utf8mb4;
 
 -- INSERT MEMBER
 INSERT INTO Member (id, name, profileImage, nickname, gender, socialType, email, fcmToken, status, createdAt, updatedAt, birthYear) VALUES (1, '오진서', null, '진서', 'MALE', 'KAKAO', 'jinseo@gmail.com', null, 'ACTIVE', '2023-07-21 14:49:54', '2023-07-21 14:49:54', '1999');
@@ -17,14 +15,14 @@ INSERT INTO Exgroup (id, name, emozi, color, maxMemberNum, startTime, endTime, d
 ', '꼴등 스쿼트 50개 영상찍어 올리기', '156398', '2023-07-21 23:58:14', '2023-07-21 23:55:26', null, 10, 3, NULL, NULL, 14, 8, 'ACTIVE');
 
 -- INSERT JOINLIST
-INSERT INTO JoinList (id, memberId, exgroupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (1, 1, 2, '2023-07-21 15:05:14', 'HOST', '2023-07-21 15:05:14', 0, 'ACTIVE', 0);
-INSERT INTO JoinList (id, memberId, exgroupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (2, 1, 3, '2023-07-21 15:05:14', 'MEMBER', '2023-07-21 15:05:14', 0, 'ACTIVE', 1);
-INSERT INTO JoinList (id, memberId, exgroupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (3, 2, 2, '2023-07-21 15:05:14', 'MEMBER', '2023-07-21 15:05:14', 0, 'ACTIVE', 1);
-INSERT INTO JoinList (id, memberId, exgroupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (4, 3, 2, '2023-07-21 15:05:14', 'MEMBER', '2023-07-21 15:05:14', 0, 'ACTIVE', 1);
-INSERT INTO JoinList (id, memberId, exgroupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (5, 4, 3, '2023-07-21 15:05:14', 'HOST', '2023-07-21 15:05:14', 0, 'ACTIVE', 0);
-INSERT INTO JoinList (id, memberId, exgroupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (6, 5, 2, '2023-07-21 15:05:54', 'MEMBER', '2023-07-21 15:05:54', 0, 'ACTIVE', 1);
-INSERT INTO JoinList (id, memberId, exgroupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (7, 6, 2, '2023-07-21 15:05:54', 'MEMBER', '2023-07-21 15:05:54', 0, 'ACTIVE', 0);
-INSERT INTO JoinList (id, memberId, exgroupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (8, 7, 2, '2023-07-21 15:06:18', 'MEMBER', '2023-07-21 15:06:18', 0, 'ACTIVE', 0);
+INSERT INTO JoinList (id, memberId, groupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (1, 1, 2, '2023-07-21 15:05:14', 'HOST', '2023-07-21 15:05:14', 0, 'ACTIVE', 0);
+INSERT INTO JoinList (id, memberId, groupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (2, 1, 3, '2023-07-21 15:05:14', 'MEMBER', '2023-07-21 15:05:14', 0, 'ACTIVE', 1);
+INSERT INTO JoinList (id, memberId, groupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (3, 2, 2, '2023-07-21 15:05:14', 'MEMBER', '2023-07-21 15:05:14', 0, 'ACTIVE', 1);
+INSERT INTO JoinList (id, memberId, groupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (4, 3, 2, '2023-07-21 15:05:14', 'MEMBER', '2023-07-21 15:05:14', 0, 'ACTIVE', 1);
+INSERT INTO JoinList (id, memberId, groupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (5, 4, 3, '2023-07-21 15:05:14', 'HOST', '2023-07-21 15:05:14', 0, 'ACTIVE', 0);
+INSERT INTO JoinList (id, memberId, groupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (6, 5, 2, '2023-07-21 15:05:54', 'MEMBER', '2023-07-21 15:05:54', 0, 'ACTIVE', 1);
+INSERT INTO JoinList (id, memberId, groupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (7, 6, 2, '2023-07-21 15:05:54', 'MEMBER', '2023-07-21 15:05:54', 0, 'ACTIVE', 0);
+INSERT INTO JoinList (id, memberId, groupId, createdAt, joinType, updatedAt, outCount, status, executedMissionCount) VALUES (8, 7, 2, '2023-07-21 15:06:18', 'MEMBER', '2023-07-21 15:06:18', 0, 'ACTIVE', 0);
 
 -- INSERT EXERCISE
 INSERT INTO Exercise (minPerKcal, createdAt, id, updatedAt, description, exerciseCategory, name, status, videoLink) VALUES (10, '2023-07-23 11:16:04.000000', 1, '2023-07-23 11:16:03.000000', '어디서나 할 수 있는 전신 운동 입니다
@@ -40,10 +38,10 @@ INSERT INTO Exercise (minPerKcal, createdAt, id, updatedAt, description, exercis
 INSERT INTO Exercise (minPerKcal, createdAt, id, updatedAt, description, exerciseCategory, name, status, videoLink) VALUES (10, '2023-07-23 14:44:19.000000', 5, '2023-07-23 14:44:24.000000', '복근 운동', 'EXERCISE', '복근 운동', 'ACTIVE', 'https://www.youtube.com/shorts/1K0Ono8vo1o');
 
 -- INSERT MISSION
-INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, exgroupId, id, memberId, startAt, updatedAt) VALUES (0, 10, '2023-07-23 16:30:44.000000', '2023-07-23 16:40:42.000000', 1, 2, 1, 1, '2023-07-23 16:35:35.000000', '2023-07-23 16:30:44.000000');
-INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, exgroupId, id, memberId, startAt, updatedAt) VALUES (0, 15, '2023-07-23 16:40:42.000000', '2023-07-23 16:57:35.000000', 3, 2, 2, 3, '2023-07-23 16:50:42.000000', '2023-07-23 16:40:42.000000');
-INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, exgroupId, id, memberId, startAt, updatedAt) VALUES (2, 25, '2023-07-23 16:57:35.000000', '2023-07-23 18:08:29.000000', 4, 2, 3, 5, '2023-07-23 18:00:35.000000', '2023-07-23 16:57:35.000000');
-INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, exgroupId, id, memberId, startAt, updatedAt) VALUES (0, 20, '2023-07-23 18:08:29.000000', '2023-07-23 18:20:29.000000', 5, 2, 4, 6, '2023-07-23 18:11:29.000000', '2023-07-23 18:08:29.000000');
-INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, exgroupId, id, memberId, startAt, updatedAt) VALUES (0, null, '2023-07-23 18:20:29.000000', null, 3, 2, 5, 2, null, '2023-07-23 18:20:29.000000');
-INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, exgroupId, id, memberId, startAt, updatedAt) VALUES (0, null, '2023-07-23 09:00:48.000000', null, 2, 3, 6, 1, null, '2023-07-23 09:00:48.000000');
+INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, groupId, id, memberId, startAt, updatedAt) VALUES (0, 10, '2023-07-23 16:30:44.000000', '2023-07-23 16:40:42.000000', 1, 2, 1, 1, '2023-07-23 16:35:35.000000', '2023-07-23 16:30:44.000000');
+INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, groupId, id, memberId, startAt, updatedAt) VALUES (0, 15, '2023-07-23 16:40:42.000000', '2023-07-23 16:57:35.000000', 3, 2, 2, 3, '2023-07-23 16:50:42.000000', '2023-07-23 16:40:42.000000');
+INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, groupId, id, memberId, startAt, updatedAt) VALUES (2, 25, '2023-07-23 16:57:35.000000', '2023-07-23 18:08:29.000000', 4, 2, 3, 5, '2023-07-23 18:00:35.000000', '2023-07-23 16:57:35.000000');
+INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, groupId, id, memberId, startAt, updatedAt) VALUES (0, 20, '2023-07-23 18:08:29.000000', '2023-07-23 18:20:29.000000', 5, 2, 4, 6, '2023-07-23 18:11:29.000000', '2023-07-23 18:08:29.000000');
+INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, groupId, id, memberId, startAt, updatedAt) VALUES (0, null, '2023-07-23 18:20:29.000000', null, 3, 2, 5, 2, null, '2023-07-23 18:20:29.000000');
+INSERT INTO Mission (alarmCount, calory, createdAt, endAt, exerciseId, groupId, id, memberId, startAt, updatedAt) VALUES (0, null, '2023-07-23 09:00:48.000000', null, 2, 3, 6, 1, null, '2023-07-23 09:00:48.000000');
 
