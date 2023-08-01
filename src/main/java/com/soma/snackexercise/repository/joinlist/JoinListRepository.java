@@ -101,4 +101,13 @@ public interface JoinListRepository extends JpaRepository<JoinList, Long> {
 
     Boolean existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus(Group group, Member member, Integer outCount, Status status);
 
+
+    /**
+     * 회원이 현재 가입되어있으며, 종료되지 않은 그룹과 JoinList를 조회합니다.
+     * @param member 회원
+     * @return 회원이 가입한 JoinList와 Group
+     */
+    @Query("SELECT j from JoinList j JOIN FETCH j.group g WHERE j.member = :member AND j.status = 'ACTIVE'")
+    List<JoinList> findAllActiveJoinGroupsByMember(@Param("member") Member member);
+
 }
