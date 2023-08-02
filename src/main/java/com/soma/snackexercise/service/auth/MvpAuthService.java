@@ -35,9 +35,6 @@ public class MvpAuthService {
     }
 
     private void validateDuplicateNickname(MvpLoginRequest request) {
-        System.out.println("-----------000000---------------");
-        System.out.println(request.getNickname() + " " + memberRepository.existsByNickname(request.getNickname()));
-        System.out.println("-----------000000---------------");
         if (memberRepository.existsByNickname(request.getNickname())) {
             throw new MemberNicknameAlreadyExistsException();
         }
