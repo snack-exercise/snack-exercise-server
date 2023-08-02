@@ -1,5 +1,6 @@
 package com.soma.snackexercise.repository.mission;
 
+import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Mission 데이터에 접근하는 데 사용되는 Repository 인터페이스
@@ -62,4 +64,6 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
             "   WHERE m.group.id = :groupId AND :startDateTime <= m.createdAt AND m.createdAt < :endDateTime AND m.startAt IS NOT NULL" +
             "   ORDER BY m.createdAt")
     List<Mission> findFinishedMissionsByGroupIdWithinDateRange(@Param("groupId") Long groupId, @Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
+
+    Optional<Mission> findFirstByGroupAndMemberAndEndAtIsNotNullOrderByCreatedAtDesc(Group group, Member member);
 }
