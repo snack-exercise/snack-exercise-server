@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soma.snackexercise.auth.jwt.util.PasswordUtil;
 import com.soma.snackexercise.domain.member.Member;
+import com.soma.snackexercise.domain.member.Role;
 import com.soma.snackexercise.dto.auth.AccessTokenResponse;
 import com.soma.snackexercise.exception.ExpiredJwtException;
 import com.soma.snackexercise.exception.InvalidRefreshTokenException;
@@ -207,7 +208,7 @@ public class JwtService {
         UserDetails userDetailsUser = User.builder()
                 .username(myMember.getEmail())
                 .password(password)
-                .roles(myMember.getRole().name())
+                .roles(Role.USER.name())
                 .build();
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetailsUser, null,
