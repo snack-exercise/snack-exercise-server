@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request.requestMatchers(
-                        "/mvp/auth/login", "/error", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
+                        "/mvp/auth/login", "/mvp/auth/sign-up", "/error", "/swagger-ui/**", "/swagger-resources/**", "/v3/api-docs/**", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**",
                         "/api/sign-up", "/api/auth/**", "/health").permitAll()
                                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
