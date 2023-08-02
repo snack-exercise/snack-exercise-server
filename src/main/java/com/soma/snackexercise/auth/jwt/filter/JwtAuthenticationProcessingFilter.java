@@ -2,7 +2,6 @@ package com.soma.snackexercise.auth.jwt.filter;
 
 import com.soma.snackexercise.auth.jwt.service.JwtService;
 import com.soma.snackexercise.repository.member.MemberRepository;
-import com.soma.snackexercise.util.RedisUtil;
 import com.soma.snackexercise.util.constant.Status;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +26,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
-    private final RedisUtil redisUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

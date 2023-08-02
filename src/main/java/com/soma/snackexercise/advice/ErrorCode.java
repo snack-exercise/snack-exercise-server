@@ -12,6 +12,7 @@ public enum ErrorCode {
     /* Member */
     MEMBER_NOT_FOUND_EXCEPTION(-1100, "사용자가 존재하지 않습니다."),
     MEMBER_NAME_ALREADY_EXISTS_EXCEPTION(-1101, "유저 이름이 이미 존재합니다."),
+    MEMBER_NICKNAME_ALREADY_EXISTS_EXCEPTION(-1102, "유저 닉네임이 이미 존재합니다."),
 
     /* Group */
     // todo : 너무 에러메시지가 친절한가..?

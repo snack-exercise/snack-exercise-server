@@ -39,6 +39,12 @@ public class ExceptionAdvice {
         return Response.failure(MEMBER_NAME_ALREADY_EXISTS_EXCEPTION);
     }
 
+    @ExceptionHandler(MemberNicknameAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Response memberNicknameAlreadyExistsExceptionHandler(MemberNicknameAlreadyExistsException e) {
+        return Response.failure(MEMBER_NICKNAME_ALREADY_EXISTS_EXCEPTION);
+    }
+
     /*
     Group
      */
