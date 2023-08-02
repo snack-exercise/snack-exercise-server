@@ -31,7 +31,7 @@ public class MvpAuthService {
 
         String accessToken = jwtService.createAccessToken(email);
 
-        return new MvpLoginResponse(accessToken, member.getId());
+        return new MvpLoginResponse("Bearer " + accessToken, member.getId());
     }
 
     private void validateDuplicateNickname(MvpLoginRequest request) {
