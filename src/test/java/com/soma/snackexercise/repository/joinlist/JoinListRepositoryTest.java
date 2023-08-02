@@ -157,7 +157,6 @@ class JoinListRepositoryTest {
 
         clear();
 
-
         // when
         Boolean exists = joinListRepository.existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus(group, member, outCount, Status.ACTIVE);
         Boolean notExists = joinListRepository.existsByGroupAndMemberAndOutCountGreaterThanEqualAndStatus(group, member, outCount + 1, Status.ACTIVE);
@@ -165,6 +164,25 @@ class JoinListRepositoryTest {
         // then
         assertThat(exists).isTrue();
         assertThat(notExists).isFalse();
+    }
+
+    @Test
+    void findMaxExecutedMissionCountByGroupAndStatusTest() {
+        joinList = joinListRepository.save(createJoinListForMember(member, group));
+        joinList.addOneExecutedMissionCountCount();
+        joinList.addOneExecutedMissionCountCount();
+        joinListRepository.save(joinList);
+
+        Member member1 = memberRepository.save(createMember());
+        JoinList joinList1 = joinListRepository.save(createJoinListForMember(member1, group));
+        joinList1.addOneExecutedMissionCountCount();
+        joinList1.addOneExecutedMissionCountCount();
+        joinListRepository.save(joinList1);
+
+        clear();
+
+        int cnt = joinListRepository.findCurrentRoundPositionByGroupId(group, Status.ACTIVE);
+        assertThat(cnt).isEqualTo(2);
     }
 
     void clear() {

@@ -4,10 +4,15 @@ import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
 import com.soma.snackexercise.dto.mission.response.MemberMissionDto;
+import com.soma.snackexercise.dto.mission.response.MissionResponse;
 import com.soma.snackexercise.dto.mission.response.RankingResponse;
 import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
 import com.soma.snackexercise.exception.GroupNotFoundException;
+import com.soma.snackexercise.exception.MemberNotFoundException;
+import com.soma.snackexercise.exception.MissionNotFoundException;
 import com.soma.snackexercise.repository.group.GroupRepository;
+import com.soma.snackexercise.repository.joinlist.JoinListRepository;
+import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.repository.mission.MissionRepository;
 import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
@@ -31,25 +36,26 @@ public class MissionService {
 
     private final MissionRepository missionRepository;
     private final GroupRepository groupRepository;
+    private final MemberRepository memberRepository;
+    private final JoinListRepository joinListRepository;
 
     /**
      * 오늘의 미션 결과를 조회합니다.
-     * @param exgroupId 조회할 그룹의 ID
+     * @param groupId 조회할 그룹의 ID
      * @return 오늘의 미션 결과
      */
-    public TodayMissionResultResponse readTodayMissionResults(Long exgroupId) {
+    public TodayMissionResultResponse readTodayMissionResults(Long groupId) {
         // 1. 그룹의 종료일자
-        Group group = groupRepository.findByIdAndStatus(exgroupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
+        Group group = groupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
 
         // 2. 그룹이 현재 완료한 릴레이 횟수
         LocalDateTime now = LocalDateTime.now();// 현재 날짜와 시간 가져오기
         LocalDateTime todayMidnight = now.with(LocalTime.MIN);// 오늘 자정일 구하기
         LocalDateTime tomorrowMidnight = now.plusDays(1).with(LocalTime.MIN);// 내일 자정 구하기
-
-        Integer currentFinishedRelayCount = missionRepository.findCurrentFinishedRelayCountByGroupId(exgroupId, todayMidnight, tomorrowMidnight);
+        Integer currentFinishedRelayCount = missionRepository.findCurrentFinishedRelayCountByGroupId(groupId, todayMidnight, tomorrowMidnight);
 
         // 3. 모든 그룹원의 오늘 수행한 미션 현황
-        List<Mission> missions = missionRepository.findMissionsByGroupIdWithinDateRange(exgroupId, todayMidnight, tomorrowMidnight);
+        List<Mission> missions = missionRepository.findMissionsByGroupIdWithinDateRange(groupId, todayMidnight, tomorrowMidnight);
         List<MemberMissionDto> missionFlow = missions.stream().map(MemberMissionDto::toDto).toList();
 
         return new TodayMissionResultResponse(missionFlow, currentFinishedRelayCount, group.getEndDate());
@@ -115,5 +121,19 @@ public class MissionService {
         // 3. 평균 속도 기준 오름차순 정렬
         return todayRankingMap.values().stream()
                 .sorted((a, b) -> (int) (a.getAvgMissionExecutionTime() - b.getAvgMissionExecutionTime())).toList();
+    }
+
+    public MissionResponse read(Long groupId, String email) {
+        Group group = groupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
+        Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
+        Mission mission = missionRepository.findFirstByGroupAndMemberAndEndAtIsNotNullOrderByCreatedAtDesc(group, member).orElseThrow(MissionNotFoundException::new);
+
+        // 그룹이 현재 완료한 릴레이 횟수
+        Integer currentFinishedRelayCount = joinListRepository.findMaxExecutedMissionCountByGroupAndStatus(group, Status.ACTIVE);
+
+        // 현재 회차에서 몇 번째
+        Integer currentRoundPosition = joinListRepository.findCurrentRoundPositionByGroupId(group, Status.ACTIVE) + 1;
+
+        return MissionResponse.toDto(mission, currentFinishedRelayCount, currentRoundPosition);
     }
 }

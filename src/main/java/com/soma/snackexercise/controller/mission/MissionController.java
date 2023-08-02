@@ -14,10 +14,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Mission", description = "미션 API")
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class MissionController {
                     @ApiResponse(responseCode = "404", description = "당일 미션 수행 현황을 찾을 수 없음", content = @Content(schema = @Schema(implementation = Response.class)))
             })
     @Parameter(name = "groupId", description = "조회할 운동 그룹 ID", required = true,  in = ParameterIn.PATH)
-    @GetMapping("/exgroups/{exgroupId}/missions")
+    @GetMapping("/groups/{exgroupId}/missions")
     public Response getTodayMissionResults(@PathVariable("exgroupId") Long exgroupId){
         return Response.success(missionService.readTodayMissionResults(exgroupId));
     }
@@ -46,7 +46,7 @@ public class MissionController {
             })
     @Parameter(name = "groupId", description = "조회할 운동 그룹 ID", required = true,  in = ParameterIn.PATH)
     @Parameter(name = "filter", description = "당일 랭킹 : today, 누적 랭킹 : total", required = true,  in = ParameterIn.QUERY)
-    @GetMapping("/exgroups/{exgroupId}/missions/rank")
+    @GetMapping("/groups/{exgroupId}/missions/rank")
     public Response getMissionRank(@PathVariable("exgroupId") Long exgroupId, @RequestParam String filter){
         if(filter.equals("today")){
             return Response.success(missionService.readTodayMissionRank(exgroupId));
@@ -54,5 +54,12 @@ public class MissionController {
             return Response.success(missionService.readCumulativeMissionRank(exgroupId));
         }
         throw new WrongRequestParamException(); // TODO query param 검증을 이런 식으로 해도 될지
+    }
+    @Operation(summary = "미션 정보 읽기", description = "미션 정보를 읽습니다.", security = { @SecurityRequirement(name = "bearer-key") })
+    @Parameter(name = "groupId", description = "사용자가 속한 그룹 id")
+    @GetMapping("/missions/groups/{groupId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response read(@PathVariable Long groupId, @AuthenticationPrincipal UserDetails loginUser) {
+        return Response.success(missionService.read(groupId, loginUser.getUsername()));
     }
 }
