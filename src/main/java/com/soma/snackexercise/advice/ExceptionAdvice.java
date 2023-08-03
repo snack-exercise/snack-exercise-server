@@ -94,6 +94,15 @@ public class ExceptionAdvice {
     }
 
     /*
+    Mission
+     */
+    @ExceptionHandler(MissionNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response missionNotFoundExceptionHandler (MissionNotFoundException e){
+        return Response.failure(MISSION_NOT_FOUND_EXCEPTION);
+    }
+
+    /*
     Query Param
      */
     @ExceptionHandler(WrongRequestParamException.class)

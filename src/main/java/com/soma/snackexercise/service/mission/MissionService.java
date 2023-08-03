@@ -3,10 +3,8 @@ package com.soma.snackexercise.service.mission;
 import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
-import com.soma.snackexercise.dto.mission.response.MemberMissionDto;
-import com.soma.snackexercise.dto.mission.response.MissionResponse;
-import com.soma.snackexercise.dto.mission.response.RankingResponse;
-import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
+import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
+import com.soma.snackexercise.dto.mission.response.*;
 import com.soma.snackexercise.exception.GroupNotFoundException;
 import com.soma.snackexercise.exception.MemberNotFoundException;
 import com.soma.snackexercise.exception.MissionNotFoundException;
@@ -135,5 +133,12 @@ public class MissionService {
         Integer currentRoundPosition = joinListRepository.findCurrentRoundPositionByGroupId(group, Status.ACTIVE) + 1;
 
         return MissionResponse.toDto(mission, currentFinishedRelayCount, currentRoundPosition);
+    }
+
+    @Transactional
+    public MissionStartResponse start(MissionStartRequest request) {
+        Mission mission = missionRepository.findById(request.getMissionId()).orElseThrow(MissionNotFoundException::new);
+        mission.startMission();
+        return MissionStartResponse.toDto(mission);
     }
 }

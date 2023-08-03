@@ -26,6 +26,9 @@ public enum ErrorCode {
     /* JoinList */
     JOIN_LIST_NOT_FOUND_EXCEPTION(-1300, "회원_운동그룹이 존재하지 않습니다."),
 
+    /* Mission */
+    MISSION_NOT_FOUND_EXCEPTION(-1400, "미션이 존재하지 않습니다."),
+
     /* QueryParam */
     WRONG_QUERY_PARAM_EXCEPTION(-1900, "잘못된 Query Param입니다.");
 
