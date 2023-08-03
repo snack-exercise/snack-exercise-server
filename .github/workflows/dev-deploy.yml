@@ -97,6 +97,7 @@ jobs:
           port: 22
           source : "./docker-compose.yml"
           target : "./snackApp"
+          debug: true
 
       # (9) 서버에 접속하여 도커 이미지를 pull 받고 실행하기
       - name: executing remote ssh commands using password
