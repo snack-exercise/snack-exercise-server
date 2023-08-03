@@ -1,7 +1,8 @@
 package com.soma.snackexercise.controller.mission;
 
-import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
+import com.soma.snackexercise.dto.mission.request.MissionCancelRequest;
 import com.soma.snackexercise.dto.mission.request.MissionFinishRequest;
+import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
 import com.soma.snackexercise.dto.mission.response.RankingResponse;
 import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
 import com.soma.snackexercise.exception.WrongRequestParamException;
@@ -70,8 +71,16 @@ public class MissionController {
     @Operation(summary = "미션 시작하기", description = "미션을 시작합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping("/missions/start")
     @ResponseStatus(HttpStatus.OK)
-    public Response start(@RequestBody MissionStartRequest request) {
-        return Response.success(missionService.start(request));
+    public Response startMission(@RequestBody MissionStartRequest request) {
+        return Response.success(missionService.missionStart(request));
+    }
+
+    @Operation(summary = "미션 중도 중단", description = "미션을 중도에 중단합니다.", security = { @SecurityRequirement(name = "bearer-key") })
+    @PostMapping("/missions/cancel")
+    @ResponseStatus(HttpStatus.OK)
+    public Response cancelMission(@RequestBody MissionCancelRequest request) {
+        missionService.cancelMission(request);
+        return Response.success();
     }
 
     @Operation(summary = "미션 수행 완료", description = "할당된 미션을 수행 완료합니다.",
