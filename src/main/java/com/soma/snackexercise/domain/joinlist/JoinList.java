@@ -33,7 +33,8 @@ public class JoinList extends BaseEntity {
     public void addOneOutCount() {
         this.outCount += 1;
     }
-    public void addOneExecutedMissionCountCount() {
+
+    public void addOneExecutedMissionCount() {
         this.executedMissionCount += 1;
     }
 

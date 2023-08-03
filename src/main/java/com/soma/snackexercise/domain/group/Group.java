@@ -10,6 +10,8 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static java.lang.Boolean.*;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -42,6 +44,8 @@ public class Group extends BaseEntity {
 
     private LocalDate endDate; // 종료 기간
 
+    private Boolean isGoalAchieved; // 성공 여부
+
     private String penalty; // 벌칙
 
     private String code; // 그룹 입장 코드
@@ -60,7 +64,8 @@ public class Group extends BaseEntity {
         this.maxMemberNum = newMaxMemberNum;
     }
 
-    public void updateCurrentDoingMemberId(Long memberId) {
+
+    public void updateCurrentDoingMemberId(Long memberId){
         this.currentDoingMemberId = memberId;
     }
 
@@ -82,8 +87,14 @@ public class Group extends BaseEntity {
         this.endDate = startDate.plusDays(existDays);
     }
 
+
     public Boolean isCurrentTimeBetweenStartTimeAndEndTime(LocalTime now) {
         return now.isAfter(startTime) && now.isBefore(endTime);
+    }
+  
+    public void updateIsGoalAchieved(){
+        this.isGoalAchieved = TRUE;
+
     }
 
     @Builder
@@ -104,6 +115,7 @@ public class Group extends BaseEntity {
         this.code = code;
         this.checkIntervalTime = checkIntervalTime;
         this.checkMaxNum = checkMaxNum;
+        this.isGoalAchieved = FALSE;
         active();
     }
 
