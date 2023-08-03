@@ -104,7 +104,7 @@ public class GroupControllerIntegrationTest {
 
         // when, then
         mockMvc.perform(
-                        post("/api/groups")
+                        post("/groups")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andExpect(status().isCreated())
@@ -124,7 +124,7 @@ public class GroupControllerIntegrationTest {
 
         // when, then
         mockMvc.perform(
-                        get("/api/groups/{groupId}", group.getId())
+                        get("/groups/{groupId}", group.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.result.data.id").value(group.getId()))
@@ -145,7 +145,7 @@ public class GroupControllerIntegrationTest {
 
         // when, then
         mockMvc.perform(
-                        get("/api/groups/{groupId}/members", group.getId())
+                        get("/groups/{groupId}/members", group.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.data", hasSize(2)));
     }
@@ -162,7 +162,7 @@ public class GroupControllerIntegrationTest {
 
         // when, then
         mockMvc.perform(
-                        patch("/api/groups/{groupId}", group.getId())
+                        patch("/groups/{groupId}", group.getId())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andExpect(status().isOk())
@@ -182,7 +182,7 @@ public class GroupControllerIntegrationTest {
 
         // when, then
         mockMvc.perform(
-                        delete("/api/groups/{groupId}/members/{memberId}", group.getId(), targetMember.getId())
+                        delete("/groups/{groupId}/members/{memberId}", group.getId(), targetMember.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
@@ -202,7 +202,7 @@ public class GroupControllerIntegrationTest {
 
         // when, then
         mockMvc.perform(
-                        delete("/api/groups/{groupId}", group.getId())
+                        delete("/groups/{groupId}", group.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
@@ -221,7 +221,7 @@ public class GroupControllerIntegrationTest {
 
         // when, then
         mockMvc.perform(
-                        patch("/api/groups/{groupId}/initiation", group.getId())
+                        patch("/groups/{groupId}/initiation", group.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.result.data.name").value(group.getName()));
@@ -243,7 +243,7 @@ public class GroupControllerIntegrationTest {
         clear();
 
         // when, then
-        mockMvc.perform(post("/api/groups/join/code")
+        mockMvc.perform(post("/groups/join/code")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())

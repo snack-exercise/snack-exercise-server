@@ -65,7 +65,7 @@ class GroupControllerTest {
 
         // when, then
         mockMvc.perform(
-                post("/api/groups")
+                post("/groups")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpect(status().isCreated());
@@ -81,7 +81,7 @@ class GroupControllerTest {
 
         // when, then
         mockMvc.perform(
-                get("/api/groups/{groupId}", groupId)
+                get("/groups/{groupId}", groupId)
         ).andExpect(status().isOk());
 
         verify(groupService, times(1)).read(groupId);
@@ -97,7 +97,7 @@ class GroupControllerTest {
 
         // when, then
         MvcResult mvcResult = mockMvc.perform(
-                        get("/api/groups/{groupId}/members", groupId)
+                        get("/groups/{groupId}/members", groupId)
                 ).andExpect(status().isOk())
                 .andReturn();
 
@@ -120,7 +120,7 @@ class GroupControllerTest {
 
         // when, then
         MvcResult mvcResult = mockMvc.perform(
-                patch("/api/groups/{groupId}", groupId)
+                patch("/groups/{groupId}", groupId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON)
@@ -142,7 +142,7 @@ class GroupControllerTest {
 
         // when, then
         mockMvc.perform(
-                delete("/api/groups/{groupId}/members/{memberId}", groupId, memberId)
+                delete("/groups/{groupId}/members/{memberId}", groupId, memberId)
         ).andExpect(status().isOk());
 
         verify(groupService, times(1)).deleteMemberByHost(anyLong(), anyLong(), anyString());
@@ -156,7 +156,7 @@ class GroupControllerTest {
 
         // when, then
         mockMvc.perform(
-                delete("/api/groups/{groupId}", groupId)
+                delete("/groups/{groupId}", groupId)
         ).andExpect(status().isOk());
 
         verify(groupService, times(1)).leaveGroupByMember(anyLong(), anyString());
@@ -172,7 +172,7 @@ class GroupControllerTest {
 
         // when, then
         MvcResult mvcResult = mockMvc.perform(
-                patch("/api/groups/{groupId}/initiation", groupId)
+                patch("/groups/{groupId}/initiation", groupId)
         ).andExpect(status().isOk()).andReturn();
 
         verify(groupService, times(1)).startGroup(anyLong(), anyString());
@@ -190,7 +190,7 @@ class GroupControllerTest {
 
         // when, then
         mockMvc.perform(
-                post("/api/groups/join/code")
+                post("/groups/join/code")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpect(status().isOk());

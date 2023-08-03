@@ -59,7 +59,7 @@ public class GroupControllerAdviceTest {
 
         // when, then
         mockMvc.perform(
-                        post("/api/groups")
+                        post("/groups")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andExpect(jsonPath("$.code").value(MEMBER_NOT_FOUND_EXCEPTION.getCode()))
@@ -75,7 +75,7 @@ public class GroupControllerAdviceTest {
 
         // when, then
         mockMvc.perform(
-                        get("/api/groups/{groupId}", groupId)
+                        get("/groups/{groupId}", groupId)
                 ).andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.code").value(GROUP_NOT_FOUND_EXCEPTION.getCode()))
                 .andExpect(jsonPath("$.result.message").value(GROUP_NOT_FOUND_EXCEPTION.getMessage()));
@@ -91,7 +91,7 @@ public class GroupControllerAdviceTest {
 
         // when, then
         mockMvc.perform(
-                        patch("/api/groups/{groupId}", groupId)
+                        patch("/groups/{groupId}", groupId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
@@ -111,7 +111,7 @@ public class GroupControllerAdviceTest {
 
         // when, then
         mockMvc.perform(
-                        delete("/api/groups/{groupId}/members/{memberId}", groupId, memberId)
+                        delete("/groups/{groupId}/members/{memberId}", groupId, memberId)
                 ).andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -129,7 +129,7 @@ public class GroupControllerAdviceTest {
 
         // when, then
         mockMvc.perform(
-                        delete("/api/groups/{groupId}/members/{memberId}", groupId, memberId)
+                        delete("/groups/{groupId}/members/{memberId}", groupId, memberId)
                 ).andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
@@ -146,7 +146,7 @@ public class GroupControllerAdviceTest {
 
         // when, then
         mockMvc.perform(
-                        delete("/api/groups/{groupId}", groupId)
+                        delete("/groups/{groupId}", groupId)
                 ).andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -163,7 +163,7 @@ public class GroupControllerAdviceTest {
 
         // when, then
         mockMvc.perform(
-                        patch("/api/groups/{groupId}/initiation", groupId)
+                        patch("/groups/{groupId}/initiation", groupId)
                 ).andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
@@ -180,7 +180,7 @@ public class GroupControllerAdviceTest {
 
         // when, then
         mockMvc.perform(
-                        post("/api/groups/join/code")
+                        post("/groups/join/code")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
@@ -199,7 +199,7 @@ public class GroupControllerAdviceTest {
 
         // when, then
         mockMvc.perform(
-                        post("/api/groups/join/code")
+                        post("/groups/join/code")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
