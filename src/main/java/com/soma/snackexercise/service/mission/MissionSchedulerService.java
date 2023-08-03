@@ -110,10 +110,10 @@ public class MissionSchedulerService {
                 continue;
             }
 
+            mission.addOneAlarmCount();
+
             List<JoinList> joinLists = joinListRepository.findByGroupAndStatus(group, Status.ACTIVE);
-
             joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
-
             firebaseCloudMessageService.sendByTokenList(tokenList, REMINDER.getTitleWithNickname(targetMember.getNickname()), REMINDER.getBodyWithNickname(targetMember.getNickname()));
         }
     }
