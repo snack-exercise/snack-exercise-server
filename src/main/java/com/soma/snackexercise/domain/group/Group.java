@@ -86,11 +86,6 @@ public class Group extends BaseEntity {
         this.startDate = LocalDate.now();
         this.endDate = startDate.plusDays(existDays);
     }
-
-
-    public Boolean isCurrentTimeBetweenStartTimeAndEndTime(LocalTime now) {
-        return now.isAfter(startTime) && now.isBefore(endTime);
-    }
   
     public void updateIsGoalAchieved(){
         this.isGoalAchieved = TRUE;
