@@ -47,8 +47,8 @@ public class MissionSchedulerService {
     // todo : Transactionl을 붙여주는게 나을까..?
     @Scheduled(fixedRate = 5000) // 이전 Task 시작 시점으로부터 5초가 지난 후 Task 실행
     public void allocateMissionAtGroupStartTime(){
-        // todo : 종료 여부가 false인 group에 대해서
-        List<Group> groupList = groupRepository.findAllByStatus(Status.ACTIVE);
+        // 종료 여부가 false인 group에 대해서
+        List<Group> groupList = groupRepository.findAllByIsGoalAchievedAndStatus(false, Status.ACTIVE);
         List<String> tokenList = new ArrayList<>();
         List<Exercise> exerciseList = exerciseRepository.findAll();
 
@@ -81,8 +81,8 @@ public class MissionSchedulerService {
 
     @Scheduled(fixedRate = 5000)
     public void sendReminderNotifications() {
-        // todo : 종료 여부가 false인 그룹에 대해서
-        List<Group> groupList = groupRepository.findAllByStatus(Status.ACTIVE);
+        // 종료 여부가 false인 그룹에 대해서
+        List<Group> groupList = groupRepository.findAllByIsGoalAchievedAndStatus(false, Status.ACTIVE);
 
         LocalTime localTimeNow = LocalTime.now();
         LocalDateTime localDateTimeNow = LocalDateTime.now();
