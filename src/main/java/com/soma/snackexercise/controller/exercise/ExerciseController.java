@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name="Exercise", description = "운동 API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/exercises")
+@RequestMapping("/exercises")
 public class ExerciseController {
     private final ExerciseService exerciseService;
 
@@ -59,11 +59,11 @@ public class ExerciseController {
                 @ApiResponse(responseCode = "200", description = "운동 수정 성공", content = @Content(schema = @Schema(implementation = ExerciseResponse.class)))
     })
     @Parameter(name = "exerciseId", description = "수정할 운동 ID", required = true,  in = ParameterIn.PATH)
-    @PutMapping("/{id}")
+    @PutMapping("/{exerciseId}")
     @ResponseStatus(HttpStatus.OK)
-    public Response update(@PathVariable Long id,
+    public Response update(@PathVariable Long exerciseId,
                            @RequestBody ExerciseUpdateRequest request) {
-        return Response.success(exerciseService.update(id, request));
+        return Response.success(exerciseService.update(exerciseId, request));
     }
 
     @Operation(summary = "운동 삭제",
@@ -73,10 +73,10 @@ public class ExerciseController {
                 @ApiResponse(responseCode = "200", description = "하나의 운동 삭제 성공", content = @Content(schema = @Schema(implementation = Response.class))),
     })
     @Parameter(name = "exerciseId", description = "삭제할 운동 ID", required = true,  in = ParameterIn.PATH)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{exerciseId}")
     @ResponseStatus(HttpStatus.OK)
-    public Response delete(@PathVariable Long id) {
-        exerciseService.delete(id);
+    public Response delete(@PathVariable Long exerciseId) {
+        exerciseService.delete(exerciseId);
         return Response.success();
     }
 }

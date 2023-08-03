@@ -3,7 +3,6 @@ package com.soma.snackexercise.controller.mission;
 import com.soma.snackexercise.dto.mission.request.MissionCancelRequest;
 import com.soma.snackexercise.dto.mission.request.MissionFinishRequest;
 import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
-import com.soma.snackexercise.dto.mission.response.MissionFinishResponse;
 import com.soma.snackexercise.dto.mission.response.RankingResponse;
 import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
 import com.soma.snackexercise.exception.WrongRequestParamException;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Mission", description = "미션 API")
 @RequiredArgsConstructor
-@RestController()
 public class MissionController {
     private final MissionService missionService;
 

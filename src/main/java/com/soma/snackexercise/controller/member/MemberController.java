@@ -21,14 +21,10 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Member", description = "회원 API")
 @RequiredArgsConstructor
-@RestController
+@RestController("/my")
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping("/jwt-test")
-    public String jwtTest() {
-        return "jwtTest 요청 성공";
-    }
 
     // TODO : UserId는 민감한 정보이므로 URL에 직접 포함하지 않는 것이 좋은듯
     @Operation(summary = "회원 수정",
