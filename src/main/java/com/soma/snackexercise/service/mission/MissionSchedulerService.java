@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Random;
 
 import static com.soma.snackexercise.domain.notification.NotificationMessage.ALLOCATE;
-import static java.lang.Math.abs;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,11 +50,11 @@ public class MissionSchedulerService {
         // 모든 그룹에 대해서 현재 시각이 그룹의 시작시간과 시간차이가 5초 이하인 그룹에 대해서 미션 할당 및 알림 보내기
         LocalTime now = LocalTime.now();
         for (Group group : groupList) {
-            long timeDiff = abs(ChronoUnit.SECONDS.between(now, group.getStartTime()));
+            long timeDiff = ChronoUnit.SECONDS.between(now, group.getStartTime());
 
             // 그룹 시작시각과 현재시각의 차이가 5이상이라면, 알림을 보내지 않음
-            if(timeDiff >= 5){
-                return;
+            if(timeDiff >= 5 || timeDiff < 0){
+                continue;
             }
             Member targetMember = getMissionAllocatedMember(group);
             tokenList.add(targetMember.getFcmToken());
@@ -101,5 +100,10 @@ public class MissionSchedulerService {
         List<Exercise> exerciseList = exerciseRepository.findAll();
         int randomIndex = random.nextInt(exerciseList.size());
         return exerciseList.get(randomIndex);
+    }
+
+    @Scheduled(fixedRate = 5000)
+    public void sendReminderNotifications() {
+
     }
 }
