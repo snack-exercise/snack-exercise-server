@@ -65,5 +65,11 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
             "   ORDER BY m.createdAt")
     List<Mission> findFinishedMissionsByGroupIdWithinDateRange(@Param("groupId") Long groupId, @Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
 
-    Optional<Mission> findFirstByGroupAndMemberAndEndAtIsNotNullOrderByCreatedAtDesc(Group group, Member member);
+    /**
+     * 그룹과 멤버가 주어질 때 가장 최신의 미션을 반환합니다.
+     * @param group
+     * @param member
+     * @return 가장 최신의 미션
+     */
+    Optional<Mission> findFirstByGroupAndMemberOrderByCreatedAtDesc(Group group, Member member);
 }

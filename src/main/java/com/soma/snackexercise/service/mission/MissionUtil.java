@@ -34,6 +34,8 @@ public class MissionUtil {
             targetMember = memberRepository.findByIdAndStatus(group.getCurrentDoingMemberId(), Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
         }else{// 2. 현재 수행중인 멤버가 없다면(처음 할당), 그룹 내 미션 수행 횟수가 가장 적은 사람 중에서 랜덤한 멤버에게 미션 할당 및 알림 보내기
             targetMember = getNextMissionMember(group);
+            // 그룹의 현재 미션중인 멤버 ID 업데이트
+            group.updateCurrentDoingMemberId(targetMember.getId());
         }
         return targetMember;
     }
