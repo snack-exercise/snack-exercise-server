@@ -2,6 +2,7 @@ package com.soma.snackexercise.controller.notification;
 
 import com.soma.snackexercise.dto.member.request.MemberUpdateFcmTokenRequest;
 import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
+import com.soma.snackexercise.dto.notification.request.SendManualReminderRequest;
 import com.soma.snackexercise.service.notification.NotificationService;
 import com.soma.snackexercise.util.response.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,5 +32,16 @@ public class NotificationController {
     @PatchMapping("/members/notification")
     public Response updateFcmToken(@RequestBody MemberUpdateFcmTokenRequest request, @AuthenticationPrincipal UserDetails loginUser){
         return Response.success(notificationService.updateFcmToken(request, loginUser.getUsername()));
+    }
+
+    @Operation(summary = "수동 독촉 알림 전송", description = "현재 미션 수행 차례인 회원에게 독촉알림을 전송합니다.",
+            security = { @SecurityRequirement(name = "bearer-key") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "수동 독촉 알림 전송 성공", content = @Content(schema = @Schema(implementation = Response.class))),
+            })
+    @PatchMapping("alarm/reminder")
+    public Response sendManualReminderAlarm(@RequestBody SendManualReminderRequest request, @AuthenticationPrincipal UserDetails loginUser){
+        notificationService.sendManualReminderAlarm(request, loginUser.getUsername());
+        return Response.success();
     }
 }
