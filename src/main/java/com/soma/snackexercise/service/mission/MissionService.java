@@ -63,7 +63,7 @@ public class MissionService {
         Integer currentFinishedRelayCount = missionRepository.findCurrentFinishedRelayCountByGroupId(groupId, todayMidnight, tomorrowMidnight);
 
         // 3. 모든 그룹원의 오늘 수행한 미션 현황
-        List<Mission> missions = missionRepository.findMissionsByGroupIdWithinDateRange(groupId, todayMidnight, tomorrowMidnight);
+        List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(groupId, todayMidnight, tomorrowMidnight);
         List<MemberMissionDto> missionFlow = missions.stream().map(MemberMissionDto::toDto).toList();
 
         return new TodayMissionResultResponse(missionFlow, currentFinishedRelayCount, group.getEndDate());
@@ -149,6 +149,7 @@ public class MissionService {
     public MissionStartResponse missionStart(MissionStartRequest request) {
         Mission mission = missionRepository.findById(request.getMissionId()).orElseThrow(MissionNotFoundException::new);
         mission.startMission();
+        log.info("[미션 시작 시각] {}", mission.getStartAt());
         return MissionStartResponse.toDto(mission);
     }
 
