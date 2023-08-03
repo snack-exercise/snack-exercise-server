@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Exgroup", description = "운동 그룹 API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/groups")
+@RequestMapping("/groups")
 public class GroupController {
 
     private final GroupService groupService;
@@ -33,8 +33,8 @@ public class GroupController {
     @Operation(summary = "운동 그룹 생성", description = "하나의 운동 그룹을 생성합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Response create(@RequestBody GroupCreateRequest groupCreateRequest, @AuthenticationPrincipal UserDetails loginUser){
-        return Response.success(groupService.create(groupCreateRequest, loginUser.getUsername()));
+    public Response create(@RequestBody GroupCreateRequest request, @AuthenticationPrincipal UserDetails loginUser){
+        return Response.success(groupService.create(request, loginUser.getUsername()));
     }
 
 

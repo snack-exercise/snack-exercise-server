@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SignupController {
     private final SignupService signupService;
 
-    @PostMapping("/api/sign-up")
+    @PostMapping("/sign-up")
     @ResponseStatus(HttpStatus.CREATED)
     public Response signup(@RequestBody SignupRequest signupRequest, HttpServletRequest request, HttpServletResponse response) {
         signupService.signup(signupRequest, request, response);

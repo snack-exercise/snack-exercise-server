@@ -9,4 +9,9 @@ public class HealthController {
     public String healthCheck(){
         return "health";
     }
+
+    @GetMapping("/jwt-test")
+    public String jwtTest() {
+        return "jwtTest 요청 성공";
+    }
 }
