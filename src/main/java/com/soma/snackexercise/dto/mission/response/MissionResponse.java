@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class MissionResponse {
-    private Long id;
+    private Long missionId;
     private Integer finishedRelayCount;
     private Integer currentRoundPosition;
     private ExerciseResponse exercise;

@@ -1,5 +1,6 @@
 package com.soma.snackexercise.controller.mission;
 
+import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
 import com.soma.snackexercise.dto.mission.response.RankingResponse;
 import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
 import com.soma.snackexercise.exception.WrongRequestParamException;
@@ -61,5 +62,12 @@ public class MissionController {
     @ResponseStatus(HttpStatus.OK)
     public Response read(@PathVariable Long groupId, @AuthenticationPrincipal UserDetails loginUser) {
         return Response.success(missionService.read(groupId, loginUser.getUsername()));
+    }
+
+    @Operation(summary = "미션 시작하기", description = "미션을 시작합니다.", security = { @SecurityRequirement(name = "bearer-key") })
+    @PostMapping("/missions/start")
+    @ResponseStatus(HttpStatus.OK)
+    public Response start(@RequestBody MissionStartRequest request) {
+        return Response.success(missionService.start(request));
     }
 }
