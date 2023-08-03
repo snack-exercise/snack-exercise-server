@@ -20,8 +20,8 @@ public class MemberMissionDto {
                 mission.getMember().getId(),
                 mission.getMember().getNickname(),
                 mission.getMember().getProfileImage(),
-                mission.getStartAt(),
-                mission.getEndAt()
+                mission.getCreatedAt(), // 할당 시각
+                mission.getEndAt() // 종료 시각
         );
     }
 }
