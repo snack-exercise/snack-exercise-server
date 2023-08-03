@@ -51,10 +51,25 @@ public class Mission extends BaseTimeEntity {
     }
 
     /**
+     * 독촉 알람 횟수 1 증가
+     */
+    public void addOneAlarmCount() {
+        this.alarmCount += 1;
+    }
+
+
+    /**
      * 미션 시작 버튼 클릭시, 미션 시작 시간 기록
      */
     public void startMission(){
         this.startAt = LocalDateTime.now();
+    }
+
+    /**
+     * 미션 중단 시, startAt 초기화
+     */
+    public void cancelMission() {
+        this.startAt = null;
     }
 
     /**

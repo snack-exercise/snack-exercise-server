@@ -4,6 +4,7 @@ import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
+import com.soma.snackexercise.dto.mission.request.MissionCancelRequest;
 import com.soma.snackexercise.dto.mission.request.MissionFinishRequest;
 import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
 import com.soma.snackexercise.dto.mission.response.*;
@@ -145,10 +146,20 @@ public class MissionService {
     }
 
     @Transactional
-    public MissionStartResponse start(MissionStartRequest request) {
+    public MissionStartResponse missionStart(MissionStartRequest request) {
         Mission mission = missionRepository.findById(request.getMissionId()).orElseThrow(MissionNotFoundException::new);
         mission.startMission();
         return MissionStartResponse.toDto(mission);
+    }
+
+    /**
+     * 미션을 중도 중단합니다.
+     * @param request 미션 중단할 id
+     */
+    @Transactional
+    public void cancelMission(MissionCancelRequest request) {
+        Mission mission = missionRepository.findById(request.getMissionId()).orElseThrow(MissionNotFoundException::new);
+        mission.cancelMission();
     }
 
     /**
