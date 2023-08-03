@@ -22,7 +22,7 @@ public class MissionFactory {
                 .build();
 
         mission.startMission();
-        mission.endMission(3);
+        mission.endMission(3, 10L);
 
         return mission;
     }

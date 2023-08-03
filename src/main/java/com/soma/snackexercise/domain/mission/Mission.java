@@ -50,15 +50,27 @@ public class Mission extends BaseTimeEntity {
         this.alarmCount = 0;
     }
 
+    /**
+     * 미션 시작 버튼 클릭시, 미션 시작 시간 기록
+     */
     public void startMission(){
         this.startAt = LocalDateTime.now();
     }
 
-    public void endMission(Integer calory){
-        this.endAt = LocalDateTime.now();
+    /**
+     * 운동 종료시, 소모 칼로리와 운동 종료 시각을 기록
+     * @param calory 소모 칼로리
+     * @param lengthOfVideo 운동 영상 길이
+     */
+    public void endMission(Integer calory, Long lengthOfVideo){
+        this.endAt = this.startAt.plusMinutes(lengthOfVideo);
         this.calory = calory;
     }
 
+    /**
+     * 운동 할당 시각과 운동 시각 사이의 시각 차이를 계산
+     * @return 운동 할당 시각과 운동 시작 시각의 시간 차이
+     */
     public Long calculateMinutesDiffBetweenCreateAndStart() {
         if(getStartAt() == null || getCreatedAt() == null){
             throw new CalculateMinutesDiffException();
