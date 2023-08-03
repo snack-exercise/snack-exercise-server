@@ -1,5 +1,6 @@
 package com.soma.snackexercise.service.mission;
 
+import com.soma.snackexercise.domain.BaseEntity;
 import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
@@ -16,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -24,8 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.soma.snackexercise.domain.notification.NotificationMessage.ALLOCATE;
-import static com.soma.snackexercise.domain.notification.NotificationMessage.AUTOMATIC_REMINDER;
+import static com.soma.snackexercise.domain.notification.NotificationMessage.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,7 +48,7 @@ public class MissionSchedulerService {
      */
     // todo : Transactionl을 붙여주는게 나을까..?
     @Scheduled(fixedRate = 5000) // 이전 Task 시작 시점으로부터 5초가 지난 후 Task 실행
-    public void allocateMissionAtGroupStartTime(){
+    public void allocateMissionAtGroupStartTime() {
         // 종료 여부가 false인 group에 대해서
         List<Group> groupList = groupRepository.findAllByIsGoalAchievedAndStatus(false, Status.ACTIVE);
         List<String> tokenList = new ArrayList<>();
@@ -58,7 +60,7 @@ public class MissionSchedulerService {
             long timeDiff = ChronoUnit.SECONDS.between(now, group.getStartTime());
 
             // 그룹 시작시각과 현재시각의 차이가 5이상이거나 음수라면 알림을 보내지 않음
-            if(timeDiff >= 5 || timeDiff < 0){
+            if (timeDiff >= 5 || timeDiff < 0) {
                 continue;
             }
             Member targetMember = missionUtil.getMissionAllocatedMember(group);
@@ -73,7 +75,7 @@ public class MissionSchedulerService {
             log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getName(), LocalDateTime.now());
         }
 
-        if(!tokenList.isEmpty()){
+        if (!tokenList.isEmpty()) {
             // tokenList로 알림 보내기
             firebaseCloudMessageService.sendByTokenList(tokenList, ALLOCATE.getTitle(), ALLOCATE.getBody());
         }
@@ -105,7 +107,7 @@ public class MissionSchedulerService {
                     targetMemberId == null ||
                     mission == null ||
                     mission.getStartAt() != null ||
-                    mission.getAlarmCount() >= group.getCheckMaxNum()||
+                    mission.getAlarmCount() >= group.getCheckMaxNum() ||
                     !mission.isValidTimeReminder(localDateTimeNow, group.getCheckIntervalTime(), 5)) {
                 continue;
             }
@@ -116,5 +118,35 @@ public class MissionSchedulerService {
             joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
             firebaseCloudMessageService.sendByTokenList(tokenList, AUTOMATIC_REMINDER.getTitleWithNickname(targetMember.getNickname()), AUTOMATIC_REMINDER.getBodyWithNickname(targetMember.getNickname()));
         }
+    }
+
+    @Transactional
+    @Scheduled(fixedRate = 5000)
+    public void inActiveGroupsPastEndDate() {
+        // 종료 여부에 관계없이 group이 Active한 그룹들 중에서 EndDate가 지난 그룹
+        LocalDate now = LocalDate.now();
+        List<Group> groupList = groupRepository.findAllByEndDateGreaterThanAndStatus(now, Status.ACTIVE);
+
+        for (Group group : groupList) {
+            // 그룹 inActive
+            group.inActive();
+
+            List<JoinList> joinLists = joinListRepository.findByGroupAndStatus(group, Status.ACTIVE);
+
+            // JoinList들에게 알람 전송
+            sendNotificationsToJoinList(group, joinLists);
+
+            // JoinList 모두 비활성화
+            joinLists.forEach(BaseEntity::inActive);
+        }
+
+    }
+
+    private void sendNotificationsToJoinList(Group group, List<JoinList> joinLists) {
+        List<String> tokenList = new ArrayList<>();
+
+        joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
+
+        firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_END.getTitleWithGroupName(group.getName()), GROUP_END.getBody());
     }
 }
