@@ -64,6 +64,7 @@ public class Group extends BaseEntity {
         this.maxMemberNum = newMaxMemberNum;
     }
 
+
     public void updateCurrentDoingMemberId(Long memberId){
         this.currentDoingMemberId = memberId;
     }
@@ -86,8 +87,14 @@ public class Group extends BaseEntity {
         this.endDate = startDate.plusDays(existDays);
     }
 
+
+    public Boolean isCurrentTimeBetweenStartTimeAndEndTime(LocalTime now) {
+        return now.isAfter(startTime) && now.isBefore(endTime);
+    }
+  
     public void updateIsGoalAchieved(){
         this.isGoalAchieved = TRUE;
+
     }
 
     @Builder
