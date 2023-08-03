@@ -47,8 +47,10 @@ public class MissionSchedulerService {
      * 5초 마다 현재 시각과 그룹의 시작시각 차이가 5초 이하라면, 그룹원 한 명에게 미션을 할당하고 알림을 보냅니다.
      */
     // todo : Transactionl을 붙여주는게 나을까..?
-    @Scheduled(fixedRate = 5000) // 이전 Task 시작 시점으로부터 5초가 지난 후 Task 실행
+    //@Scheduled(fixedRate = 5000) // 이전 Task 시작 시점으로부터 5초가 지난 후 Task 실행
+    @Scheduled(cron = "1 * * * * *") // 1분마다 실행, cron 표현식
     public void allocateMissionAtGroupStartTime() {
+        log.info("============= 그룹 시작 시간 미션 할당 스케줄러 =============");
         // 종료 여부가 false인 group에 대해서
         List<Group> groupList = groupRepository.findAllByIsGoalAchievedAndStatus(false, Status.ACTIVE);
         List<String> tokenList = new ArrayList<>();
@@ -81,8 +83,10 @@ public class MissionSchedulerService {
         }
     }
 
-    @Scheduled(fixedRate = 5000)
+    //@Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "0 * * * * *") // 1분마다 실행, cron 표현식
     public void sendReminderNotifications() {
+        log.info("============= 자동 독촉 알람 스케줄러 =============");
         // 종료 여부가 false인 그룹에 대해서
         List<Group> groupList = groupRepository.findAllByIsGoalAchievedAndStatus(false, Status.ACTIVE);
 
@@ -121,8 +125,10 @@ public class MissionSchedulerService {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 5000)
+    //@Scheduled(fixedRate = 5000
+    @Scheduled(cron = "0 0 0/1 * * *") // 1시간마다 실행, cron 표현식
     public void inActiveGroupsPastEndDate() {
+        log.info("============= 그룹 종료 일자 스케줄러 =============");
         // 종료 여부에 관계없이 group이 Active한 그룹들 중에서 EndDate가 지난 그룹
         LocalDate now = LocalDate.now();
         List<Group> groupList = groupRepository.findAllByEndDateGreaterThanAndStatus(now, Status.ACTIVE);
