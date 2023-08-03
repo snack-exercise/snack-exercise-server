@@ -1,6 +1,7 @@
 package com.soma.snackexercise.controller.mission;
 
 import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
+import com.soma.snackexercise.dto.mission.request.MissionFinishRequest;
 import com.soma.snackexercise.dto.mission.response.RankingResponse;
 import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
 import com.soma.snackexercise.exception.WrongRequestParamException;
@@ -33,9 +34,10 @@ public class MissionController {
                     @ApiResponse(responseCode = "404", description = "당일 미션 수행 현황을 찾을 수 없음", content = @Content(schema = @Schema(implementation = Response.class)))
             })
     @Parameter(name = "groupId", description = "조회할 운동 그룹 ID", required = true,  in = ParameterIn.PATH)
-    @GetMapping("/groups/{exgroupId}/missions")
-    public Response getTodayMissionResults(@PathVariable("exgroupId") Long exgroupId){
-        return Response.success(missionService.readTodayMissionResults(exgroupId));
+    @GetMapping("/groups/{groupId}/missions")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getTodayMissionResults(@PathVariable("groupId") Long groupId){
+        return Response.success(missionService.readTodayMissionResults(groupId));
     }
 
 
@@ -47,12 +49,13 @@ public class MissionController {
             })
     @Parameter(name = "groupId", description = "조회할 운동 그룹 ID", required = true,  in = ParameterIn.PATH)
     @Parameter(name = "filter", description = "당일 랭킹 : today, 누적 랭킹 : total", required = true,  in = ParameterIn.QUERY)
-    @GetMapping("/groups/{exgroupId}/missions/rank")
-    public Response getMissionRank(@PathVariable("exgroupId") Long exgroupId, @RequestParam String filter){
+    @GetMapping("/groups/{groupId}/missions/rank")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getMissionRank(@PathVariable("groupId") Long groupId, @RequestParam String filter){
         if(filter.equals("today")){
-            return Response.success(missionService.readTodayMissionRank(exgroupId));
+            return Response.success(missionService.readTodayMissionRank(groupId));
         }else if(filter.equals("total")){
-            return Response.success(missionService.readCumulativeMissionRank(exgroupId));
+            return Response.success(missionService.readCumulativeMissionRank(groupId));
         }
         throw new WrongRequestParamException(); // TODO query param 검증을 이런 식으로 해도 될지
     }
@@ -69,5 +72,18 @@ public class MissionController {
     @ResponseStatus(HttpStatus.OK)
     public Response start(@RequestBody MissionStartRequest request) {
         return Response.success(missionService.start(request));
+    }
+
+    @Operation(summary = "미션 수행 완료", description = "할당된 미션을 수행 완료합니다.",
+            security = { @SecurityRequirement(name = "bearer-key") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "미션 수행 완료 성공", content = @Content(schema = @Schema(implementation = RankingResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "미션을 찾을 수 없음", content = @Content(schema = @Schema(implementation = Response.class)))
+            })
+    @Parameter(name = "missionId", description = "수행 완료할 미션 ID", required = true,  in = ParameterIn.PATH)
+    @PostMapping("missions/{missionId}/finish")
+    @ResponseStatus(HttpStatus.OK)
+    public Response finishMission(@PathVariable("missionId") Long missionId, @RequestBody MissionFinishRequest request, @AuthenticationPrincipal UserDetails loginUser){
+        return Response.success(missionService.finishMission(missionId, request, loginUser.getUsername()));
     }
 }

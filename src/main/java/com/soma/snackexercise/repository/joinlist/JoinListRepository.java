@@ -125,4 +125,20 @@ public interface JoinListRepository extends JpaRepository<JoinList, Long> {
             "WHERE j.group = :group " +
             "AND j.status = :status )")
     Integer findCurrentRoundPositionByGroupId(@Param("group") Group group, @Param("status") Status status);
+
+    /**
+     * 그룹에서 목표 릴레이 횟수를 달성한 회원의 수를 반환합니다.
+     * @param group 그룹
+     * @return 그룹에서 목표 릴레이 횟수를 달성한 회원의 수
+     */
+    @Query("SELECT count(*) FROM JoinList j WHERE j.group = :group AND j.executedMissionCount = j.group.goalRelayNum AND j.status = 'ACTIVE'")
+    Integer countGroupGoalAchievedMember(@Param("group") Group group);
+
+    /**
+     * 그룹의 회원 수를 반환합니다.
+     * @param group 그룹
+     * @return 그룹의 회원 수
+     */
+    @Query("SELECT count(*) FROM JoinList j WHERE j.group = :group AND j.status = 'ACTIVE'")
+    Integer countGroupMember(@Param("group") Group group);
 }

@@ -169,14 +169,14 @@ class JoinListRepositoryTest {
     @Test
     void findMaxExecutedMissionCountByGroupAndStatusTest() {
         joinList = joinListRepository.save(createJoinListForMember(member, group));
-        joinList.addOneExecutedMissionCountCount();
-        joinList.addOneExecutedMissionCountCount();
+        joinList.addOneExecutedMissionCount();
+        joinList.addOneExecutedMissionCount();
         joinListRepository.save(joinList);
 
         Member member1 = memberRepository.save(createMember());
         JoinList joinList1 = joinListRepository.save(createJoinListForMember(member1, group));
-        joinList1.addOneExecutedMissionCountCount();
-        joinList1.addOneExecutedMissionCountCount();
+        joinList1.addOneExecutedMissionCount();
+        joinList1.addOneExecutedMissionCount();
         joinListRepository.save(joinList1);
 
         clear();

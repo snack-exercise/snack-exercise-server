@@ -1,19 +1,21 @@
 package com.soma.snackexercise.service.mission;
 
 import com.soma.snackexercise.domain.group.Group;
+import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
+import com.soma.snackexercise.dto.mission.request.MissionFinishRequest;
 import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
 import com.soma.snackexercise.dto.mission.response.*;
-import com.soma.snackexercise.exception.GroupNotFoundException;
-import com.soma.snackexercise.exception.MemberNotFoundException;
-import com.soma.snackexercise.exception.MissionNotFoundException;
+import com.soma.snackexercise.exception.*;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.repository.mission.MissionRepository;
+import com.soma.snackexercise.service.notification.FirebaseCloudMessageService;
 import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +25,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.soma.snackexercise.domain.notification.NotificationMessage.ALLOCATE;
+import static com.soma.snackexercise.domain.notification.NotificationMessage.GROUP_GOAL_ACHIEVE;
+import static com.soma.snackexercise.util.constant.Status.ACTIVE;
+
 /**
  * 미션 관련 서비스 클래스
  */
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -36,6 +43,8 @@ public class MissionService {
     private final GroupRepository groupRepository;
     private final MemberRepository memberRepository;
     private final JoinListRepository joinListRepository;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
+    private final MissionUtil missionUtil;
 
     /**
      * 오늘의 미션 결과를 조회합니다.
@@ -44,7 +53,7 @@ public class MissionService {
      */
     public TodayMissionResultResponse readTodayMissionResults(Long groupId) {
         // 1. 그룹의 종료일자
-        Group group = groupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
+        Group group = groupRepository.findByIdAndStatus(groupId, ACTIVE).orElseThrow(GroupNotFoundException::new);
 
         // 2. 그룹이 현재 완료한 릴레이 횟수
         LocalDateTime now = LocalDateTime.now();// 현재 날짜와 시간 가져오기
@@ -65,7 +74,7 @@ public class MissionService {
      * @return 오늘의 미션 순위
      */
     public Object readTodayMissionRank(Long exgroupId) {
-        if(!groupRepository.existsByIdAndStatus(exgroupId, Status.ACTIVE)){
+        if(!groupRepository.existsByIdAndStatus(exgroupId, ACTIVE)){
             throw new GroupNotFoundException();
         }
 
@@ -85,7 +94,7 @@ public class MissionService {
      * @return 누적 미션 순위
      */
     public Object readCumulativeMissionRank(Long exgroupId) {
-        Group group = groupRepository.findByIdAndStatus(exgroupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
+        Group group = groupRepository.findByIdAndStatus(exgroupId, ACTIVE).orElseThrow(GroupNotFoundException::new);
 
         List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(exgroupId, group.getStartDate().atStartOfDay(), group.getEndDate().atStartOfDay().plusDays(1));
 
@@ -140,5 +149,57 @@ public class MissionService {
         Mission mission = missionRepository.findById(request.getMissionId()).orElseThrow(MissionNotFoundException::new);
         mission.startMission();
         return MissionStartResponse.toDto(mission);
+    }
+
+    /**
+     *
+     * @param missionId 수행 완료할 미션 ID
+     * @param request 해당 미션을 수행하여 얻은 소모칼로리, 수행한 운동영상의 길이
+     * @return
+     */
+    @Transactional // TODO 쿼리 성능 검증 필요
+    public MissionFinishResponse finishMission(Long missionId, MissionFinishRequest request, String loginUserEmail) {
+        // 1. 미션 테이블에 수행 완료 내용 기록
+        Mission mission = missionRepository.findById(missionId).orElseThrow(MissionNotFoundException::new);
+        mission.endMission(request.getCalory(), request.getLengthOfVideo());
+
+        // 2. JoinList의 executedMissionCount 1 추가
+        Group group = mission.getGroup();
+        Member member = mission.getMember();
+
+        JoinList joinList = joinListRepository.findByGroupAndMemberAndStatus(group, member, ACTIVE).orElseThrow(JoinListNotFoundException::new);
+        joinList.addOneExecutedMissionCount();
+
+        // 3. 모든 그룹원이 목표한 릴레이횟수만큼 수행 시, 그룹 목표 달성 및 푸시 알림 보내기
+        if(joinListRepository.countGroupGoalAchievedMember(group) == joinListRepository.countGroupMember(group)){
+            group.updateIsGoalAchieved(); // 그룹 목표 달성 여부 update
+
+            // 멤버 전원에게 미션 성공 푸시 알림 전송
+            List<String> tokenList = joinListRepository.findByGroupAndStatus(group, ACTIVE).stream().map(joinList1 -> joinList1.getMember().getFcmToken()).toList();
+            firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_GOAL_ACHIEVE.getTitle(), GROUP_GOAL_ACHIEVE.getBody());
+            log.info("[그룹 목표 달성] 그룹명 : {}", group.getName());
+
+            return new MissionFinishResponse(group.getIsGoalAchieved());
+        }
+
+
+        // 4. 다음 미션 할당자 선정 및 할당, 알림 전송
+        Member nextMissionMember = missionUtil.getNextMissionMember(group);
+        missionRepository.save(Mission.builder()
+                .exercise(missionUtil.getRandomExercise())
+                .member(nextMissionMember)
+                .group(group)
+                .build());
+        group.updateCurrentDoingMemberId(nextMissionMember.getId());
+
+        if(nextMissionMember.getFcmToken() == null){
+            throw new FcmTokenEmptyException();
+        }
+
+        firebaseCloudMessageService.sendByToken(nextMissionMember.getFcmToken(), ALLOCATE.getTitle(), ALLOCATE.getBody());
+
+        log.info("[미션 수행 완료] 그룹명 : {}", group.getName());
+        log.info("[다음 미션] 그룹원 : {}, 할당 시각 : {}", nextMissionMember.getName(), LocalDateTime.now());
+        return new MissionFinishResponse(group.getIsGoalAchieved());
     }
 }
