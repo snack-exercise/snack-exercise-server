@@ -46,6 +46,7 @@ public class MissionSchedulerService {
     public void allocateMissionAtGroupStartTime(){
         List<Group> groupList = groupRepository.findAllByStatus(Status.ACTIVE);
         List<String> tokenList = new ArrayList<>();
+        List<Exercise> exerciseList = exerciseRepository.findAll();
 
         // 모든 그룹에 대해서 현재 시각이 그룹의 시작시간과 시간차이가 5초 이하인 그룹에 대해서 미션 할당 및 알림 보내기
         LocalTime now = LocalTime.now();
@@ -60,7 +61,7 @@ public class MissionSchedulerService {
             tokenList.add(targetMember.getFcmToken());
 
             missionRepository.save(Mission.builder()
-                    .exercise(getRandomExercise())
+                    .exercise(exerciseList.get(random.nextInt(exerciseList.size())))
                     .member(targetMember)
                     .group(group)
                     .build());
@@ -90,16 +91,6 @@ public class MissionSchedulerService {
             targetMember = minExecutedMemberList.get(randomIndex);
         }
         return targetMember;
-    }
-
-    /**
-     *
-     * @return 랜덤한 운동 1개를 반환합니다.
-     */
-    Exercise getRandomExercise(){
-        List<Exercise> exerciseList = exerciseRepository.findAll();
-        int randomIndex = random.nextInt(exerciseList.size());
-        return exerciseList.get(randomIndex);
     }
 
     @Scheduled(fixedRate = 5000)
