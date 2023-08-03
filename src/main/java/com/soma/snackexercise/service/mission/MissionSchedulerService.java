@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.soma.snackexercise.domain.notification.NotificationMessage.ALLOCATE;
-import static com.soma.snackexercise.domain.notification.NotificationMessage.REMINDER;
+import static com.soma.snackexercise.domain.notification.NotificationMessage.AUTOMATIC_REMINDER;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -114,7 +114,7 @@ public class MissionSchedulerService {
 
             List<JoinList> joinLists = joinListRepository.findByGroupAndStatus(group, Status.ACTIVE);
             joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
-            firebaseCloudMessageService.sendByTokenList(tokenList, REMINDER.getTitleWithNickname(targetMember.getNickname()), REMINDER.getBodyWithNickname(targetMember.getNickname()));
+            firebaseCloudMessageService.sendByTokenList(tokenList, AUTOMATIC_REMINDER.getTitleWithNickname(targetMember.getNickname()), AUTOMATIC_REMINDER.getBodyWithNickname(targetMember.getNickname()));
         }
     }
 }

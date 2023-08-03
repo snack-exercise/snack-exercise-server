@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum NotificationMessage {
-    REMINDER("님이 운동을 안하고 있어요!", "님이 지금 당장 운동할 수 있도록 독촉해보세요!"),
+    MANUAL_REMINDER("님이 당신의 운동을 기다리고 있어요!", "잠깐의 운동이 당신의 하루에 큰 변화를 가져올 거예요!"),
+    AUTOMATIC_REMINDER("님이 운동을 안하고 있어요!", "님이 지금 당장 운동할 수 있도록 독촉해보세요!"),
     ALLOCATE("운동 미션 할당! 💪", "지금 당장 운동 미션을 확인하고 운동을 수행해보세요! 🔥"),
     GROUP_GOAL_ACHIEVE("그룹 목표 달성! 🙌", "그룹의 목표 릴레이 횟수를 모두 달성했어요! 👍🏻");
 
