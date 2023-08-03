@@ -78,4 +78,16 @@ public class Mission extends BaseTimeEntity {
 
         return ChronoUnit.MINUTES.between(getCreatedAt(), getStartAt());
     }
+
+    public Boolean isValidTimeReminder(LocalDateTime now, Integer checkIntervalTime, Integer scheduledFixedRate) {
+        long differenceInSeconds = ChronoUnit.SECONDS.between(now, getCreatedAt());
+
+        if(differenceInSeconds < 0) {
+            return false;
+        }
+
+        long reminderTime = differenceInSeconds - (checkIntervalTime * 60);
+
+        return reminderTime < scheduledFixedRate;
+    }
 }

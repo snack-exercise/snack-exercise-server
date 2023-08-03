@@ -72,12 +72,4 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
      * @return 가장 최신의 미션
      */
     Optional<Mission> findFirstByGroupAndMemberOrderByCreatedAtDesc(Group group, Member member);
-
-    /**
-     * 그룹과 멤버가 주어질때, 아직 시작하지 않은 가장 최신의 미션을 반환합니다.
-     * @param group
-     * @param member
-     * @return 아직 시작하지 않은 가장 최신의 미션
-     */
-    Optional<Mission> findFirstByGroupAndMemberAndStartAtIsNullOrderByCreatedAtDesc(Group group, Member member);
 }

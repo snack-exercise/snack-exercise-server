@@ -133,7 +133,7 @@ public class MissionService {
     public MissionResponse read(Long groupId, String email) {
         Group group = groupRepository.findByIdAndStatus(groupId, Status.ACTIVE).orElseThrow(GroupNotFoundException::new);
         Member member = memberRepository.findByEmailAndStatus(email, Status.ACTIVE).orElseThrow(MemberNotFoundException::new);
-        Mission mission = missionRepository.findFirstByGroupAndMemberAndEndAtIsNotNullOrderByCreatedAtDesc(group, member).orElseThrow(MissionNotFoundException::new);
+        Mission mission = missionRepository.findFirstByGroupAndMemberOrderByCreatedAtDesc(group, member).orElseThrow(MissionNotFoundException::new);
 
         // 그룹이 현재 완료한 릴레이 횟수
         Integer currentFinishedRelayCount = joinListRepository.findMaxExecutedMissionCountByGroupAndStatus(group, Status.ACTIVE);

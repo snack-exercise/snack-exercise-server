@@ -90,6 +90,10 @@ public class Group extends BaseEntity {
         this.isGoalAchieved = TRUE;
     }
 
+    public Boolean isCurrentTimeBetweenStartTimeAndEndTime(LocalTime now) {
+        return now.isAfter(startTime) && now.isBefore(endTime);
+    }
+
     @Builder
     public Group(String name, String emozi, String color, String description,
                  Integer maxMemberNum, Integer goalRelayNum, LocalTime startTime,
