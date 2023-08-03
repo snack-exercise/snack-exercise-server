@@ -86,7 +86,7 @@ public class Group extends BaseEntity {
         this.startDate = LocalDate.now();
         this.endDate = startDate.plusDays(existDays);
     }
-  
+
     public void updateIsGoalAchieved(){
         this.isGoalAchieved = TRUE;
 
