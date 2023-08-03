@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Mission", description = "미션 API")
 @RequiredArgsConstructor
+@RestController
 public class MissionController {
     private final MissionService missionService;
 
