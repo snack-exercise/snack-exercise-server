@@ -60,6 +60,10 @@ public class Group extends BaseEntity {
         this.maxMemberNum = newMaxMemberNum;
     }
 
+    public void updateCurrentDoingMemberId(Long memberId) {
+        this.currentDoingMemberId = memberId;
+    }
+
     public void update(GroupUpdateRequest request) {
         this.name = request.getName();
         this.emozi = request.getEmozi();
