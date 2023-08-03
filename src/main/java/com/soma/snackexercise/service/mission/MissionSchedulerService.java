@@ -117,4 +117,9 @@ public class MissionSchedulerService {
             firebaseCloudMessageService.sendByTokenList(tokenList, REMINDER.getTitleWithNickname(targetMember.getNickname()), REMINDER.getBodyWithNickname(targetMember.getNickname()));
         }
     }
+
+    @Scheduled(fixedRate = 5000)
+    public void sendReminderNotifications() {
+
+    }
 }
