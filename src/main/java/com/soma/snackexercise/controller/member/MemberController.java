@@ -34,7 +34,6 @@ public class MemberController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "회원 수정 성공", content = @Content(schema = @Schema(implementation = MemberResponse.class)))
             })
-    @Parameter(name = "memberId", description = "수정할 회원 ID", required = true,  in = ParameterIn.PATH)
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     public Response update(@RequestBody MemberUpdateRequest request, @AuthenticationPrincipal UserDetails loginUser) {
