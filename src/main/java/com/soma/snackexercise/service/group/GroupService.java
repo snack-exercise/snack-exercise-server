@@ -1,5 +1,6 @@
 package com.soma.snackexercise.service.group;
 
+import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.domain.group.CreateGroupCode;
 import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
@@ -14,15 +15,18 @@ import com.soma.snackexercise.dto.group.response.JoinGroupResponse;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.exception.*;
+import com.soma.snackexercise.repository.exercise.ExerciseRepository;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
+import com.soma.snackexercise.service.mission.MissionUtil;
 import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
 import java.util.List;
 
 // TODO : jakarata Transactional과 spring Transactional의 차이는 뭘까
@@ -34,7 +38,8 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final MemberRepository memberRepository;
     private final JoinListRepository joinListRepository;
-
+    private final ExerciseRepository exerciseRepository;
+    private final MissionUtil missionUtil;
 
     @Transactional
     public GroupCreateResponse create(GroupCreateRequest groupCreateRequest, String email){
@@ -183,6 +188,16 @@ public class GroupService {
 
         // 2. 그룹의 시작일자, 끝일자 기록
         group.updateStartDateAndEndDate();
+
+        // 3. 현재 시각이 그룹의 운동 시간 범위 내라면, 회원 1명에게 운동 할당
+        LocalTime now = LocalTime.now();
+        List<Exercise> exerciseList = exerciseRepository.findAll();
+
+        if(now.isAfter(group.getStartTime()) && now.isBefore(group.getEndTime())){
+            log.info("============= 그룹 시작, [그룹명] : {} =============", group.getName());
+            Member targetMember = missionUtil.getNextMissionMember(group);
+            missionUtil.allocateMission(targetMember, group, exerciseList);
+        }
 
         return GroupResponse.toDto(group);
     }
