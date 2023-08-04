@@ -105,4 +105,15 @@ public class MissionController {
     public Response getNonMemberRandomMission(){
         return Response.success(missionService.getNonMemberRandomMission());
     }
+
+    @Operation(summary = "회원 랜덤 미션 받기", description = "회원에게 랜덤 미션을 제공합니다.",
+            security = { @SecurityRequirement(name = "bearer-key") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "회원 랜덤 미션 받기 성공", content = @Content(schema = @Schema(implementation = Response.class)))
+            })
+    @GetMapping("missions/random/member")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getMemberRandomMission(@AuthenticationPrincipal UserDetails loginUser){
+        return Response.success(missionService.getMemberRandomMission(loginUser.getUsername()));
+    }
 }

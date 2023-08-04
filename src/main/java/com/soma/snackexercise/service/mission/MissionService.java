@@ -227,5 +227,22 @@ public class MissionService {
         return ExerciseResponse.toDto(missionUtil.getRandomExercise());
     }
 
+    /**
+     * 회원에게 랜덤 운동 1개를 할당합니다.
+     * @param email 이메일
+     * @return 랜덤 운동 1개
+     */
+    @Transactional
+    public ExerciseResponse getMemberRandomMission(String email) {
+        Exercise randomExercise = missionUtil.getRandomExercise();
+        Member member = memberRepository.findByEmailAndStatus(email, ACTIVE).orElseThrow(MemberNotFoundException::new);
+        missionRepository.save(Mission.builder()
+                .exercise(randomExercise)
+                .member(member)
+                .group(null)// TODO : FK null 가능은 하다만 무결성을 위해서는 피하는 게 좋다는 데...
+                .build());
+
+        return ExerciseResponse.toDto(randomExercise);
+    }
 
 }
