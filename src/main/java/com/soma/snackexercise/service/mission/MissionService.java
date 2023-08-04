@@ -245,4 +245,15 @@ public class MissionService {
         return ExerciseResponse.toDto(randomExercise);
     }
 
+    /**
+     * 회원의 랜덤 운동 수행을 기록합니다.
+     * @param missionId 수행 완료할 미션 ID
+     * @param request 해당 미션을 수행하여 얻은 소모칼로리, 수행한 운동영상의 길이
+     * @param email 이메일
+     */
+    @Transactional
+    public void finishMemberRandomMission(Long missionId, MissionFinishRequest request, String email) {
+        Mission mission = missionRepository.findById(missionId).orElseThrow(MissionNotFoundException::new);
+        mission.endMission(request.getCalory(), request.getLengthOfVideo());
+    }
 }
