@@ -29,6 +29,7 @@ import java.util.Random;
 
 import static com.soma.snackexercise.domain.notification.NotificationMessage.*;
 
+@Transactional(readOnly = true)
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -49,6 +50,7 @@ public class MissionSchedulerService {
     // todo : Transactionl을 붙여주는게 나을까..?
     //@Scheduled(fixedRate = 5000) // 이전 Task 시작 시점으로부터 5초가 지난 후 Task 실행
     @Scheduled(cron = "1 * * * * *") // 1분마다 실행, cron 표현식
+    @Transactional
     public void allocateMissionAtGroupStartTime() {
         log.info("============= 그룹 시작 시간 미션 할당 스케줄러 =============");
         // 종료 여부가 false인 group에 대해서
@@ -59,14 +61,19 @@ public class MissionSchedulerService {
         // 모든 그룹에 대해서 현재 시각이 그룹의 시작시간과 시간차이가 5초 이하인 그룹에 대해서 미션 할당 및 알림 보내기
         LocalTime now = LocalTime.now();
         for (Group group : groupList) {
-            long timeDiff = ChronoUnit.SECONDS.between(now, group.getStartTime());
-
+            long timeDiff = ChronoUnit.MINUTES.between(now, group.getStartTime()); // group.getStartTime - now
+            if(now.isBefore(group.getStartTime())){
+                continue;
+            }
+            log.info("[시각 차이] : {}분, [그룹명] : {}", timeDiff, group.getName());
             // 그룹 시작시각과 현재시각의 차이가 5이상이거나 음수라면 알림을 보내지 않음
-            if (timeDiff >= 5 || timeDiff < 0) {
+            if (timeDiff >= 1 || timeDiff < 0) {
                 continue;
             }
             Member targetMember = missionUtil.getMissionAllocatedMember(group);
-            tokenList.add(targetMember.getFcmToken());
+            if (targetMember.getFcmToken() != null) { // TODO 만약 회원의 fcm token이 null인 경우 처리 필요
+                tokenList.add(targetMember.getFcmToken());
+            }
 
             missionRepository.save(Mission.builder()
                     .exercise(exerciseList.get(random.nextInt(exerciseList.size())))
@@ -84,6 +91,7 @@ public class MissionSchedulerService {
     }
 
     //@Scheduled(fixedRate = 5000)
+    @Transactional
     @Scheduled(cron = "0 * * * * *") // 1분마다 실행, cron 표현식
     public void sendReminderNotifications() {
         log.info("============= 자동 독촉 알람 스케줄러 =============");
@@ -112,15 +120,24 @@ public class MissionSchedulerService {
                     mission == null ||
                     mission.getStartAt() != null ||
                     mission.getAlarmCount() >= group.getCheckMaxNum() ||
-                    !mission.isValidTimeReminder(localDateTimeNow, group.getCheckIntervalTime(), 5)) {
+                    !mission.isValidTimeReminder(localDateTimeNow, group.getCheckIntervalTime(), 1)) {
+                log.info("[그룹명] : {}, 독촉 대상이 없습니다.", group.getName());
                 continue;
             }
-
+            log.info("[그룹명] : {}, [미션 ID] : {}, [미션 수행자명] : {}", mission.getId(), mission.getMember().getName());
             mission.addOneAlarmCount();
 
             List<JoinList> joinLists = joinListRepository.findByGroupAndStatus(group, Status.ACTIVE);
-            joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
-            firebaseCloudMessageService.sendByTokenList(tokenList, AUTOMATIC_REMINDER.getTitleWithNickname(targetMember.getNickname()), AUTOMATIC_REMINDER.getBodyWithNickname(targetMember.getNickname()));
+            for (JoinList joinList : joinLists) {
+                if(joinList.getMember().getFcmToken() != null){
+                    tokenList.add(joinList.getMember().getFcmToken());
+                }
+            }
+            //joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
+            if(!tokenList.isEmpty()){
+                firebaseCloudMessageService.sendByTokenList(tokenList, AUTOMATIC_REMINDER.getTitleWithNickname(targetMember.getNickname()), AUTOMATIC_REMINDER.getBodyWithNickname(targetMember.getNickname()));
+            }
+
         }
     }
 
@@ -150,9 +167,15 @@ public class MissionSchedulerService {
 
     private void sendNotificationsToJoinList(Group group, List<JoinList> joinLists) {
         List<String> tokenList = new ArrayList<>();
+        for (JoinList joinList : joinLists) {
+            if (joinList.getMember().getFcmToken() != null) {
+                tokenList.add(joinList.getMember().getFcmToken());
+            }
+        }
+        //joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
+        if (!tokenList.isEmpty()) {
+            firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_END.getTitleWithGroupName(group.getName()), GROUP_END.getBody());
 
-        joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
-
-        firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_END.getTitleWithGroupName(group.getName()), GROUP_END.getBody());
+        }
     }
 }
