@@ -102,12 +102,18 @@ public class ExceptionAdvice {
         return Response.failure(MISSION_NOT_FOUND_EXCEPTION);
     }
 
+    @ExceptionHandler(NotStartedGroupException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response notStartedGroupExceptionHandler (NotStartedGroupException e){
+        return Response.failure(NOT_STARTED_GROUP);
+    }
+
     /*
     Exercise
      */
     @ExceptionHandler(ExerciseNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response exerciseNotFoundExceptionExceptionHandler (ExerciseNotFoundException e){
+    public Response exerciseNotFoundExceptionHandler (ExerciseNotFoundException e){
         return Response.failure(MISSION_NOT_FOUND_EXCEPTION);
     }
 
