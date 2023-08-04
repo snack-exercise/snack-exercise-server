@@ -95,4 +95,14 @@ public class MissionController {
     public Response finishMission(@PathVariable("missionId") Long missionId, @RequestBody MissionFinishRequest request, @AuthenticationPrincipal UserDetails loginUser){
         return Response.success(missionService.finishMission(missionId, request, loginUser.getUsername()));
     }
+
+    @Operation(summary = "비회원 랜덤 미션 받기", description = "비회원에게 랜덤 미션을 제공합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "비회원 랜덤 미션 받기 성공", content = @Content(schema = @Schema(implementation = Response.class))),
+            })
+    @GetMapping("missions/random/non-member")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getNonMemberRandomMission(){
+        return Response.success(missionService.getNonMemberRandomMission());
+    }
 }
