@@ -1,9 +1,11 @@
 package com.soma.snackexercise.service.mission;
 
+import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
+import com.soma.snackexercise.dto.exercise.response.ExerciseResponse;
 import com.soma.snackexercise.dto.mission.request.MissionCancelRequest;
 import com.soma.snackexercise.dto.mission.request.MissionFinishRequest;
 import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
@@ -166,10 +168,10 @@ public class MissionService {
     }
 
     /**
-     *
+     * 릴레이 미션 수행 완료를 기록하고, 다음 사람에게 미션을 할당합니다.
      * @param missionId 수행 완료할 미션 ID
      * @param request 해당 미션을 수행하여 얻은 소모칼로리, 수행한 운동영상의 길이
-     * @return
+     * @return 그룹 목표 달성 여부
      */
     @Transactional // TODO 쿼리 성능 검증 필요
     public MissionFinishResponse finishMission(Long missionId, MissionFinishRequest request, String loginUserEmail) {
@@ -215,5 +217,43 @@ public class MissionService {
         log.info("[미션 수행 완료] 그룹명 : {}", group.getName());
         log.info("[다음 미션] 그룹원 : {}, 할당 시각 : {}", nextMissionMember.getName(), LocalDateTime.now());
         return new MissionFinishResponse(group.getIsGoalAchieved());
+    }
+
+    /**
+     * 비회원에게 랜덤 운동 1개를 할당합니다.
+     * @return 랜덤 운동 1개
+     */
+    public ExerciseResponse getNonMemberRandomMission() {
+        return ExerciseResponse.toDto(missionUtil.getRandomExercise());
+    }
+
+    /**
+     * 회원에게 랜덤 운동 1개를 할당합니다.
+     * @param email 이메일
+     * @return 랜덤 운동 1개
+     */
+    @Transactional
+    public ExerciseResponse getMemberRandomMission(String email) {
+        Exercise randomExercise = missionUtil.getRandomExercise();
+        Member member = memberRepository.findByEmailAndStatus(email, ACTIVE).orElseThrow(MemberNotFoundException::new);
+        missionRepository.save(Mission.builder()
+                .exercise(randomExercise)
+                .member(member)
+                .group(null)// TODO : FK null 가능은 하다만 무결성을 위해서는 피하는 게 좋다는 데...
+                .build());
+
+        return ExerciseResponse.toDto(randomExercise);
+    }
+
+    /**
+     * 회원의 랜덤 운동 수행을 기록합니다.
+     * @param missionId 수행 완료할 미션 ID
+     * @param request 해당 미션을 수행하여 얻은 소모칼로리, 수행한 운동영상의 길이
+     * @param email 이메일
+     */
+    @Transactional
+    public void finishMemberRandomMission(Long missionId, MissionFinishRequest request, String email) {
+        Mission mission = missionRepository.findById(missionId).orElseThrow(MissionNotFoundException::new);
+        mission.endMission(request.getCalory(), request.getLengthOfVideo());
     }
 }

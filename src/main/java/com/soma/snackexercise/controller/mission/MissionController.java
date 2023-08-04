@@ -95,4 +95,39 @@ public class MissionController {
     public Response finishMission(@PathVariable("missionId") Long missionId, @RequestBody MissionFinishRequest request, @AuthenticationPrincipal UserDetails loginUser){
         return Response.success(missionService.finishMission(missionId, request, loginUser.getUsername()));
     }
+
+    @Operation(summary = "비회원 랜덤 미션 받기", description = "비회원에게 랜덤 미션을 제공합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "비회원 랜덤 미션 받기 성공", content = @Content(schema = @Schema(implementation = Response.class))),
+            })
+    @GetMapping("missions/random/non-member")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getNonMemberRandomMission(){
+        return Response.success(missionService.getNonMemberRandomMission());
+    }
+
+    @Operation(summary = "회원 랜덤 미션 받기", description = "회원에게 랜덤 미션을 제공합니다.",
+            security = { @SecurityRequirement(name = "bearer-key") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "회원 랜덤 미션 받기 성공", content = @Content(schema = @Schema(implementation = Response.class)))
+            })
+    @GetMapping("missions/random/member")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getMemberRandomMission(@AuthenticationPrincipal UserDetails loginUser){
+        return Response.success(missionService.getMemberRandomMission(loginUser.getUsername()));
+    }
+
+    @Operation(summary = "회원 랜덤 미션 수행 완료", description = "회원의 랜덤 미션 수행을 저장합니다.",
+            security = { @SecurityRequirement(name = "bearer-key") },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "미션 수행 완료 성공", content = @Content(schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(responseCode = "404", description = "미션을 찾을 수 없음", content = @Content(schema = @Schema(implementation = Response.class)))
+            })
+    @Parameter(name = "missionId", description = "수행 완료할 미션 ID", required = true,  in = ParameterIn.PATH)
+    @PostMapping("missions/random/{missionId}/finish")
+    @ResponseStatus(HttpStatus.OK)
+    public Response finishMemberRandomMission(@PathVariable("missionId") Long missionId, @RequestBody MissionFinishRequest request, @AuthenticationPrincipal UserDetails loginUser){
+        missionService.finishMemberRandomMission(missionId, request, loginUser.getUsername());
+        return Response.success();
+    }
 }
