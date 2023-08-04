@@ -80,12 +80,11 @@ public class MissionService {
         }
 
         // 1. 오늘 날짜의 모든 미션 조회
-        LocalDateTime now = LocalDateTime.now().minusDays(1);// 현재 날짜와 시간 가져오기
+        LocalDateTime now = LocalDateTime.now();// 현재 날짜와 시간 가져오기
         LocalDateTime todayMidnight = now.with(LocalTime.MIN);// 오늘 자정 구하기
         LocalDateTime tomorrowMidnight = now.plusDays(1).with(LocalTime.MIN);// 내일 자정 구하기
 
         List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(exgroupId, todayMidnight, tomorrowMidnight);
-
         return calcRankFromMissionList(missions);
     }
 
@@ -96,6 +95,9 @@ public class MissionService {
      */
     public Object readCumulativeMissionRank(Long exgroupId) {
         Group group = groupRepository.findByIdAndStatus(exgroupId, ACTIVE).orElseThrow(GroupNotFoundException::new);
+        if (group.getStartDate() == null){
+            throw new NotStartedGroupException();
+        }
 
         List<Mission> missions = missionRepository.findFinishedMissionsByGroupIdWithinDateRange(exgroupId, group.getStartDate().atStartOfDay(), group.getEndDate().atStartOfDay().plusDays(1));
 
