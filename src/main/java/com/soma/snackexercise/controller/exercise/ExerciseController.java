@@ -30,7 +30,6 @@ public class ExerciseController {
                responses = {
                     @ApiResponse(responseCode = "200", description = "운동 생성 성공")
                })
-    @Parameter(name = "request", description = "운동 생성 정보", required = true, in = ParameterIn.DEFAULT)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Response create(@RequestBody ExerciseCreateRequest request) {
