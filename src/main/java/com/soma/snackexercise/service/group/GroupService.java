@@ -64,6 +64,7 @@ public class GroupService {
                 .goalRelayNum(groupCreateRequest.getGoalRelayNum())
                 .startTime(groupCreateRequest.getStartTime())
                 .endTime(groupCreateRequest.getEndTime())
+                .existDays(groupCreateRequest.getExistDays())
                 .penalty(groupCreateRequest.getPenalty())
                 .code(groupCode)
                 .checkIntervalTime(groupCreateRequest.getCheckIntervalTime())
