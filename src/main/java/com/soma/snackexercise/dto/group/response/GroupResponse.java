@@ -46,8 +46,6 @@ public class GroupResponse {
 
     private String penalty; // 벌칙
 
-    private String code; // 그룹 입장 코드
-
     private Integer checkIntervalTime; // 미션 수행 체크 시간 간격
 
     private Integer checkMaxNum; // 일별 미션 수행 체크 최대 횟수
@@ -67,7 +65,6 @@ public class GroupResponse {
                 group.getStartDate(),
                 group.getEndDate(),
                 group.getPenalty(),
-                group.getCode(),
                 group.getCheckIntervalTime(),
                 group.getCheckMaxNum()
         );
