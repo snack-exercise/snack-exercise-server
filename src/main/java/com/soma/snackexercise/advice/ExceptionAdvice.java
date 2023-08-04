@@ -103,6 +103,15 @@ public class ExceptionAdvice {
     }
 
     /*
+    Exercise
+     */
+    @ExceptionHandler(ExerciseNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response exerciseNotFoundExceptionExceptionHandler (ExerciseNotFoundException e){
+        return Response.failure(MISSION_NOT_FOUND_EXCEPTION);
+    }
+
+    /*
     Query Param
      */
     @ExceptionHandler(WrongRequestParamException.class)

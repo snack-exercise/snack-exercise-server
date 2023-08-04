@@ -29,6 +29,9 @@ public enum ErrorCode {
     /* Mission */
     MISSION_NOT_FOUND_EXCEPTION(-1400, "미션이 존재하지 않습니다."),
 
+    /* Exercise */
+    EXERCISE_NOT_FOUND_EXCEPTION(-1500, "운동이 존재하지 않습니다."),
+
     /* QueryParam */
     WRONG_QUERY_PARAM_EXCEPTION(-1900, "잘못된 Query Param입니다.");
 
