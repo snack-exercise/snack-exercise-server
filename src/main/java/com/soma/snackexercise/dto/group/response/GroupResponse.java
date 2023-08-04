@@ -44,6 +44,8 @@ public class GroupResponse {
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate endDate; // 종료 기간
 
+    private String code;
+
     private String penalty; // 벌칙
 
     private Integer checkIntervalTime; // 미션 수행 체크 시간 간격
@@ -64,6 +66,7 @@ public class GroupResponse {
                 group.getExistDays(),
                 group.getStartDate(),
                 group.getEndDate(),
+                group.getCode(),
                 group.getPenalty(),
                 group.getCheckIntervalTime(),
                 group.getCheckMaxNum()
