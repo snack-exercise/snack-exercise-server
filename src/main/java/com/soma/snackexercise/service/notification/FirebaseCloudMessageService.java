@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class FirebaseCloudMessageService {
-    private final FirebaseMessaging firebaseMessaging;
+    //private final FirebaseMessaging firebaseMessaging;
 
     /**
      * tokenList를 받아 여러 개의 기기로 알림 보내기
@@ -33,7 +33,7 @@ public class FirebaseCloudMessageService {
                 .build();
 
         try {
-            BatchResponse response = firebaseMessaging.sendMulticast(multicastMessage);
+            BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
             if (response.getFailureCount() > 0) {
                 List<SendResponse> responses = response.getResponses();
                 List<String> failedTokens = new ArrayList<>();
@@ -68,7 +68,7 @@ public class FirebaseCloudMessageService {
                 .build();
 
         try {
-            firebaseMessaging.send(message);
+            FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
             log.info("FirebaseMessagingException: {}, fail token: {}", e.getMessage(), token);
         }
