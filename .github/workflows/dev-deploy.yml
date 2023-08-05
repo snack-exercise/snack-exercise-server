@@ -62,7 +62,12 @@ jobs:
           touch ./snackpot-fcm.json
           echo "${{ secrets.FCM_JSON_SECRET }}" > ./snackpot-fcm.json
         shell: bash
-
+  
+      - name: List files in current directory
+        run: |
+          cd ./src/main/resources
+          ls
+        shell: bash
 
       # (4) ./gradlew 권한 설정
       - name: ./gradlew 권한 설정
