@@ -55,19 +55,16 @@ jobs:
           echo "${{ secrets.APPLICATION_FCM_YML }}" > ./application-fcm.yml
         shell: bash
 
+      # JSON 문자열 파싱을 위한 jq 설치
+      - name: Install jq
+        run: sudo apt-get install jq
+        shell: bash
+
       ## (3-4) snackpot-fcm.json 생성
       - name: make snackpot-fcm.json
-        run: |
-          cd ./src/main/resources
-          touch ./snackpot-fcm.json
-          echo "${{ secrets.FCM_JSON_SECRET }}" > ./snackpot-fcm.json
+        run: echo "${{ secrets.FCM_JSON_SECRET }}" | jq . > ./src/main/resources/snackpot-fcm.json
         shell: bash
-  
-      - name: List files in current directory
-        run: |
-          cd ./src/main/resources
-          ls
-        shell: bash
+
 
       # (4) ./gradlew 권한 설정
       - name: ./gradlew 권한 설정
