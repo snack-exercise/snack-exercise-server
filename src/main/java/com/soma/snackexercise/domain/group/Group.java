@@ -52,7 +52,7 @@ public class Group extends BaseEntity {
 
     private Integer checkIntervalTime; // 독촉 검사 시간 간격
 
-    private Integer checkMaxNum; // 하루 독촉 검사 최대 횟수
+    private Integer checkMaxNum; // 미션 1개당 최대 독촉 검사 횟수
 
     private Long currentDoingMemberId; // 현재 미션 수행 중인 회원의 ID
 
@@ -78,8 +78,8 @@ public class Group extends BaseEntity {
         this.startTime = request.getStartTime();
         this.endTime = request.getEndTime();
         this.penalty = request.getPenalty();
-        this.checkIntervalTime = this.getCheckIntervalTime();
-        this.checkMaxNum = this.getCheckMaxNum();
+        this.checkIntervalTime = request.getCheckIntervalTime();
+        this.checkMaxNum = request.getCheckMaxNum();
     }
 
     public void updateStartDateAndEndDate(){
