@@ -62,7 +62,7 @@ jobs:
 
       ## (3-4) snackpot-fcm.json 생성
       - name: make snackpot-fcm.json
-        run: echo "${{ secrets.FCM_JSON_SECRET }}" | jq . > ./src/main/resources/snackpot-fcm.json
+        run: echo '{"key":"value"}' | jq . > ./src/main/resources/snackpot-fcm.json
         shell: bash
 
 
