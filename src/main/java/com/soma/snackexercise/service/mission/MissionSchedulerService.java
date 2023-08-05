@@ -15,6 +15,7 @@ import com.soma.snackexercise.service.notification.FirebaseCloudMessageService;
 import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,12 +50,13 @@ public class MissionSchedulerService {
      */
     // todo : Transactionl을 붙여주는게 나을까..?
     //@Scheduled(fixedRate = 5000) // 이전 Task 시작 시점으로부터 5초가 지난 후 Task 실행
+    @Async
     @Scheduled(cron = "1 * * * * *") // 1분마다 실행, cron 표현식
     @Transactional
     public void allocateMissionAtGroupStartTime() {
         log.info("============= 그룹 시작 시간 미션 할당 스케줄러 =============");
         // 종료 여부가 false이고, 아직 시작하지 않은 그룹에 대해서
-        List<Group> groupList = groupRepository.findAllByCreatedAtNotNullAndIsGoalAchievedAndStatus(false, Status.ACTIVE);
+        List<Group> groupList = groupRepository.findAllByStartDateNotNullAndIsGoalAchievedAndStatus(false, Status.ACTIVE);
         List<String> tokenList = new ArrayList<>();
         List<Exercise> exerciseList = exerciseRepository.findAll();
 
@@ -90,7 +92,11 @@ public class MissionSchedulerService {
         }
     }
 
+    /**
+     * 미션 할당 이후, 지정한 시간만큼 시간이 흐른 뒤에 운동 수행 여부를 확인합니다. 수행을 하지 않았을 경우, 미션 수행 차례인 사람에게는 수행 장려메세지가, 그룹 전원에게 독촉을 장려하는 메세지가 전달됩니다.
+     */
     //@Scheduled(fixedRate = 5000)
+    @Async
     @Transactional
     @Scheduled(cron = "0 * * * * *") // 1분마다 실행, cron 표현식
     public void sendReminderNotifications() {
@@ -124,23 +130,35 @@ public class MissionSchedulerService {
                 log.info("[그룹명] : {}, 독촉 대상이 없습니다.", group.getName());
                 continue;
             }
-            log.info("[그룹명] : {}, [미션 ID] : {}, [미션 수행자명] : {}", mission.getId(), mission.getMember().getName());
+            log.info("[그룹명] : {}, [미션 ID] : {}, [미션 수행자명] : {}", group.getName(), mission.getId(), targetMember.getName());
             mission.addOneAlarmCount();
 
+            // 푸시 알림 전송
+            // 미션 수행자 푸시 알림 전송
+            String targetMemberFcmToken = targetMember.getFcmToken();
+            if (targetMemberFcmToken != null && !targetMemberFcmToken.isEmpty()){
+                firebaseCloudMessageService.sendByToken(targetMemberFcmToken, AUTOMATIC_REMINDER_TARGETMEMBER.getTitle(), AUTOMATIC_REMINDER_TARGETMEMBER.getBody());
+            }
+
+            // 미션 수행자 제외한 그룹원에게 푸시 알림 전송
             List<JoinList> joinLists = joinListRepository.findByGroupAndStatus(group, Status.ACTIVE);
             for (JoinList joinList : joinLists) {
-                if(joinList.getMember().getFcmToken() != null){
+                if(joinList.getMember() != targetMember && joinList.getMember().getFcmToken() != null){
                     tokenList.add(joinList.getMember().getFcmToken());
                 }
             }
             //joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
             if(!tokenList.isEmpty()){
-                firebaseCloudMessageService.sendByTokenList(tokenList, AUTOMATIC_REMINDER.getTitleWithNickname(targetMember.getNickname()), AUTOMATIC_REMINDER.getBodyWithNickname(targetMember.getNickname()));
+                firebaseCloudMessageService.sendByTokenList(tokenList, AUTOMATIC_REMINDER_FOR_GROUPMEMBER.getTitleWithNickname(targetMember.getNickname()), AUTOMATIC_REMINDER_FOR_GROUPMEMBER.getBodyWithNickname(targetMember.getNickname()));
             }
 
         }
     }
 
+    /**
+     * 1시간 마다 스케줄러가 그룹의 종료일자를 기반으로 그룹을 종료합니다.
+     */
+    @Async
     @Transactional
     //@Scheduled(fixedRate = 5000
     @Scheduled(cron = "0 0 0/1 * * *") // 1시간마다 실행, cron 표현식
