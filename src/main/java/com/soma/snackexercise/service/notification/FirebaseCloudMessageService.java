@@ -28,27 +28,27 @@ public class FirebaseCloudMessageService {
     private String fireBaseScope;
 
      //fcm 기본 설정 진행
-    @PostConstruct
-    public void init() {
-        try {
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setCredentials(
-                            GoogleCredentials
-                                    .fromStream(new ClassPathResource(FCM_PRIVATE_KEY_PATH).getInputStream())
-                                    .createScoped(List.of(fireBaseScope)))
-                    .build();
-
-            if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options);
-                log.info("Firebase application has been initialized");
-            }
-        } catch (IOException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            // spring 뜰때 알림 서버가 잘 동작하지 않는 것이므로 바로 죽임
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+//    @PostConstruct
+//    public void init() {
+//        try {
+//            FirebaseOptions options = new FirebaseOptions.Builder()
+//                    .setCredentials(
+//                            GoogleCredentials
+//                                    .fromStream(new ClassPathResource(FCM_PRIVATE_KEY_PATH).getInputStream())
+//                                    .createScoped(List.of(fireBaseScope)))
+//                    .build();
+//
+//            if (FirebaseApp.getApps().isEmpty()) {
+//                FirebaseApp.initializeApp(options);
+//                log.info("Firebase application has been initialized");
+//            }
+//        } catch (IOException e) {
+//            log.error(e.getMessage());
+//            e.printStackTrace();
+//            // spring 뜰때 알림 서버가 잘 동작하지 않는 것이므로 바로 죽임
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }
 
 
 
