@@ -30,8 +30,8 @@ public class FCMConfig {
     //fcm 기본 설정 진행
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
-        // initialize Admin SDK using OAuth 2.0 refresh token
-        InputStream serviceAccountFile = new ClassPathResource(FCM_PRIVATE_KEY_PATH).getInputStream();
+
+        InputStream serviceAccountFile = new ClassPathResource("snackpot-fcm.json").getInputStream();
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccountFile)
