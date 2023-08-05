@@ -21,6 +21,8 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     List<Group> findAllByIsGoalAchievedAndStatus(Boolean isGoalAchieved, Status status);
 
+    List<Group> findAllByCreatedAtNotNullAndIsGoalAchievedAndStatus(Boolean isGoalAchieved, Status status);
+
     /**
      * 상태가 ACTIVE 하면서 인자로 들어온 날짜보다 endAt 필드가 더 오래된 모든 그룹을 반환한다.
      * @param now
