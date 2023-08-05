@@ -34,8 +34,7 @@ public class FCMConfig {
         InputStream serviceAccountFile = new ClassPathResource("snackpot-fcm.json").getInputStream();
 
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccountFile)
-                        .createScoped(List.of(fireBaseScope)))
+                .setCredentials(GoogleCredentials.fromStream(serviceAccountFile))
                 .setProjectId(projectId) // 필수는 아님
                 .build();
 
