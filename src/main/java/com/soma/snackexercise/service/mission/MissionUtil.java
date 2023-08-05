@@ -84,6 +84,7 @@ public class MissionUtil {
                 .member(member)
                 .group(group)
                 .build());
+        group.updateCurrentDoingMemberId(member.getId());
 
         log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), member.getName(), LocalDateTime.now());
         return  member;

@@ -53,8 +53,8 @@ public class MissionSchedulerService {
     @Transactional
     public void allocateMissionAtGroupStartTime() {
         log.info("============= 그룹 시작 시간 미션 할당 스케줄러 =============");
-        // 종료 여부가 false인 group에 대해서
-        List<Group> groupList = groupRepository.findAllByIsGoalAchievedAndStatus(false, Status.ACTIVE);
+        // 종료 여부가 false이고, 아직 시작하지 않은 그룹에 대해서
+        List<Group> groupList = groupRepository.findAllByCreatedAtNotNullAndIsGoalAchievedAndStatus(false, Status.ACTIVE);
         List<String> tokenList = new ArrayList<>();
         List<Exercise> exerciseList = exerciseRepository.findAll();
 

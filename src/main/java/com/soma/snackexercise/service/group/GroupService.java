@@ -193,7 +193,7 @@ public class GroupService {
         LocalTime now = LocalTime.now();
         List<Exercise> exerciseList = exerciseRepository.findAll();
 
-        if(now.isAfter(group.getStartTime()) && now.isBefore(group.getEndTime())){
+        if(now.isAfter(group.getStartTime()) && now.isBefore(group.getEndTime()) && group.getCurrentDoingMemberId() == null){ // 그룹 운동 시간 안이고, 그룹에 미션 할당된 사람이 없는 경우
             log.info("============= 그룹 시작, [그룹명] : {} =============", group.getName());
             Member targetMember = missionUtil.getNextMissionMember(group);
             missionUtil.allocateMission(targetMember, group, exerciseList);
