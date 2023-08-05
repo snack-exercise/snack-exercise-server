@@ -29,7 +29,7 @@ public class FCMConfig {
 
     //fcm 기본 설정 진행
     @Bean
-    public FirebaseApp firebaseApp() throws IOException {
+    FirebaseApp firebaseApp() throws IOException {
 
         InputStream serviceAccountFile = new ClassPathResource("snackpot-fcm.json").getInputStream();
 
@@ -43,7 +43,7 @@ public class FCMConfig {
     }
 
     @Bean
-    public FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp){
+    FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp){
         return FirebaseMessaging.getInstance(firebaseApp);
     }
 }
