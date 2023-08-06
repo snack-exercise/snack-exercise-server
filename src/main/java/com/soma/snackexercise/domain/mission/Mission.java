@@ -8,6 +8,7 @@ import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.exception.CalculateMinutesDiffException;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -15,6 +16,7 @@ import java.time.temporal.ChronoUnit;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Slf4j
 @Entity
 public class Mission extends BaseTimeEntity {
     @Id
@@ -98,11 +100,7 @@ public class Mission extends BaseTimeEntity {
         long differenceInMinutes = ChronoUnit.MINUTES.between(getCreatedAt(), now); // (createdAt - now)
         long reminderTime = differenceInMinutes % checkIntervalTime;
 
-        System.out.println("[시각 차이] : differenceInMinutes = " + differenceInMinutes);
-
-        if(differenceInMinutes < 0) {
-            return false;
-        }
+        log.info("[시각 차이] : differenceInMinutes = " + differenceInMinutes);
 
         return reminderTime < scheduledFixedRate;
     }
