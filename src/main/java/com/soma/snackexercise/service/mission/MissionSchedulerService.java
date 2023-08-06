@@ -64,6 +64,8 @@ public class MissionSchedulerService {
         LocalTime now = LocalTime.now();
         for (Group group : groupList) {
             long timeDiff = ChronoUnit.MINUTES.between(now, group.getStartTime()); // group.getStartTime - now
+
+            // 현재 시간이 시작 시간보다 이전이라면 continue
             if(now.isBefore(group.getStartTime())){
                 continue;
             }

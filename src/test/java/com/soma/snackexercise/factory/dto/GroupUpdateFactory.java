@@ -9,4 +9,9 @@ public class GroupUpdateFactory {
         return new GroupUpdateRequest("name", "emozi", "color", "description", 3, 10,
                 LocalTime.now(), LocalTime.now().plusHours(1), "커피 쏘기", 20, 2, 10);
     }
+
+    public static GroupUpdateRequest createGroupUpdateRequestWithStartTime(LocalTime startTime) {
+        return new GroupUpdateRequest("name", "emozi", "color", "description", 3, 10,
+                startTime, LocalTime.now().plusHours(1), "커피 쏘기", 20, 2, 10);
+    }
 }
