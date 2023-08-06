@@ -1,7 +1,7 @@
 package com.soma.snackexercise.service.member;
 
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.exception.MemberNotFoundException;
+import com.soma.snackexercise.exception.member.MemberNotFoundException;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.repository.mission.MissionRepository;

@@ -1,4 +1,4 @@
-package com.soma.snackexercise.exception;
+package com.soma.snackexercise.exception.mission;
 
 public class MissionNotFoundException extends RuntimeException{
 }

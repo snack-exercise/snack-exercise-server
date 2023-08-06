@@ -5,7 +5,7 @@ import com.soma.snackexercise.domain.BaseTimeEntity;
 import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.exception.CalculateMinutesDiffException;
+import com.soma.snackexercise.exception.timeNullException;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -90,7 +90,7 @@ public class Mission extends BaseTimeEntity {
      */
     public Long calculateMinutesDiffBetweenCreateAndStart() {
         if(getStartAt() == null || getCreatedAt() == null){
-            throw new CalculateMinutesDiffException();
+            throw new timeNullException();
         }
 
         return ChronoUnit.MINUTES.between(getCreatedAt(), getStartAt());

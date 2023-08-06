@@ -6,7 +6,7 @@ import com.soma.snackexercise.domain.mission.Mission;
 import com.soma.snackexercise.dto.mission.response.MemberMissionDto;
 import com.soma.snackexercise.dto.mission.response.RankingResponse;
 import com.soma.snackexercise.dto.mission.response.TodayMissionResultResponse;
-import com.soma.snackexercise.exception.GroupNotFoundException;
+import com.soma.snackexercise.exception.group.GroupNotFoundException;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.mission.MissionRepository;
 import org.junit.jupiter.api.DisplayName;

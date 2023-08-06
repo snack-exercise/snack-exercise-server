@@ -10,7 +10,9 @@ import com.soma.snackexercise.dto.group.response.GroupCreateResponse;
 import com.soma.snackexercise.dto.group.response.GroupResponse;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
-import com.soma.snackexercise.exception.*;
+import com.soma.snackexercise.exception.group.*;
+import com.soma.snackexercise.exception.joinlist.JoinListNotFoundException;
+import com.soma.snackexercise.exception.member.MemberNotFoundException;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
@@ -190,7 +192,7 @@ class GroupServiceTest {
         given(joinListRepository.countByGroupAndOutCountLessThanOneAndStatusEqualsActive(any())).willReturn(request.getMaxMemberNum() + 1);
 
         // when, then
-        assertThatThrownBy(() -> groupService.update(1L, email, request)).isInstanceOf(MaxMemberNumLessThanCurrentException.class);
+        assertThatThrownBy(() -> groupService.update(1L, email, request)).isInstanceOf(exceedGroupMaxMemberNumException.class);
     }
 
     @Test
