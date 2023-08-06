@@ -104,7 +104,9 @@ jobs:
         run: |
           mkdir app-deploy
           cp scripts/*.sh app-deploy/
-          cp appspec.yml app-deploy/
+          cd app-deploy
+          mkdir scripts
+          cp appspec.yml app-deploy/scripts/
           zip -r app-deploy.zip app-deploy
           
 
