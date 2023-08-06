@@ -208,11 +208,13 @@ public class MissionService {
                 .build());
         group.updateCurrentDoingMemberId(nextMissionMember.getId());
 
-        if(nextMissionMember.getFcmToken() == null){
-            throw new FcmTokenEmptyException();
+        // 아직 fcm 프론트와 연동 전이라서 주석 처리
+//        if(nextMissionMember.getFcmToken() == null){
+//            throw new FcmTokenEmptyException();
+//        }
+        if(nextMissionMember.getFcmToken() != null){
+            firebaseCloudMessageService.sendByToken(nextMissionMember.getFcmToken(), ALLOCATE.getTitle(), ALLOCATE.getBody());
         }
-
-        firebaseCloudMessageService.sendByToken(nextMissionMember.getFcmToken(), ALLOCATE.getTitle(), ALLOCATE.getBody());
 
         log.info("[미션 수행 완료] 그룹명 : {}", group.getName());
         log.info("[다음 미션] 그룹원 : {}, 할당 시각 : {}", nextMissionMember.getName(), LocalDateTime.now());
