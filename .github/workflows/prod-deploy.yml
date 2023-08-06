@@ -7,6 +7,14 @@ on:
     branches:
       - main
 
+# 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: snackpot-bucket
+  CODE_DEPLOY_APPLICATION_NAME: snackpot-deploy-application
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: snackpot-deploy-auto-scaling-group
+
+
 jobs:
   production-cd:
     runs-on: ubuntu-22.04 # 필수, 실행환경 지정
@@ -23,13 +31,50 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      ## (3) application-prod.properties 생성
+      ## (3-1) application-prod.properties 생성
       - name: make application-prod.yml
         run: |
           cd ./src/main/resources
           touch ./application-prod.yml
           echo "${{ secrets.APPLICATION_PROD_YML }}" > ./application-prod.yml
         shell: bash
+
+      ## (3-2) application-jwt.yml 생성
+      - name: make application-jwt.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-jwt.yml
+          echo "${{ secrets.APPLICATION_JWT_YML }}" > ./application-jwt.yml
+        shell: bash
+
+      ## (3-3) application-oauth.yml 생성
+      - name: make application-oauth.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-oauth.yml
+          echo "${{ secrets.APPLICATION_OAUTH_YML }}" > ./application-oauth.yml
+        shell: bash
+
+      ## (3-4) application-fcm.yml 생성
+      - name: make application-fcm.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-fcm.yml
+          echo "${{ secrets.APPLICATION_FCM_YML }}" > ./application-fcm.yml
+        shell: bash
+
+      ## (3-4) snackpot-fcm.json 생성
+      - name: make snackpot-fcm.json
+        run: echo "${{ secrets.FCM_JSON_SECRET }}" | base64 --decode > ./src/main/resources/snackpot-fcm.json
+        shell: bash
+
+      # (4) ./gradlew 권한 설정
+      - name: ./gradlew 권한 설정
+        run: chmod +x ./gradlew
+
+      # (5) Gradle build (Test 제외)
+      - name: Build with Gradle
+        run: ./gradlew build -x test
 
       # (4) ./gradlew 권한 설정
       - name: ./gradlew 권한 설정
@@ -54,12 +99,30 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      # (8) code deploy
-      - name: code deploy
+      # app-deploy라는 폴더 생성 및 appspec.yml 파일과 scripts 폴더 이동하기
+      - name: Create app-deploy folder에 move appspec.yml and scripts folder and zip app-deploy folder
+        run: |
+          mkdir app-deploy
+          cp scripts/*.sh appdeploy/
+          cp appspec.yml appdeploy/
+          zip -r app-deploy.zip app-deploy
+          
+
+      # (8) appspec.yml, scripts 파일을 S3 버킷에 업로드
+      - name: Upload to AWS S3
+        run: |
+          aws deploy push \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --ignore-hidden-files \
+            --s3-location s3://${{ env.S3_BUCKET_NAME }}/deploy/$GITHUB_SHA.zip \
+            --source app-deploy
+
+      # (8) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+      - name: Deploy to AWS EC2 from S3
         run: |
           aws deploy create-deployment \
-          --application-name snack-exercise-code-deploy \
+          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
-          --deployment-group-name snack-exercise-bg-deploy-group \
-          --github-location repository=${{ github.repository }},commitId=${{ github.sha }}
+          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+          --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
 

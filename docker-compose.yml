@@ -1,0 +1,30 @@
+version: '3' # docker-compose는 버전 1~3까지 존재, 최신 버전 사용을 위해서 버전 3 설정
+
+services: # 컨테이너 집합 요소
+  redis:
+    container_name: snack-redis
+    hostname: redis
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - snack_net
+
+  springboot:
+    container_name: spring-dev
+    # build:
+    #  context: . # DockerFile이 있는 디렉토리
+    #  dockerfile: Dockerfile
+    image: ojs835/snack-exercise-hub:latest-dev
+    ports:
+      - 8080:8080
+    depends_on:
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE : dev-env # 사용할 profile 지정
+    networks:
+      - snack_net
+
+networks:
+  snack_net:
+    driver: bridge
