@@ -4,7 +4,7 @@ import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.joinlist.JoinType;
 import com.soma.snackexercise.domain.member.Member;
-import com.soma.snackexercise.exception.JoinListNotFoundException;
+import com.soma.snackexercise.exception.joinlist.JoinListNotFoundException;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.util.constant.Status;

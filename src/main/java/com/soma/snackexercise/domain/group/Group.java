@@ -3,7 +3,7 @@ package com.soma.snackexercise.domain.group;
 
 import com.soma.snackexercise.domain.BaseEntity;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
-import com.soma.snackexercise.exception.MaxMemberNumLessThanCurrentException;
+import com.soma.snackexercise.exception.group.exceedGroupMaxMemberNumException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -58,7 +58,7 @@ public class Group extends BaseEntity {
 
     public void updateMaxMemberNum(int currentMemberNum, int newMaxMemberNum) {
         if (currentMemberNum > newMaxMemberNum) {
-            throw new MaxMemberNumLessThanCurrentException();
+            throw new exceedGroupMaxMemberNumException();
         }
 
         this.maxMemberNum = newMaxMemberNum;

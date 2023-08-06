@@ -3,8 +3,8 @@ package com.soma.snackexercise.service.signup;
 import com.soma.snackexercise.auth.jwt.service.JwtService;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.signup.SignupRequest;
-import com.soma.snackexercise.exception.MemberNameAlreadyExistsException;
-import com.soma.snackexercise.exception.MemberNotFoundException;
+import com.soma.snackexercise.exception.member.MemberNameAlreadyExistsException;
+import com.soma.snackexercise.exception.member.MemberNotFoundException;
 import com.soma.snackexercise.repository.member.MemberRepository;
 
 import com.soma.snackexercise.util.constant.Status;

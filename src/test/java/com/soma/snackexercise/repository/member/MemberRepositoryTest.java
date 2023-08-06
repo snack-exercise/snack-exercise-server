@@ -5,7 +5,7 @@ import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.member.SocialType;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
-import com.soma.snackexercise.exception.MemberNotFoundException;
+import com.soma.snackexercise.exception.member.MemberNotFoundException;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.util.constant.Status;

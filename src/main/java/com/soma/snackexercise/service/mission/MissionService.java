@@ -10,7 +10,12 @@ import com.soma.snackexercise.dto.mission.request.MissionCancelRequest;
 import com.soma.snackexercise.dto.mission.request.MissionFinishRequest;
 import com.soma.snackexercise.dto.mission.request.MissionStartRequest;
 import com.soma.snackexercise.dto.mission.response.*;
-import com.soma.snackexercise.exception.*;
+import com.soma.snackexercise.exception.group.GroupNotFoundException;
+import com.soma.snackexercise.exception.group.InvalidGroupTimeException;
+import com.soma.snackexercise.exception.group.NotStartedGroupException;
+import com.soma.snackexercise.exception.joinlist.JoinListNotFoundException;
+import com.soma.snackexercise.exception.member.MemberNotFoundException;
+import com.soma.snackexercise.exception.mission.MissionNotFoundException;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
@@ -152,6 +157,13 @@ public class MissionService {
     @Transactional
     public MissionStartResponse missionStart(MissionStartRequest request) {
         Mission mission = missionRepository.findById(request.getMissionId()).orElseThrow(MissionNotFoundException::new);
+
+        // 그룹의 시간 유효 시간 범위 내가 아니라면 nextMember null처리
+        Group group = mission.getGroup();
+        if(!group.isCurrentTimeBetweenStartTimeAndEndTime(LocalTime.now())){
+            throw new InvalidGroupTimeException();
+        }
+
         mission.startMission();
         log.info("[미션 시작 시각] {}", mission.getStartAt());
         return MissionStartResponse.toDto(mission);
@@ -180,11 +192,11 @@ public class MissionService {
         mission.endMission(request.getCalory(), request.getLengthOfVideo());
 
         // 2. JoinList의 executedMissionCount 1 추가
-        Group group = mission.getGroup();
         Member member = mission.getMember();
-
+        Group group = mission.getGroup();
         JoinList joinList = joinListRepository.findByGroupAndMemberAndStatus(group, member, ACTIVE).orElseThrow(JoinListNotFoundException::new);
         joinList.addOneExecutedMissionCount();
+        log.info("[미션 수행 완료] 그룹명 : {}", group.getName());
 
         // 3. 모든 그룹원이 목표한 릴레이횟수만큼 수행 시, 그룹 목표 달성 및 푸시 알림 보내기
         if(joinListRepository.countGroupGoalAchievedMember(group) == joinListRepository.countGroupMember(group)){
@@ -198,8 +210,14 @@ public class MissionService {
             return new MissionFinishResponse(group.getIsGoalAchieved());
         }
 
+        // 4. 그룹의 시간 유효 시간 범위 내가 아니라면 다음 사람 null 처리 -> 그룹 시작 시간 스케줄러가 다음 사람 할당 수행
+        if(!group.isCurrentTimeBetweenStartTimeAndEndTime(LocalTime.now())){
+            log.info("그룹 운영시간이 아님");
+            group.updateCurrentDoingMemberId(null);
+            return new MissionFinishResponse(group.getIsGoalAchieved());
+        }
 
-        // 4. 다음 미션 할당자 선정 및 할당, 알림 전송
+        // 5. 다음 미션 할당자 선정 및 할당, 알림 전송
         Member nextMissionMember = missionUtil.getNextMissionMember(group);
         missionRepository.save(Mission.builder()
                 .exercise(missionUtil.getRandomExercise())
@@ -215,8 +233,6 @@ public class MissionService {
         if(nextMissionMember.getFcmToken() != null){
             firebaseCloudMessageService.sendByToken(nextMissionMember.getFcmToken(), ALLOCATE.getTitle(), ALLOCATE.getBody());
         }
-
-        log.info("[미션 수행 완료] 그룹명 : {}", group.getName());
         log.info("[다음 미션] 그룹원 : {}, 할당 시각 : {}", nextMissionMember.getName(), LocalDateTime.now());
         return new MissionFinishResponse(group.getIsGoalAchieved());
     }

@@ -4,7 +4,7 @@ import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.dto.exercise.request.ExerciseCreateRequest;
 import com.soma.snackexercise.dto.exercise.request.ExerciseUpdateRequest;
 import com.soma.snackexercise.dto.exercise.response.ExerciseResponse;
-import com.soma.snackexercise.exception.ExerciseNotFoundException;
+import com.soma.snackexercise.exception.exercise.ExerciseNotFoundException;
 import com.soma.snackexercise.repository.exercise.ExerciseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

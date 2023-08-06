@@ -1,7 +1,7 @@
 package com.soma.snackexercise.repository.group;
 
 import com.soma.snackexercise.domain.group.Group;
-import com.soma.snackexercise.exception.GroupNotFoundException;
+import com.soma.snackexercise.exception.group.GroupNotFoundException;
 import com.soma.snackexercise.util.constant.Status;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

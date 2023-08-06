@@ -1,4 +1,4 @@
-package com.soma.snackexercise.exception;
+package com.soma.snackexercise.exception.group;
 
 public class GroupNotFoundException extends RuntimeException {
 }
