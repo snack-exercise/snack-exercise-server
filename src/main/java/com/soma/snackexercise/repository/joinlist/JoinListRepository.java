@@ -110,21 +110,21 @@ public interface JoinListRepository extends JpaRepository<JoinList, Long> {
     @Query("SELECT j from JoinList j JOIN FETCH j.group g WHERE j.member = :member AND j.status = 'ACTIVE'")
     List<JoinList> findAllActiveJoinGroupsByMember(@Param("member") Member member);
 
-    @Query("SELECT MAX(j.executedMissionCount) " +
+
+    @Query("SELECT CASE WHEN COUNT(DISTINCT j.executedMissionCount) = 1 " +
+            "THEN MAX(j.executedMissionCount) + 1 " +
+            "ELSE MAX(j.executedMissionCount) END " +
             "FROM JoinList j " +
             "WHERE j.group = :group " +
             "AND j.status = :status ")
     Integer findMaxExecutedMissionCountByGroupAndStatus(@Param("group") Group group, @Param("status") Status status);
 
-    @Query("SELECT COUNT(DISTINCT j) " +
+    @Query("SELECT COUNT(j) " +
             "FROM JoinList j " +
             "WHERE j.group = :group " +
             "AND j.status = :status " +
-            "AND j.executedMissionCount = (SELECT MAX(j.executedMissionCount) " +
-            "FROM JoinList j " +
-            "WHERE j.group = :group " +
-            "AND j.status = :status )")
-    Integer findCurrentRoundPositionByGroupId(@Param("group") Group group, @Param("status") Status status);
+            "AND j.executedMissionCount = :currentFinishedRelayCount ")
+    Integer findCurrentRoundPositionByGroupId(@Param("group") Group group, @Param("status") Status status, @Param("currentFinishedRelayCount") Integer currentFinishedRelayCount);
 
     /**
      * 그룹에서 목표 릴레이 횟수를 달성한 회원의 수를 반환합니다.
