@@ -1,3 +1,3 @@
 #!/bin/bash
-cd ..
+cd ../app-deploy/
 sudo docker-compose -f docker-compose-prod.yml down
