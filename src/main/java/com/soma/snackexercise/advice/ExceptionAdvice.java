@@ -105,7 +105,7 @@ public class ExceptionAdvice {
     @ExceptionHandler(NotStartedGroupException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Response notStartedGroupExceptionHandler (NotStartedGroupException e){
-        return Response.failure(NOT_STARTED_GROUP);
+        return Response.failure(NOT_STARTED_GROUP_EXCEPTION);
     }
 
     /*
@@ -125,4 +125,12 @@ public class ExceptionAdvice {
     public Response wrongRequestParamExceptionHandler(WrongRequestParamException e){
         return Response.failure(WRONG_QUERY_PARAM_EXCEPTION);
     }
+
+    @ExceptionHandler(FcmTokenEmptyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response fcmTokenEmptyExceptionHandler(FcmTokenEmptyException e){
+        return Response.failure(FCM_TOKEN_NOT_FOUND_EXCEPTION);
+    }
+
+
 }
