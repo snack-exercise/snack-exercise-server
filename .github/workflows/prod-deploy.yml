@@ -110,6 +110,12 @@ jobs:
           cp scripts/*.sh app-deploy/scripts/
           zip -r app-deploy.zip app-deploy
           
+      - name: Check files and folders
+        run: |
+          ls -al
+          ls -al scripts/
+          cat appspec.yml
+      
 
       # (8) appspec.yml, scripts 파일을 S3 버킷에 업로드
       - name: Upload to AWS S3
