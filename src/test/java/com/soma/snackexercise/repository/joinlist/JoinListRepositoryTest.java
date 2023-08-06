@@ -181,7 +181,7 @@ class JoinListRepositoryTest {
 
         clear();
 
-        int cnt = joinListRepository.findCurrentRoundPositionByGroupId(group, Status.ACTIVE);
+        int cnt = joinListRepository.findCurrentRoundPositionByGroupId(group, Status.ACTIVE, 1);
         assertThat(cnt).isEqualTo(2);
     }
 

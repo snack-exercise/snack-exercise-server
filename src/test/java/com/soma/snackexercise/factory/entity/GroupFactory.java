@@ -25,6 +25,25 @@ public class GroupFactory {
                 .build();
     }
 
+    public static Group createGroupWithStartTime(LocalTime startTime) {
+        LocalTime now = LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
+        return Group.builder()
+                .name("name")
+                .emozi("emozi")
+                .color("red")
+                .description("desc")
+                .maxMemberNum(3)
+                .goalRelayNum(10)
+                .startTime(startTime)
+                .endTime(startTime.plusHours(1))
+                .existDays(5)
+                .penalty("커피 사기")
+                .code("code")
+                .checkIntervalTime(10)
+                .checkMaxNum(2)
+                .build();
+    }
+
     public static Group createGroupWithName(String name) {
         return Group.builder()
                 .name(name)
