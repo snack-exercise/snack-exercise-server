@@ -1,8 +1,24 @@
 version: 0.0
 os: ubuntu
 
+files:
+  - source:  /
+    destination: /home/ubuntu/app
+    overwrite: yes
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+
 hooks:
+  BeforeInstall:
+    - location: scripts/stop.sh
+      timeout: 300
+      runas: root
+
   ApplicationStart:
-    - location: run.sh
+    - location: scripts/run.sh
       timeout: 300
       runas: root

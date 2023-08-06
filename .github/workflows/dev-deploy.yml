@@ -23,12 +23,41 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      ## (3) application-dev.properties 생성
+      ## (3-1) application-dev.yml 생성
       - name: make application-dev.yml
         run: |
           cd ./src/main/resources
           touch ./application-dev.yml
           echo "${{ secrets.APPLICATION_DEV_YML }}" > ./application-dev.yml
+        shell: bash
+
+      ## (3-2) application-jwt.yml 생성
+      - name: make application-jwt.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-jwt.yml
+          echo "${{ secrets.APPLICATION_JWT_YML }}" > ./application-jwt.yml
+        shell: bash
+
+      ## (3-3) application-oauth.yml 생성
+      - name: make application-oauth.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-oauth.yml
+          echo "${{ secrets.APPLICATION_OAUTH_YML }}" > ./application-oauth.yml
+        shell: bash
+
+      ## (3-4) application-fcm.yml 생성
+      - name: make application-fcm.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-fcm.yml
+          echo "${{ secrets.APPLICATION_FCM_YML }}" > ./application-fcm.yml
+        shell: bash
+
+      ## (3-4) snackpot-fcm.json 생성
+      - name: make snackpot-fcm.json
+        run: echo "${{ secrets.FCM_JSON_SECRET }}" | base64 --decode > ./src/main/resources/snackpot-fcm.json
         shell: bash
 
       # (4) ./gradlew 권한 설정
@@ -54,8 +83,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
+      # (8) 로컬 docker-compose.yml 파일 EC2로 복사
+      - name: Copy docker-compose.yml to EC2 via SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: 22
+          source : "./docker-compose.yml"
+          target : "./snackApp"
+          debug: true
 
-      # (8) 서버에 접속하여 도커 이미지를 pull 받고 실행하기
+      # (9) 서버에 접속하여 도커 이미지를 pull 받고 실행하기
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -64,8 +104,8 @@ jobs:
           key: ${{ secrets.KEY }}
           port: 22
           script: |
-            sudo docker stop prod-server
-            sudo docker rm prod-server
+            cd snackApp
+            sudo docker-compose down
+            sudo docker-compose pull
             sudo docker image rm ${{ secrets.DOCKER_REPO }}
-            sudo docker pull ${{ secrets.DOCKER_REPO }}:latest-dev
-            sudo docker run -d --name spring-dev -p 8080:8080 ${{ secrets.DOCKER_REPO }}:latest-dev
+            sudo docker-compose up -d

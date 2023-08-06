@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.1'
     id 'io.spring.dependency-management' version '1.1.0'
+
+    id 'jacoco'
 }
 
 group = 'com.soma'
@@ -22,17 +24,35 @@ repositories {
 }
 
 dependencies {
+    // Spring Data JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    // implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    // implementation 'org.springframework.boot:spring-boot-starter-security'
+    // OAuth
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // Web
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    // lombok
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.h2database:h2'
-    // runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.projectlombok:lombok'
+    // devtools
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    // h2
+    runtimeOnly 'com.h2database:h2'
+    // mariadb
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    // testImplementation 'org.springframework.security:spring-security-test'
+    // security test
+    testImplementation 'org.springframework.security:spring-security-test'
+    // jwt
+    implementation 'com.auth0:java-jwt:4.2.1'
+    // Spring Data Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+    // firebase
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
 }
 
 tasks.named('test') {
@@ -43,4 +63,46 @@ tasks.named('test') {
 // 빌드시 plain jar 파일을 생성되지 않도록 아래의 내용 추가
 jar {
 	enabled = false
+}
+
+// jacoco
+
+test{
+    finalizedBy jacocoTestReport // test 작업이 끝나고 jacocoTestReport를 실행
+}
+
+
+jacoco {
+    toolVersion = "0.8.8"
+    reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
+}
+
+// test 결과를 report로 생성
+jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHTML')
+    }
+    // dependsOn : 이 작업에 지정된 종속성을 추가
+    dependsOn test // jacocoTestReport 에 test라는 종속성을 추가
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+// jacocoTestReport 결과를 바탕으로 coverage가 만족되었는지를 체크
+jacocoTestCoverageVerification {
+    violationRules {
+
+        rule {
+            enabled = true
+            //코드 버커리지 체크 기준
+            element = 'CLASS'
+
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.0
+            }
+        }
+    }
 }
