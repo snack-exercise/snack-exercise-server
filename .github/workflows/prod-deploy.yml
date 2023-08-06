@@ -103,10 +103,19 @@ jobs:
       - name: Create app-deploy folder에 move appspec.yml and scripts folder and zip app-deploy folder
         run: |
           mkdir app-deploy
-          cp scripts/*.sh appdeploy/
-          cp appspec.yml appdeploy/
+          cp appspec.yml app-deploy/
+          cd app-deploy
+          mkdir scripts
+          cd ..
+          cp scripts/*.sh app-deploy/scripts/
           zip -r app-deploy.zip app-deploy
-          
+
+      - name: Check files and folders
+        run: |
+          ls -al
+          ls -al scripts/
+          cat appspec.yml
+      
 
       # (8) appspec.yml, scripts 파일을 S3 버킷에 업로드
       - name: Upload to AWS S3
@@ -124,5 +133,4 @@ jobs:
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-          --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
-
+          --s3-location bucket=$S3_BUCKET_NAME,key=deploy/$GITHUB_SHA.zip,bundleType=zip

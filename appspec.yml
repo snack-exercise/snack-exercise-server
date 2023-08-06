@@ -2,7 +2,7 @@ version: 0.0
 os: ubuntu
 
 files:
-  - source:  /
+  - source:  ./
     destination: /home/ubuntu/app
     overwrite: yes
 
