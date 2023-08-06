@@ -144,7 +144,7 @@ public class MissionService {
         Integer currentFinishedRelayCount = joinListRepository.findMaxExecutedMissionCountByGroupAndStatus(group, Status.ACTIVE);
 
         // 현재 회차에서 몇 번째
-        Integer currentRoundPosition = joinListRepository.findCurrentRoundPositionByGroupId(group, Status.ACTIVE) + 1;
+        Integer currentRoundPosition = joinListRepository.findCurrentRoundPositionByGroupId(group, Status.ACTIVE, currentFinishedRelayCount) + 1;
 
         return MissionResponse.toDto(mission, currentFinishedRelayCount, currentRoundPosition);
     }
