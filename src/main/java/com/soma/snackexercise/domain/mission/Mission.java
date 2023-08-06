@@ -95,7 +95,7 @@ public class Mission extends BaseTimeEntity {
     }
 
     public Boolean isValidTimeReminder(LocalDateTime now, Integer checkIntervalTime, Integer scheduledFixedRate) {
-        long differenceInMinutes = ChronoUnit.MINUTES.between(getCreatedAt(), now); // (createdAt - now) % checkIntervalTime
+        long differenceInMinutes = ChronoUnit.MINUTES.between(getCreatedAt(), now); // (createdAt - now)
         long reminderTime = differenceInMinutes % checkIntervalTime;
 
         System.out.println("[시각 차이] : differenceInMinutes = " + differenceInMinutes);
