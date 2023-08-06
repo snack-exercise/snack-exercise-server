@@ -109,7 +109,7 @@ jobs:
           cd ..
           cp scripts/*.sh app-deploy/scripts/
           zip -r app-deploy.zip app-deploy
-          
+
       - name: Check files and folders
         run: |
           ls -al
@@ -133,5 +133,4 @@ jobs:
           --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
-          --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
-
+          --s3-location bucket=$S3_BUCKET_NAME,key=deploy/$GITHUB_SHA.zip,bundleType=zip
