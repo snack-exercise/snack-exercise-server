@@ -19,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,11 +63,11 @@ class MissionSchedulerServiceUnitTest {
     private FirebaseCloudMessageService firebaseCloudMessageService;
 
     @Test
-    @DisplayName("미션 시작 스케줄러 동작 테스트")
+    @DisplayName("그룹 시작 시간 미션 할당 스케줄러 동작 테스트")
     void allocateMissionAtGroupStartTimeTest() {
         // given
         Member member = createMember();
-        Group group = createGroup();
+        Group group = createGroupWithStartTime(LocalTime.now().truncatedTo(ChronoUnit.SECONDS));
         Exercise exercise = createExercise();
 
         List<Group> groupList = List.of(group);
