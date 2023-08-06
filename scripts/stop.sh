@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo docker rm -f snack-exercise
+sudo docker-compose down

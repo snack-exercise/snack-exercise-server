@@ -85,7 +85,7 @@ public class MissionSchedulerService {
                     .group(group)
                     .build());
 
-            log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getName(), LocalDateTime.now());
+            log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
         }
 
         if (!tokenList.isEmpty()) {
@@ -132,7 +132,7 @@ public class MissionSchedulerService {
                 log.info("[그룹명] : {}, 독촉 대상이 없습니다.", group.getName());
                 continue;
             }
-            log.info("[그룹명] : {}, [미션 ID] : {}, [미션 수행자명] : {}", group.getName(), mission.getId(), targetMember.getName());
+            log.info("[그룹명] : {}, [미션 ID] : {}, [미션 수행자명] : {}", group.getName(), mission.getId(), targetMember.getNickname());
             mission.addOneAlarmCount();
 
             // 푸시 알림 전송

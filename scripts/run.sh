@@ -1,4 +1,3 @@
 #!/bin/bash
-sudo service docker start
-sudo docker pull ojs835/snack-exercise-hub:latest-prod
-sudo docker run -d --name snack-exercise snack-exercise-hub:latest-prod
+sudo docker-compose -f docker-compose-prod.yml pull
+sudo docker-compose -d -f docker-compose-prod.yml up
