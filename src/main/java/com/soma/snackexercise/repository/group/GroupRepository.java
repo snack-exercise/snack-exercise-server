@@ -29,5 +29,5 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
      * @param status
      * @return
      */
-    List<Group> findAllByEndDateGreaterThanAndStatus(LocalDate now, Status status);
+    List<Group> findAllByEndDateLessThanAndStatus(LocalDate now, Status status);
 }

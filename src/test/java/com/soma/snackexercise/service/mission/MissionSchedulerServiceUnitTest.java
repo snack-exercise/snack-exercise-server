@@ -132,7 +132,7 @@ class MissionSchedulerServiceUnitTest {
         JoinList joinList = createJoinListForMember(member, group);
         List<JoinList> joinLists = List.of(joinList);
 
-        given(groupRepository.findAllByEndDateGreaterThanAndStatus(any(), any())).willReturn(groupList);
+        given(groupRepository.findAllByEndDateLessThanAndStatus(any(), any())).willReturn(groupList);
         given(joinListRepository.findByGroupAndStatus(any(Group.class), any())).willReturn(joinLists);
 
         // when
