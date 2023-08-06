@@ -103,8 +103,8 @@ jobs:
       - name: Create app-deploy folder에 move appspec.yml and scripts folder and zip app-deploy folder
         run: |
           mkdir app-deploy
-          cp scripts/*.sh appdeploy/
-          cp appspec.yml appdeploy/
+          cp scripts/*.sh app-deploy/
+          cp appspec.yml app-deploy/
           zip -r app-deploy.zip app-deploy
           
 
