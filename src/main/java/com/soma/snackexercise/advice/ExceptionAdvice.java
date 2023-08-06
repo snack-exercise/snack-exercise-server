@@ -2,6 +2,14 @@ package com.soma.snackexercise.advice;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.soma.snackexercise.exception.*;
+import com.soma.snackexercise.exception.exercise.ExerciseNotFoundException;
+import com.soma.snackexercise.exception.group.*;
+import com.soma.snackexercise.exception.joinlist.JoinListNotFoundException;
+import com.soma.snackexercise.exception.member.FcmTokenEmptyException;
+import com.soma.snackexercise.exception.member.MemberNameAlreadyExistsException;
+import com.soma.snackexercise.exception.member.MemberNicknameAlreadyExistsException;
+import com.soma.snackexercise.exception.member.MemberNotFoundException;
+import com.soma.snackexercise.exception.mission.MissionNotFoundException;
 import com.soma.snackexercise.util.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -82,6 +90,12 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public Response exceedsKickOutLimitExceptionHandler (ExceedsKickOutLimitException e){
         return Response.failure(EXCEEDS_KICK_OUT_LIMIT_EXCEPTION);
+    }
+
+    @ExceptionHandler(InvalidGroupTimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response invalidGroupTimeExceptionHandler (InvalidGroupTimeException e){
+        return Response.failure(INVALID_GROUP_TIME_EXCEPTION);
     }
 
     /*
