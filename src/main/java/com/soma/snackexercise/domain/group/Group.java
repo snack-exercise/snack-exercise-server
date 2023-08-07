@@ -96,6 +96,10 @@ public class Group extends BaseEntity {
         return now.isAfter(startTime) && now.isBefore(endTime);
     }
 
+    public Boolean isStarted(){
+        return this.startDate != null;
+    }
+
     @Builder
     public Group(String name, String emozi, String color, String description,
                  Integer maxMemberNum, Integer goalRelayNum, LocalTime startTime,

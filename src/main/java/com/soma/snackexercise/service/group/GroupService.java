@@ -9,6 +9,7 @@ import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
+import com.soma.snackexercise.dto.group.response.FinishedGroupResponse;
 import com.soma.snackexercise.dto.group.response.GroupCreateResponse;
 import com.soma.snackexercise.dto.group.response.GroupResponse;
 import com.soma.snackexercise.dto.group.response.JoinGroupResponse;
@@ -23,6 +24,7 @@ import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.service.mission.MissionUtil;
 import com.soma.snackexercise.service.notification.FirebaseCloudMessageService;
+import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -207,8 +209,9 @@ public class GroupService {
         }
 
         // 4. 그룹원 모두에게 그룹 시작 푸시알림 전송
-        List<String> tokenList = joinListRepository.findByGroupAndStatus(group, ACTIVE).stream().map(joinList -> joinList.getMember().getFcmToken()).toList();
+        List<String> tokenList = joinListRepository.findByGroupAndStatus(group, ACTIVE).stream().filter(joinList -> joinList.getMember().getFcmToken() != null).map(joinList -> joinList.getMember().getFcmToken()).toList();
         if (!tokenList.isEmpty()) {
+            System.out.println("tokenList = " + tokenList);
             // tokenList로 알림 보내기
             firebaseCloudMessageService.sendByTokenList(tokenList, ALLOCATE.getTitle(), ALLOCATE.getBody());
         }
@@ -222,6 +225,19 @@ public class GroupService {
         Member member = memberRepository.findByEmailAndStatus(email, ACTIVE).orElseThrow(MemberNotFoundException::new);
 
         validateJoinGroup(group, member);
+
+        // 이미 시작한 그룹에 중간에 참여하는 경우, 그룹원 중 가장 적은 수행횟수만큼 수행했다고 간주한다.
+        if(group.isStarted()){
+            JoinList joinList = JoinList.builder()
+                    .member(member)
+                    .group(group)
+                    .joinType(JoinType.MEMBER)
+                    .build();
+
+            joinList.updateExecutedMissionCount(joinListRepository.findMinExecutedMissionCountByGroupAndStatus(group, ACTIVE));
+            joinListRepository.save(joinList);
+            return;
+        }
 
         joinListRepository.save(
                 JoinList.builder()
@@ -252,5 +268,16 @@ public class GroupService {
 
         // 그룹 ID, 그룹 명, 현재 미션 진행중인 회원의 ID 추출
         return joinLists.stream().map(joinList -> JoinGroupResponse.toDto(joinList.getGroup())).toList();
+    }
+
+    public List<FinishedGroupResponse> readAllFinishedJoinGroups(String email) {
+        Member member = memberRepository.findByEmailAndStatus(email, ACTIVE).orElseThrow(MemberNotFoundException::new);
+
+        // 회원이 가입했지만 종료한 모든 그룹
+        List<JoinList> joinLists = joinListRepository.findAllInactiveJoinGroupsByMember(member);
+        return joinLists.stream().map(joinList -> FinishedGroupResponse.toDto(
+                joinList.getGroup(),
+                joinListRepository.findMaxExecutedMissionCountByGroupAndStatus(joinList.getGroup(), INACTIVE))).toList();// 그룹이 현재 완료한 릴레이 횟수
+
     }
 }
