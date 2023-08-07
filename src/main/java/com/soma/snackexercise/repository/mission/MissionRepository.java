@@ -61,7 +61,7 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
      */
     @Query("SELECT m" +
             "   FROM Mission m JOIN FETCH m.member" +
-            "   WHERE m.group.id = :groupId AND :startDateTime <= m.createdAt AND m.createdAt < :endDateTime AND m.startAt IS NOT NULL" +
+            "   WHERE m.group.id = :groupId AND :startDateTime <= m.createdAt AND m.createdAt < :endDateTime AND m.endAt IS NOT NULL" +
             "   ORDER BY m.createdAt")
     List<Mission> findFinishedMissionsByGroupIdWithinDateRange(@Param("groupId") Long groupId, @Param("startDateTime") LocalDateTime startDateTime, @Param("endDateTime") LocalDateTime endDateTime);
 
