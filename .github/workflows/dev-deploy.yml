@@ -54,8 +54,16 @@ jobs:
           touch ./application-fcm.yml
           echo "${{ secrets.APPLICATION_FCM_YML }}" > ./application-fcm.yml
         shell: bash
+        
+      ## (3-5) application-sentry.yml 생성
+      - name: make application-sentry.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-sentry.yml
+          echo "${{ secrets.APPLICATION_SENTRY_YML }}" > ./application-sentry.yml
+        shell: bash
 
-      ## (3-4) snackpot-fcm.json 생성
+      ## (3-6) snackpot-fcm.json 생성
       - name: make snackpot-fcm.json
         run: echo "${{ secrets.FCM_JSON_SECRET }}" | base64 --decode > ./src/main/resources/snackpot-fcm.json
         shell: bash
