@@ -10,4 +10,5 @@ public class SignupRequest {
     private String nickname;
     private Gender gender;
     private Integer birthYear;
+    private String fcmToken;
 }

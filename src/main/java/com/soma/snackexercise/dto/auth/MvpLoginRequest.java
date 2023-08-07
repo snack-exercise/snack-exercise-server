@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class MvpLoginRequest {
     private String nickname;
+    private String fcmToken;
 }
