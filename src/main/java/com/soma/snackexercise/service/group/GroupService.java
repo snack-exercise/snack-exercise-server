@@ -226,6 +226,19 @@ public class GroupService {
 
         validateJoinGroup(group, member);
 
+        // 이미 시작한 그룹에 중간에 참여하는 경우, 그룹원 중 가장 적은 수행횟수만큼 수행했다고 간주한다.
+        if(group.isStarted()){
+            JoinList joinList = JoinList.builder()
+                    .member(member)
+                    .group(group)
+                    .joinType(JoinType.MEMBER)
+                    .build();
+
+            joinList.updateExecutedMissionCount(joinListRepository.findMinExecutedMissionCountByGroupAndStatus(group, ACTIVE));
+            joinListRepository.save(joinList);
+            return;
+        }
+
         joinListRepository.save(
                 JoinList.builder()
                 .member(member)

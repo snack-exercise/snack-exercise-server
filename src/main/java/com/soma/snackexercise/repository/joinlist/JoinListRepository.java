@@ -127,6 +127,12 @@ public interface JoinListRepository extends JpaRepository<JoinList, Long> {
             "AND j.status = :status ")
     Integer findMaxExecutedMissionCountByGroupAndStatus(@Param("group") Group group, @Param("status") Status status);
 
+    @Query("SELECT MIN(j.executedMissionCount)" +
+            "FROM JoinList j " +
+            "WHERE j.group = :group " +
+            "AND j.status = :status ")
+    Integer findMinExecutedMissionCountByGroupAndStatus(@Param("group") Group group, @Param("status") Status status);
+
     @Query("SELECT COUNT(j) " +
             "FROM JoinList j " +
             "WHERE j.group = :group " +
