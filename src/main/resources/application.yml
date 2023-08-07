@@ -11,3 +11,4 @@ spring:
       - jwt
       - oauth
       - fcm
+      - sentry
