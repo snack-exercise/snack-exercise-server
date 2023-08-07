@@ -42,6 +42,7 @@ application-prod.yml
 application-oauth.yml
 application-jwt.yml
 application-fcm.yml
+application-sentry.yml
 
 ### Firebase Cloud Messaging ###
 /src/main/resources/snackpot-fcm.json
