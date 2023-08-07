@@ -17,6 +17,7 @@ public class FinishedGroupResponse {
     private LocalDate endDate;
     private Integer finishedRelayNum; // 그룹이 수행 완료한 횟수
     private Integer goalRelayNum; // 그룹 목표 릴레이 횟수
+    private Boolean isGoalAchieved; // 그룹 릴레이 성공 여부
 
     public static FinishedGroupResponse toDto(Group group, Integer finishedRelayNum){
         return new FinishedGroupResponse(
@@ -25,7 +26,8 @@ public class FinishedGroupResponse {
                 group.getStartDate(),
                 group.getEndDate(),
                 finishedRelayNum,
-                group.getGoalRelayNum()
+                group.getGoalRelayNum(),
+                group.getIsGoalAchieved()
         );
     }
 }
