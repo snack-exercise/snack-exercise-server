@@ -110,6 +110,14 @@ public interface JoinListRepository extends JpaRepository<JoinList, Long> {
     @Query("SELECT j from JoinList j JOIN FETCH j.group g WHERE j.member = :member AND j.status = 'ACTIVE'")
     List<JoinList> findAllActiveJoinGroupsByMember(@Param("member") Member member);
 
+    /**
+     * 회원이 가입했고, 종료된 그룹과 JoinList를 조회합니다.
+     * @param member 회원
+     * @return 회원이 가입했고, 종료된 JoinList와 Group
+     */
+    @Query("SELECT j from JoinList j JOIN FETCH j.group g WHERE j.member = :member AND j.status = 'INACTIVE'")
+    List<JoinList> findAllInactiveJoinGroupsByMember(@Param("member") Member member);
+
 
     @Query("SELECT CASE WHEN COUNT(DISTINCT j.executedMissionCount) = 1 " +
             "THEN MAX(j.executedMissionCount) + 1 " +

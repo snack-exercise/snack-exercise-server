@@ -118,4 +118,11 @@ public class GroupController {
     public Response readAllJoinGroups(@AuthenticationPrincipal UserDetails loginUser) {
         return Response.success(groupService.readAllJoinGroups(loginUser.getUsername()));
     }
+
+    @Operation(summary = "회원이 가입했던 종료된 그룹 조회하기", description = "회원이 가입했던 종료된 그룹을 조회합니다.", security = { @SecurityRequirement(name = "bearer-key") })
+    @GetMapping("/finish")
+    @ResponseStatus(HttpStatus.OK)
+    public Response readAllFinishedJoinGroups(@AuthenticationPrincipal UserDetails loginUser) {
+        return Response.success(groupService.readAllFinishedJoinGroups(loginUser.getUsername()));
+    }
 }
