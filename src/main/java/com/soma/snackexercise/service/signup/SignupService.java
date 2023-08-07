@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class SignupService {
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
 
+    @Transactional
     public void signup(SignupRequest signupRequest, HttpServletRequest request, HttpServletResponse response) {
         validateSignup(signupRequest);
         String email = jwtService.extractRefreshToken(request);
@@ -30,6 +31,9 @@ public class SignupService {
         String newRefreshToken = jwtService.createRefreshToken(email);
         jwtService.sendRefreshToken(response, newRefreshToken);
         jwtService.updateRefreshToken(email, newRefreshToken);
+
+        // fcm 토큰 저장
+        findMember.updateFcmToken(signupRequest.getFcmToken());
     }
 
     private void validateSignup(SignupRequest request) {
