@@ -155,4 +155,9 @@ public interface JoinListRepository extends JpaRepository<JoinList, Long> {
      */
     @Query("SELECT count(*) FROM JoinList j WHERE j.group = :group AND j.status = 'ACTIVE'")
     Integer countGroupMember(@Param("group") Group group);
+
+    @Query("SELECT j " +
+            "FROM JoinList j JOIN FETCH j.group g " +
+            "WHERE g.id = :groupId AND g.status = :status AND j.joinType = 'HOST'")
+    Optional<JoinList> findHostJoinListByGroupIdAndStatus(@Param("groupId") Long groupId, @Param("status") Status status);
 }
