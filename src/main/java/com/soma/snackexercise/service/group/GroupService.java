@@ -9,10 +9,7 @@ import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
-import com.soma.snackexercise.dto.group.response.FinishedGroupResponse;
-import com.soma.snackexercise.dto.group.response.GroupCreateResponse;
-import com.soma.snackexercise.dto.group.response.GroupResponse;
-import com.soma.snackexercise.dto.group.response.JoinGroupResponse;
+import com.soma.snackexercise.dto.group.response.*;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
 import com.soma.snackexercise.exception.group.*;
@@ -98,10 +95,10 @@ public class GroupService {
         return GroupCreateResponse.toDto(newGroup);
     }
 
-    public GroupResponse read(Long groupId){
-        Group group = groupRepository.findByIdAndStatus(groupId, ACTIVE).orElseThrow(GroupNotFoundException::new);
+    public GroupResponseIncludeHost read(Long groupId){
+        JoinList joinList = joinListRepository.findHostJoinListByGroupIdAndStatus(groupId, ACTIVE).orElseThrow(GroupNotFoundException::new);
 
-        return GroupResponse.toDto(group);
+        return GroupResponseIncludeHost.toDto(joinList.getGroup(), joinList.getMember().getId());
     }
 
     public List<GetOneGroupMemberResponse> getAllExgroupMembers(Long groupId){

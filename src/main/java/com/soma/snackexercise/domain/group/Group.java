@@ -89,7 +89,8 @@ public class Group extends BaseEntity {
 
     public void updateIsGoalAchieved(){
         this.isGoalAchieved = TRUE;
-
+        this.currentDoingMemberId = null;
+        inActive(); // TODO : 그룹 미션 성공시 바로 Inactive 처리하도록 수정 (08/08)
     }
 
     public Boolean isCurrentTimeBetweenStartTimeAndEndTime(LocalTime now) {
