@@ -200,7 +200,7 @@ public class MissionService {
 
         // 3. 모든 그룹원이 목표한 릴레이횟수만큼 수행 시, 그룹 목표 달성 및 푸시 알림 보내기
         if(joinListRepository.countGroupGoalAchievedMember(group) == joinListRepository.countGroupMember(group)){
-            group.updateIsGoalAchieved(); // 그룹 목표 달성 여부 update
+            group.updateIsGoalAchieved(); // 그룹 목표 달성 여부 update 및 inactive 처리
 
             // 멤버 전원에게 미션 성공 푸시 알림 전송
             List<String> tokenList = joinListRepository.findByGroupAndStatus(group, ACTIVE).stream().map(joinList1 -> joinList1.getMember().getFcmToken()).toList();
