@@ -70,9 +70,10 @@ public class MissionController {
 
     @Operation(summary = "미션 시작하기", description = "미션을 시작합니다.", security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping("/missions/start")
+    @Parameter(name = "random", description = "랜덤 미션이면 true", required = true,  in = ParameterIn.QUERY)
     @ResponseStatus(HttpStatus.OK)
-    public Response startMission(@RequestBody MissionStartRequest request) {
-        return Response.success(missionService.missionStart(request));
+    public Response startMission(@RequestBody MissionStartRequest request, @RequestParam Boolean random) {
+        return Response.success(missionService.missionStart(request, random));
     }
 
     @Operation(summary = "미션 중도 중단", description = "미션을 중도에 중단합니다.", security = { @SecurityRequirement(name = "bearer-key") })

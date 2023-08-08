@@ -155,17 +155,24 @@ public class MissionService {
     }
 
     @Transactional
-    public MissionStartResponse missionStart(MissionStartRequest request) {
+    public MissionStartResponse missionStart(MissionStartRequest request, Boolean isRandom) {
         Mission mission = missionRepository.findById(request.getMissionId()).orElseThrow(MissionNotFoundException::new);
+        mission.startMission();
 
-        // 그룹의 시간 유효 시간 범위 내가 아니라면 nextMember null처리
-        Group group = mission.getGroup();
-        if(!group.isCurrentTimeBetweenStartTimeAndEndTime(LocalTime.now())){
-            throw new InvalidGroupTimeException();
+        if(!isRandom){
+            // 그룹의 시간 유효 시간 범위가 아니라면, 미션 시작 불가능
+            Group group = mission.getGroup();
+            if(!group.isCurrentTimeBetweenStartTimeAndEndTime(LocalTime.now())){
+                throw new InvalidGroupTimeException();
+            }
+            log.info("[회원 릴레이 미션 시작시각] {}", mission.getStartAt());
+        }
+        else if(isRandom){
+            log.info("[회원 랜덤 미션 시작시각] {}", mission.getStartAt());
         }
 
-        mission.startMission();
-        log.info("[미션 시작 시각] {}", mission.getStartAt());
+
+
         return MissionStartResponse.toDto(mission);
     }
 
