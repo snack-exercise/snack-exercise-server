@@ -182,7 +182,7 @@ class JoinListRepositoryTest {
         clear();
 
         int cnt = joinListRepository.findCurrentRoundPositionByGroupId(group, Status.ACTIVE, 1);
-        assertThat(cnt).isEqualTo(2);
+        assertThat(cnt).isEqualTo(0); // 2명이니까, 다음 차례는 새로운 릴레이 턴의 0회차
     }
 
     void clear() {

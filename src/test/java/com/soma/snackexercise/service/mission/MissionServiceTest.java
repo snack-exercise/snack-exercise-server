@@ -63,7 +63,13 @@ class MissionServiceTest {
         TodayMissionResultResponse response = missionService.readTodayMissionResults(1L);
 
         // then
-        assertThat(response.getMissionFlow().stream().map(MemberMissionDto::getMemberName)).containsExactlyInAnyOrder(member1.getNickname(), member2.getNickname());
+        assertThat(
+                response.getMissionFlow().stream()
+                        .map(MemberMissionDto::getMemberName))
+                .containsExactlyInAnyOrder(
+                        member1.getNickname(),
+                        member2.getNickname()
+                );
     }
 
     @Test
