@@ -21,7 +21,6 @@ import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
 import com.soma.snackexercise.service.mission.MissionUtil;
 import com.soma.snackexercise.service.notification.FirebaseCloudMessageService;
-import com.soma.snackexercise.util.constant.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalTime;
 import java.util.List;
 
-import static com.soma.snackexercise.domain.notification.NotificationMessage.ALLOCATE;
+import static com.soma.snackexercise.domain.notification.NotificationMessage.GROUP_START;
 import static com.soma.snackexercise.util.constant.Status.ACTIVE;
 import static com.soma.snackexercise.util.constant.Status.INACTIVE;
 
@@ -210,7 +209,7 @@ public class GroupService {
         if (!tokenList.isEmpty()) {
             System.out.println("tokenList = " + tokenList);
             // tokenList로 알림 보내기
-            firebaseCloudMessageService.sendByTokenList(tokenList, ALLOCATE.getTitle(), ALLOCATE.getBody());
+            firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_START.getTitle(), GROUP_START.getBody());
         }
 
         return GroupResponse.toDto(group);
