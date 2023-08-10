@@ -107,7 +107,7 @@ jobs:
           key: ${{ secrets.KEY }}
           port: 22
           source : "./snackpotApp"
-          target : "./snackpotApp"
+          target : "."
           debug: true
 
       # (9) 서버에 접속하여 deploy.sh 실행하기
