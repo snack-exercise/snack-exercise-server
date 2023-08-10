@@ -1,8 +1,8 @@
 version: 0.0
-os: ubuntu
+os: linux
 
 files:
-  - source:  /
+  - source: ./
     destination: /home/ubuntu/app
     overwrite: yes
 
@@ -13,12 +13,12 @@ permissions:
     group: ubuntu
 
 hooks:
-  BeforeInstall:
-    - location: scripts/stop.sh
-      timeout: 300
-      runas: root
+  # BeforeInstall:
+   # - location: stop.sh
+   #   timeout: 300
+   #   runas: root
 
   ApplicationStart:
-    - location: scripts/run.sh
+    - location: run.sh
       timeout: 300
       runas: root

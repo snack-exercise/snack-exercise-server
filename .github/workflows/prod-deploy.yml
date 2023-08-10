@@ -122,7 +122,3 @@ jobs:
           script: |
             cd snackApp
             sudo ./scripts/deploy.sh
-          
-
-
-
