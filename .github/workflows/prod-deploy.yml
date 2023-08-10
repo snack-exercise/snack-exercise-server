@@ -119,5 +119,5 @@ jobs:
           key: ${{ secrets.KEY }}
           port: 22
           script: |
-            cd snackApp
+            cd snackpotApp
             sudo ./scripts/deploy.sh
