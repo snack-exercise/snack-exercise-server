@@ -33,26 +33,13 @@ public class FCMConfig {
 
         InputStream serviceAccountFile = new ClassPathResource("snackpot-fcm.json").getInputStream();
 
-        FirebaseApp firebaseApp = null;
-        List<FirebaseApp> firebaseAppList = FirebaseApp.getApps();
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccountFile)
+                        .createScoped(List.of(fireBaseScope)))
+                .setProjectId(projectId) // 필수는 아님
+                .build();
 
-        if(firebaseAppList != null && !firebaseAppList.isEmpty()){
-            for (FirebaseApp app : firebaseAppList) {
-                if(app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)){
-                    firebaseApp = app;
-                }
-            }
-        }else{
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccountFile)
-                            .createScoped(List.of(fireBaseScope)))
-                    .setProjectId(projectId) // 필수는 아님
-                    .build();
-            firebaseApp = FirebaseApp.initializeApp(options);
-        }
-
-
-        return firebaseApp;
+        return FirebaseApp.initializeApp(options);
     }
 
     @Bean
