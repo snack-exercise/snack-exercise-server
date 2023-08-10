@@ -5,9 +5,14 @@ spring:
         - local
       dev-env:
         - dev
-      prod-env:
+      prod-blue-env:
         - prod
+        - blue
+      prod-green-env:
+        - prod
+        - green
     include:
       - jwt
       - oauth
       - fcm
+      - sentry

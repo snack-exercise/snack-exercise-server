@@ -1,4 +1,4 @@
-package com.soma.snackexercise.exception;
+package com.soma.snackexercise.exception.member;
 
 public class MemberNameAlreadyExistsException extends RuntimeException {
     public MemberNameAlreadyExistsException(String message) {

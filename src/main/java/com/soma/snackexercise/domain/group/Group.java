@@ -3,7 +3,7 @@ package com.soma.snackexercise.domain.group;
 
 import com.soma.snackexercise.domain.BaseEntity;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
-import com.soma.snackexercise.exception.MaxMemberNumLessThanCurrentException;
+import com.soma.snackexercise.exception.group.exceedGroupMaxMemberNumException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -58,7 +58,7 @@ public class Group extends BaseEntity {
 
     public void updateMaxMemberNum(int currentMemberNum, int newMaxMemberNum) {
         if (currentMemberNum > newMaxMemberNum) {
-            throw new MaxMemberNumLessThanCurrentException();
+            throw new exceedGroupMaxMemberNumException();
         }
 
         this.maxMemberNum = newMaxMemberNum;
@@ -89,11 +89,16 @@ public class Group extends BaseEntity {
 
     public void updateIsGoalAchieved(){
         this.isGoalAchieved = TRUE;
-
+        this.currentDoingMemberId = null;
+        inActive(); // TODO : 그룹 미션 성공시 바로 Inactive 처리하도록 수정 (08/08)
     }
 
     public Boolean isCurrentTimeBetweenStartTimeAndEndTime(LocalTime now) {
         return now.isAfter(startTime) && now.isBefore(endTime);
+    }
+
+    public Boolean isStarted(){
+        return this.startDate != null;
     }
 
     @Builder

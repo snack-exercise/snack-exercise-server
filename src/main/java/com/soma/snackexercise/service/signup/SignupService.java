@@ -3,8 +3,8 @@ package com.soma.snackexercise.service.signup;
 import com.soma.snackexercise.auth.jwt.service.JwtService;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.signup.SignupRequest;
-import com.soma.snackexercise.exception.MemberNameAlreadyExistsException;
-import com.soma.snackexercise.exception.MemberNotFoundException;
+import com.soma.snackexercise.exception.member.MemberNameAlreadyExistsException;
+import com.soma.snackexercise.exception.member.MemberNotFoundException;
 import com.soma.snackexercise.repository.member.MemberRepository;
 
 import com.soma.snackexercise.util.constant.Status;
@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class SignupService {
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
 
+    @Transactional
     public void signup(SignupRequest signupRequest, HttpServletRequest request, HttpServletResponse response) {
         validateSignup(signupRequest);
         String email = jwtService.extractRefreshToken(request);
@@ -30,6 +31,9 @@ public class SignupService {
         String newRefreshToken = jwtService.createRefreshToken(email);
         jwtService.sendRefreshToken(response, newRefreshToken);
         jwtService.updateRefreshToken(email, newRefreshToken);
+
+        // fcm 토큰 저장
+        findMember.updateFcmToken(signupRequest.getFcmToken());
     }
 
     private void validateSignup(SignupRequest request) {

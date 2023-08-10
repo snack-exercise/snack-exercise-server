@@ -7,9 +7,11 @@ import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.dto.group.request.GroupCreateRequest;
 import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
-import com.soma.snackexercise.exception.GroupNotFoundException;
-import com.soma.snackexercise.exception.JoinListNotFoundException;
+import com.soma.snackexercise.exception.group.GroupNotFoundException;
+import com.soma.snackexercise.exception.joinlist.JoinListNotFoundException;
+import com.soma.snackexercise.factory.entity.ExerciseFactory;
 import com.soma.snackexercise.init.TestInitDB;
+import com.soma.snackexercise.repository.exercise.ExerciseRepository;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
@@ -72,6 +74,9 @@ public class GroupControllerIntegrationTest {
     private JoinListRepository joinListRepository;
 
     @Autowired
+    private ExerciseRepository exerciseRepository;
+
+    @Autowired
     private TestInitDB initDB;
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -120,6 +125,9 @@ public class GroupControllerIntegrationTest {
     void readTest() throws Exception {
         // given
         Group group = groupRepository.save(createGroup());
+        Member member = createMember();
+        memberRepository.save(member);
+        joinListRepository.save(createJoinListForHost(member, group));
         clear();
 
         // when, then
@@ -127,8 +135,8 @@ public class GroupControllerIntegrationTest {
                         get("/groups/{groupId}", group.getId())
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.result.data.id").value(group.getId()))
-                .andExpect(jsonPath("$.result.data.name").value(group.getName()));
+                .andExpect(jsonPath("$.result.data.groupId").value(group.getId()))
+                .andExpect(jsonPath("$.result.data.groupName").value(group.getName()));
     }
 
     @Test
@@ -217,6 +225,7 @@ public class GroupControllerIntegrationTest {
         // given
         Group group = groupRepository.save(createGroup());
         joinListRepository.save(createJoinListForHost(member, group));
+        exerciseRepository.save(ExerciseFactory.createExercise());
         clear();
 
         // when, then

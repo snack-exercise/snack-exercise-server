@@ -1,5 +1,6 @@
 package com.soma.snackexercise.service.group;
 
+import com.soma.snackexercise.domain.exercise.Exercise;
 import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
@@ -8,9 +9,13 @@ import com.soma.snackexercise.dto.group.request.GroupUpdateRequest;
 import com.soma.snackexercise.dto.group.request.JoinFriendGroupRequest;
 import com.soma.snackexercise.dto.group.response.GroupCreateResponse;
 import com.soma.snackexercise.dto.group.response.GroupResponse;
+import com.soma.snackexercise.dto.group.response.GroupResponseIncludeHost;
 import com.soma.snackexercise.dto.member.JoinListMemberDto;
 import com.soma.snackexercise.dto.member.response.GetOneGroupMemberResponse;
-import com.soma.snackexercise.exception.*;
+import com.soma.snackexercise.exception.group.*;
+import com.soma.snackexercise.exception.joinlist.JoinListNotFoundException;
+import com.soma.snackexercise.exception.member.MemberNotFoundException;
+import com.soma.snackexercise.repository.exercise.ExerciseRepository;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
 import com.soma.snackexercise.repository.member.MemberRepository;
@@ -30,6 +35,7 @@ import static com.soma.snackexercise.domain.joinlist.JoinType.MEMBER;
 import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createGroupCreateRequest;
 import static com.soma.snackexercise.factory.dto.GroupCreateFactory.createJoinFriendGroupRequest;
 import static com.soma.snackexercise.factory.dto.GroupUpdateFactory.createGroupUpdateRequest;
+import static com.soma.snackexercise.factory.entity.ExerciseFactory.createExercise;
 import static com.soma.snackexercise.factory.entity.GroupFactory.createGroup;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForHost;
 import static com.soma.snackexercise.factory.entity.JoinListFactory.createJoinListForMember;
@@ -48,12 +54,16 @@ import static org.mockito.Mockito.verify;
 class GroupServiceTest {
     @InjectMocks
     private GroupService groupService;
+
     @Mock
     private GroupRepository groupRepository;
     @Mock
     private MemberRepository memberRepository;
     @Mock
     private JoinListRepository joinListRepository;
+    @Mock
+    private ExerciseRepository exerciseRepository;
+
 
     private String email = "test@naver.com";
 
@@ -102,20 +112,21 @@ class GroupServiceTest {
     void readTest() {
         // given
         Group group = createGroup();
-        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));
+        JoinList joinListForHost = createJoinListForHost(createMember(), group);
+        given(joinListRepository.findHostJoinListByGroupIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(joinListForHost));
 
         // when
-        GroupResponse response = groupService.read(1L);
+        GroupResponseIncludeHost response = groupService.read(1L);
 
         // then
-        assertThat(response.getName()).isEqualTo(group.getName());
+        assertThat(response.getGroupName()).isEqualTo(group.getName());
     }
 
     @Test
     @DisplayName("운동 그룹 조회 메소드에서 찾을 수 없을 때 예외 클래스 발생 테스트")
     void readExceptionByGroupNotFoundTest() {
         // given
-        given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(null));
+        given(joinListRepository.findHostJoinListByGroupIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(null));
 
         // when, then
         assertThatThrownBy(() -> groupService.read(1L)).isInstanceOf(GroupNotFoundException.class);
@@ -190,7 +201,7 @@ class GroupServiceTest {
         given(joinListRepository.countByGroupAndOutCountLessThanOneAndStatusEqualsActive(any())).willReturn(request.getMaxMemberNum() + 1);
 
         // when, then
-        assertThatThrownBy(() -> groupService.update(1L, email, request)).isInstanceOf(MaxMemberNumLessThanCurrentException.class);
+        assertThatThrownBy(() -> groupService.update(1L, email, request)).isInstanceOf(exceedGroupMaxMemberNumException.class);
     }
 
     @Test
@@ -325,10 +336,12 @@ class GroupServiceTest {
         // given
         Member member = createMember();
         Group group = createGroup();
+        Exercise exercise = createExercise();
 
         given(memberRepository.findByEmailAndStatus(anyString(), any())).willReturn(Optional.ofNullable(member));
         given(groupRepository.findByIdAndStatus(anyLong(), any())).willReturn(Optional.ofNullable(group));
         given(joinListRepository.existsByGroupAndMemberAndJoinTypeAndStatus(any(), any(), any(), any())).willReturn(true);
+        given(exerciseRepository.findAll()).willReturn(List.of(exercise));
 
         // when
         GroupResponse response = groupService.startGroup(1L, email);

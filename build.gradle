@@ -53,6 +53,12 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
     // firebase
     implementation 'com.google.firebase:firebase-admin:9.1.1'
+    // sentry - spring boot
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:6.27.0'
+    // sentry - logback
+    implementation 'io.sentry:sentry-logback:6.25.2'
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {
