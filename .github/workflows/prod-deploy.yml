@@ -96,7 +96,7 @@ jobs:
         run: |
           mkdir snackpotApp
           cp docker-compose-prod.yml snackpotApp/
-          cp scripts snackpotApp/
+          cp -r scripts snackpotApp/
 
       # (8) 로컬 snackpotApp 폴더 EC2로 복사
       - name: Copy snackpotApp folder to EC2 via SCP
