@@ -1,17 +1,30 @@
 version: '3' # docker-compose는 버전 1~3까지 존재, 최신 버전 사용을 위해서 버전 3 설정
 
 services: # 컨테이너 집합 요소
+#  nginx:
+#    container_name: nginx
+#    image: nginx:1.21.5-alpine
+#    ports:
+#      - 80:80
+#      - 443:443
+#    volumes:
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+#    networks:
+#      - snack_net
+
   redis:
     container_name: snack-redis
     hostname: redis
     image: redis
     ports:
       - 6379:6379
+    volumes:
+      - /usr/local/redis/data:/data
     networks:
       - snack_net
 
-  springboot:
-    container_name: spring-prod
+  spring-blue:
+    container_name: spring-blue
     # build:
     #  context: . # DockerFile이 있는 디렉토리
     #  dockerfile: Dockerfile
@@ -21,7 +34,19 @@ services: # 컨테이너 집합 요소
     depends_on:
       - redis
     environment:
-      SPRING_PROFILES_ACTIVE : prod-env # 사용할 profile 지정
+      SPRING_PROFILES_ACTIVE : prod-blue-env # 사용할 profile 지정
+    networks:
+      - snack_net
+
+  spring-green:
+    container_name: spring-green
+    image: ojs835/snack-exercise-hub:latest-prod
+    ports:
+      - 8081:8081
+    depends_on:
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE: prod-green-env # 사용할 profile 지정
     networks:
       - snack_net
 
