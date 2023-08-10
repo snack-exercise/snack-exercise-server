@@ -64,17 +64,9 @@ jobs:
       - name: ./gradlew 권한 설정
         run: chmod +x ./gradlew
 
-      # (5) Gradle build (Test 제외)
+      # (5) Gradle clean && Gradle build (Test 제외)
       - name: Build with Gradle
-        run: ./gradlew build -x test
-
-      # (4) ./gradlew 권한 설정
-      - name: ./gradlew 권한 설정
-        run: chmod +x ./gradlew
-
-      # (5) Gradle build (Test 제외)
-      - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./gradlew clean && ./gradlew build -x test
 
       # (6) docker build & push to production
       - name: Docker build & push to DockerHub
