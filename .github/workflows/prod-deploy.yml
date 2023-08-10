@@ -103,7 +103,7 @@ jobs:
       - name: Copy snackpotApp folder to EC2 via SCP
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.DEV_HOST }}
+          host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.KEY }}
           port: 22
@@ -115,7 +115,7 @@ jobs:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.DEV_HOST }}
+          host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.KEY }}
           port: 22
