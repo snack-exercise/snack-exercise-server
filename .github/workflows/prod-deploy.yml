@@ -92,7 +92,7 @@ jobs:
           aws-region: ap-northeast-2
 
       # snackpotApp라는 폴더 생성 및 docker-compose-prod.yml, appspec.yml 파일과 scripts 폴더 이동하기
-      - name: Create snackpotApp folder에 move appspec.yml and scripts folder and zip app-deploy folder
+      - name: Create snackpotApp folder에 move appspec.yml and scripts folder
         run: |
           mkdir snackpotApp
           cp docker-compose-prod.yml snackpotApp/
@@ -120,4 +120,4 @@ jobs:
           port: 22
           script: |
             cd snackpotApp
-            sudo ./scripts/deploy.sh
+            sudo sh ./scripts/deploy.sh
