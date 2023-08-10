@@ -42,7 +42,7 @@ dependencies {
     // mariadb
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     // mysql
-    implementation 'mysql:mysql-connector-java'
+    runtimeOnly "com.mysql:mysql-connector-j"
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // security test
