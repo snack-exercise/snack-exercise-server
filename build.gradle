@@ -42,7 +42,7 @@ dependencies {
     // mariadb
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     // mysql
-    runtimeOnly 'mysql:mysql-connector-java:8.0.32'
+    implementation 'mysql:mysql-connector-java:8.0.32'
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // security test
@@ -61,6 +61,8 @@ dependencies {
     implementation 'io.sentry:sentry-logback:6.25.2'
     // actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 tasks.named('test') {
