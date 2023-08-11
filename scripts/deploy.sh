@@ -1,7 +1,7 @@
 #!/bin/bash
 # nginx가 가리키지 않는 port로 컨테이너 변경
 echo "> 현재 구동중인 profile 확인"
-CURRENT_PROFILE=$(curl -s http://localhost/profile)
+CURRENT_PROFILE=$(curl -s http://localhost/profiles)
 
 echo "> $CURRENT_PROFILE"
 
