@@ -27,7 +27,7 @@ public class HealthController {
     public String profile() {
         final List<String> profiles = Arrays.asList(environment.getActiveProfiles());
         final List<String> prodProfiles = Arrays.asList("blue", "green");
-        final String defaultProfile = profiles.get(0);
+        final String defaultProfile = "blue";
 
         return Arrays.stream(environment.getActiveProfiles())
                 .filter(prodProfiles::contains)
