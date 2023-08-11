@@ -1,7 +1,7 @@
 #!/bin/bash
 # nginx가 가리키는 스프링 port 수정
 echo "> 현재 구동중인 Port 확인"
-CURRENT_PROFILE=$(curl -s http://localhost/profile)
+CURRENT_PROFILE=$(curl -s http://localhost/profiles)
 
 if [ $CURRENT_PROFILE == "blue" ]
 then
@@ -15,7 +15,7 @@ else
   IDLE_PORT=8080
 fi
 
-PROXY_PORT=$(curl -s http://localhost/profile)
+PROXY_PORT=$(curl -s http://localhost/profiles)
 echo "> 현재 구동중인 Port: $PROXY_PORT"
 
 echo "> 전환할 Port : $IDLE_PORT"

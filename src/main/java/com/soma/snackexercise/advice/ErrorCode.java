@@ -1,5 +1,6 @@
 package com.soma.snackexercise.advice;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -38,10 +39,19 @@ public enum ErrorCode {
     WRONG_QUERY_PARAM_EXCEPTION(-1900, "잘못된 Query Param입니다."),
 
     /* FCM */
-    FCM_TOKEN_NOT_FOUND_EXCEPTION(-2000, "FCM 토큰이 없는 회원입니다.");
+    FCM_TOKEN_NOT_FOUND_EXCEPTION(-2000, "FCM 토큰이 없는 회원입니다."),
+
+    /* Validation */
+    NOT_VALID(-2100, "validation 에러입니다.");
+
     ErrorCode(int code, String message){
         this.code = code;
         this.message = message;
+    }
+
+    public ErrorCode changeMessage(String message){
+        this.message = message;
+        return this;
     }
 
     private int code;

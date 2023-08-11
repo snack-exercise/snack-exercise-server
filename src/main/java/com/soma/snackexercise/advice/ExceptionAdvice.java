@@ -14,6 +14,7 @@ import com.soma.snackexercise.util.response.Response;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -157,12 +158,26 @@ public class ExceptionAdvice {
         return Response.failure(WRONG_QUERY_PARAM_EXCEPTION);
     }
 
+    /*
+    FCM Token
+     */
     @ExceptionHandler(FcmTokenEmptyException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Response fcmTokenEmptyExceptionHandler(FcmTokenEmptyException e){
         Sentry.captureException(e);
         return Response.failure(FCM_TOKEN_NOT_FOUND_EXCEPTION);
     }
+
+    /*
+    FCM Token
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response fcmTokenEmptyExceptionHandler(MethodArgumentNotValidException e){
+        Sentry.captureException(e);
+        return Response.failure(NOT_VALID.changeMessage(e.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
+    }
+
 
 
 }

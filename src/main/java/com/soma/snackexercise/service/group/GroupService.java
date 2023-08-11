@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalTime;
 import java.util.List;
 
+import static com.soma.snackexercise.domain.notification.NotificationMessage.ALLOCATE;
 import static com.soma.snackexercise.domain.notification.NotificationMessage.GROUP_START;
 import static com.soma.snackexercise.util.constant.Status.ACTIVE;
 import static com.soma.snackexercise.util.constant.Status.INACTIVE;
@@ -202,6 +203,7 @@ public class GroupService {
             log.info("============= 그룹 시작, [그룹명] : {} =============", group.getName());
             Member targetMember = missionUtil.getNextMissionMember(group);
             missionUtil.allocateMission(targetMember, group, exerciseList);
+            firebaseCloudMessageService.sendByToken(targetMember.getFcmToken(), ALLOCATE.getTitleWithGroupName(group.getName()), ALLOCATE.getBody());
         }
 
         // 4. 그룹원 모두에게 그룹 시작 푸시알림 전송
@@ -209,7 +211,7 @@ public class GroupService {
         if (!tokenList.isEmpty()) {
             System.out.println("tokenList = " + tokenList);
             // tokenList로 알림 보내기
-            firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_START.getTitle(), GROUP_START.getBody());
+            firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_START.getTitleWithGroupName(group.getName()), GROUP_START.getBody());
         }
 
         return GroupResponse.toDto(group);
