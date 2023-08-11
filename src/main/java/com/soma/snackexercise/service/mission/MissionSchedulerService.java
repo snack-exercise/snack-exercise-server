@@ -153,7 +153,7 @@ public class MissionSchedulerService {
             }
             //joinLists.forEach(joinList -> tokenList.add(joinList.getMember().getFcmToken()));
             if(!tokenList.isEmpty()){
-                firebaseCloudMessageService.sendByTokenList(tokenList, AUTOMATIC_REMINDER_FOR_GROUPMEMBER.getTitleWithNickname(targetMember.getNickname()), AUTOMATIC_REMINDER_FOR_GROUPMEMBER.getBodyWithNickname(targetMember.getNickname()));
+                firebaseCloudMessageService.sendByTokenList(tokenList, AUTOMATIC_REMINDER_FOR_GROUPMEMBER.getTitleWithGroupNameAndNickname(group.getName(), targetMember.getNickname()), AUTOMATIC_REMINDER_FOR_GROUPMEMBER.getBodyWithNickname(targetMember.getNickname()));
             }
 
         }
