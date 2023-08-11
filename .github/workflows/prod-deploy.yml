@@ -115,5 +115,6 @@ jobs:
             cd snackApp
             sudo docker-compose -f docker-compose-prod.yml down
             sudo docker-compose -f docker-compose-prod.yml pull spring-blue
-            sudo docker image rm ${{ secrets.DOCKER_REPO }}
+            sudo docker rm -f snack-redis
+            sudo docker image rm ${{ secrets.DOCKER_REPO }}:latest-prod
             sudo docker-compose -f docker-compose-prod.yml up -d spring-blue
