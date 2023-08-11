@@ -34,7 +34,7 @@ services: # 컨테이너 집합 요소
     depends_on:
       - redis
     environment:
-      SPRING_PROFILES_ACTIVE : prod-blue-env # 사용할 profile 지정
+      SPRING_PROFILES_ACTIVE: prod-blue-env # 사용할 profile 지정
     networks:
       - snack_net
 
