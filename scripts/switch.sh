@@ -1,14 +1,17 @@
 #!/bin/bash
-# nginx가 가리키는 스프링 port 수정
-echo "> 현재 구동중인 Port 확인"
+# nginx가 가리키는 스프링 profile 수정
+echo "> switch.sh"
+echo "> 현재 구동중인 profile 확인"
 CURRENT_PROFILE=$(curl -s http://localhost/profiles)
+
+echo "> CURRENT_PROFILE은 $CURRENT_PROFILE"
 
 if [ "$CURRENT_PROFILE" = "blue" ]
 then
-  IDLE_PORT=8081
+  IDLE_PORT=8080
 elif [ "$CURRENT_PROFILE" = "green" ]
 then
-  IDLE_PORT=8080
+  IDLE_PORT=8081
 else
   echo "> 일치하는 Profile이 없습니다. Profile:$CURRENT_PROFILE"
   echo "> 8080을 할당합니다."
