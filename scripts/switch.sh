@@ -3,10 +3,10 @@
 echo "> 현재 구동중인 Port 확인"
 CURRENT_PROFILE=$(curl -s http://localhost/profiles)
 
-if [ $CURRENT_PROFILE == "blue" ]
+if [ "$CURRENT_PROFILE" = "blue" ]
 then
   IDLE_PORT=8081
-elif [ $CURRENT_PROFILE == "green" ]
+elif [ "$CURRENT_PROFILE" = "green" ]
 then
   IDLE_PORT=8080
 else
