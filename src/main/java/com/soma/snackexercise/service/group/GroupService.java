@@ -209,7 +209,7 @@ public class GroupService {
         if (!tokenList.isEmpty()) {
             System.out.println("tokenList = " + tokenList);
             // tokenList로 알림 보내기
-            firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_START.getTitle(), GROUP_START.getBody());
+            firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_START.getTitleWithGroupName(group.getName()), GROUP_START.getBody());
         }
 
         return GroupResponse.toDto(group);

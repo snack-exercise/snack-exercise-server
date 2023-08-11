@@ -215,7 +215,7 @@ public class MissionService {
 
             // 멤버 전원에게 미션 성공 푸시 알림 전송
             List<String> tokenList = joinLists.stream().map(joinList1 -> joinList1.getMember().getFcmToken()).toList();
-            firebaseCloudMessageService.sendByTokenList(tokenList, GROUP_GOAL_ACHIEVE.getTitle(), GROUP_GOAL_ACHIEVE.getBody());
+            firebaseCloudMessageService.sendByTokenList(tokenList,  GROUP_GOAL_ACHIEVE.getTitleWithGroupName(group.getName()), GROUP_GOAL_ACHIEVE.getBody());
             log.info("[그룹 목표 달성] 그룹명 : {}, 회원명 : {}", group.getName(), member.getNickname());
 
             return new MissionFinishResponse(group.getIsGoalAchieved());
@@ -242,7 +242,7 @@ public class MissionService {
 //            throw new FcmTokenEmptyException();
 //        }
         if(nextMissionMember.getFcmToken() != null){
-            firebaseCloudMessageService.sendByToken(nextMissionMember.getFcmToken(), ALLOCATE.getTitle(), ALLOCATE.getBody());
+            firebaseCloudMessageService.sendByToken(nextMissionMember.getFcmToken(), ALLOCATE.getTitleWithGroupName(group.getName()), ALLOCATE.getBody());
         }
         log.info("[다음 미션] 그룹원 : {}, 할당 시각 : {}", nextMissionMember.getName(), LocalDateTime.now());
         return new MissionFinishResponse(group.getIsGoalAchieved());

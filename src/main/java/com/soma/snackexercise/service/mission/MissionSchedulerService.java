@@ -87,12 +87,14 @@ public class MissionSchedulerService {
                     .build());
 
             log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
+
+            if (!tokenList.isEmpty()) {
+                // tokenList로 알림 보내기
+                firebaseCloudMessageService.sendByTokenList(tokenList, ALLOCATE.getTitleWithGroupName(group.getName()), ALLOCATE.getBody());
+            }
         }
 
-        if (!tokenList.isEmpty()) {
-            // tokenList로 알림 보내기
-            firebaseCloudMessageService.sendByTokenList(tokenList, ALLOCATE.getTitle(), ALLOCATE.getBody());
-        }
+
     }
 
     /**
@@ -139,7 +141,7 @@ public class MissionSchedulerService {
             // 미션 수행자 푸시 알림 전송
             String targetMemberFcmToken = targetMember.getFcmToken();
             if (targetMemberFcmToken != null && !targetMemberFcmToken.isEmpty()){
-                firebaseCloudMessageService.sendByToken(targetMemberFcmToken, AUTOMATIC_REMINDER_TARGETMEMBER.getTitle(), AUTOMATIC_REMINDER_TARGETMEMBER.getBody());
+                firebaseCloudMessageService.sendByToken(targetMemberFcmToken, AUTOMATIC_REMINDER_TARGETMEMBER.getTitleWithGroupName(group.getName()), AUTOMATIC_REMINDER_TARGETMEMBER.getBody());
             }
 
             // 미션 수행자 제외한 그룹원에게 푸시 알림 전송
