@@ -113,7 +113,7 @@ jobs:
           port: 22
           script: |
             cd snackApp
-            sudo docker-compose -f docker-compose-prod.yml down 
+            sudo docker-compose -f docker-compose-prod.yml down
             sudo docker-compose -f docker-compose-prod.yml pull
             sudo docker image rm ${{ secrets.DOCKER_REPO }}
-            sudo docker-compose -f docker-compose-prod.yml up -d
+            sudo docker-compose -f docker-compose-prod.yml up spring-blue -d
