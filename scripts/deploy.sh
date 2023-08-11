@@ -22,11 +22,14 @@ fi
 
 CONTAINER_ID=$(docker container ls -f "name=spring-${IDLE_PROFILE}" -q)
 
-sudo docker stop spring-${IDLE_PROFILE}
-sudo docker rm spring-${IDLE_PROFILE}
+sudo docker-compose -f docker-compose-prod.yml down
+sudo docker-compose -f docker-compose-prod.yml pull spring-${IDLE_PROFILE}
+sudo docker rm -f snack-redis
+sudo docker rm -f spring-${IDLE_PROFILE}
+sudo docker image rm ojs835/snack-exercise-hub:latest-prod
 
 echo "> spring-$IDLE_PROFILE 컨테이너 배포"
-sudo docker-compose -f docker-compose-prod.yml up spring-${IDLE_PROFILE}
+sudo docker-compose -f docker-compose-prod.yml up -d spring-${IDLE_PROFILE}
 
 echo "> $IDLE_PROFILE 10초 후 Health check 시작"
 echo "> curl -s http://localhost:$IDLE_PORT/actuator/health "
