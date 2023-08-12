@@ -20,7 +20,13 @@ else
         IDLE_PORT=8080
 fi
 
+CONTAINER_ID=$(docker container ls -f "name=spring-${IDLE_PROFILE}" -q)
+
+sudo docker-compose -f docker-compose-prod.yml down
 sudo docker-compose -f docker-compose-prod.yml pull spring-${IDLE_PROFILE}
+sudo docker rm -f snack-redis
+sudo docker rm -f spring-${IDLE_PROFILE}
+sudo docker image rm ojs835/snack-exercise-hub:latest-prod
 
 echo "> spring-$IDLE_PROFILE 컨테이너 배포"
 sudo docker-compose -f docker-compose-prod.yml up -d spring-${IDLE_PROFILE}
@@ -29,7 +35,7 @@ echo "> $IDLE_PROFILE 10초 후 Health check 시작"
 echo "> curl -s http://localhost:$IDLE_PORT/actuator/health "
 sleep 10
 
-for retry_count in {1..10}
+for retry_count in {1..10};
 do
         response=$(curl -s http://localhost:$IDLE_PORT/actuator/health)
         up_count=$(echo $response | grep 'UP' | wc -l)
