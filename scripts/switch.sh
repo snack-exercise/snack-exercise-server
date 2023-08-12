@@ -2,7 +2,7 @@
 # nginx가 가리키는 스프링 profile 수정
 echo "> switch.sh"
 echo "> 현재 구동중인 profile 확인"
-CURRENT_PROFILE=$(curl -s http://localhost:$IDLE_PORT/profiles)
+CURRENT_PROFILE=$(curl -s http://localhost/profiles)
 
 echo "> CURRENT_PROFILE은 $CURRENT_PROFILE"
 
