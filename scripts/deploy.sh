@@ -34,7 +34,7 @@ do
         response=$(curl -s http://localhost:$IDLE_PORT/actuator/health)
         up_count=$(echo $response | grep 'UP' | wc -l)
 
-        if [ $up_count -ge 1 ]
+        if [ "$up_count" -ge 1 ]
         then
                 echo "> Health check 성공"
                 break
@@ -43,7 +43,7 @@ do
                 echo "> Health check: ${response}"
         fi
 
-        if [ $retry_count -eq 10 ]
+        if [ "$retry_count" -eq 10 ]
         then
                 echo "> Health check 실패. "
                 echo "> Nginx에 연결하지 않고 배포를 종료합니다."
@@ -55,8 +55,7 @@ do
 done
 
 echo "> 스위칭을 시도합니다..."
-sleep 10
 
 sudo sh /home/ubuntu/snackpotApp/scripts/switch.sh
 
-sudo docker-compose -f docker-compose-prod.yml down spring-${CURRENT_PROFILE}
+sudo docker-compose -f docker-compose-prod.yml down spring-"${CURRENT_PROFILE}"
