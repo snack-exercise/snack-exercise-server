@@ -16,3 +16,20 @@ spring:
       - oauth
       - fcm
       - sentry
+
+---
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: blue
+---
+server:
+  port: 8081
+
+spring:
+  config:
+    activate:
+      on-profile: green
