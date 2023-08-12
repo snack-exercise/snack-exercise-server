@@ -35,7 +35,7 @@ echo "> $IDLE_PROFILE 10초 후 Health check 시작"
 echo "> curl -s http://localhost:$IDLE_PORT/actuator/health "
 sleep 10
 
-for retry_count in {1..10};
+for retry_count in {1..10}
 do
         response=$(curl -s http://localhost:$IDLE_PORT/actuator/health)
         up_count=$(echo $response | grep 'UP' | wc -l)
@@ -62,6 +62,11 @@ done
 
 echo "> 스위칭을 시도합니다..."
 
-sudo sh /home/ubuntu/snackpotApp/scripts/switch.sh
+echo "> 전환할 Port : $IDLE_PORT"
+echo "> Port 전환"
+echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
+
+echo "> Nginx Reload"
+sudo service nginx reload
 
 sudo docker-compose -f docker-compose-prod.yml down spring-"${CURRENT_PROFILE}"
