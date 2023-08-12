@@ -118,7 +118,7 @@ jobs:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.KEY }}
-          port: 22여
+          port: 22
           script: |
             cd snackpotApp
             chmod +x ./scripts/deploy.sh
