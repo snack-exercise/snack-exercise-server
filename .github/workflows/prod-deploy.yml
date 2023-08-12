@@ -123,4 +123,4 @@ jobs:
             cd snackpotApp
             chmod +x ./scripts/deploy.sh
             chmod +x ./scripts/switch.sh
-            sudo sh ./scripts/deploy.sh
+            sudo bash sh ./scripts/deploy.sh
