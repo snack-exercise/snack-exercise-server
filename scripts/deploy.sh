@@ -35,10 +35,11 @@ echo "> $IDLE_PROFILE 10초 후 Health check 시작"
 echo "> curl -s http://localhost:$IDLE_PORT/actuator/health "
 sleep 10
 
-for retry_count in {1..10}
+for retry_count in {1..10};
 do
         response=$(curl -s http://localhost:$IDLE_PORT/actuator/health)
         up_count=$(echo $response | grep 'UP' | wc -l)
+        echo "up_count : $up_count"
 
         if [ $up_count -ge 1 ]
         then
