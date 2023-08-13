@@ -49,9 +49,15 @@ public class GroupService {
 
     @Transactional
     public GroupCreateResponse create(GroupCreateRequest groupCreateRequest, String email){
-
         // 1. 그룹 생성할 회원 조회
         Member member = memberRepository.findByEmailAndStatus(email, ACTIVE).orElseThrow(MemberNotFoundException::new);
+
+        // 방장은 같은 이름의 그룹은 하나만 생성 가능
+        System.out.println("groupRepository.existsByHostMemberAndGroupNameAndStaus(member, groupCreateRequest.getName(), ACTIVE) = " + groupRepository.existsByHostMemberAndGroupNameAndStaus(member, groupCreateRequest.getName(), ACTIVE));
+        if(groupRepository.existsByHostMemberAndGroupNameAndStaus(member, groupCreateRequest.getName(), ACTIVE)){
+            throw new DuplicateGroupNameException();
+        }
+
 
         // 2. 그룹 코드 생성
         String groupCode = CreateGroupCode.createGroupCode();
