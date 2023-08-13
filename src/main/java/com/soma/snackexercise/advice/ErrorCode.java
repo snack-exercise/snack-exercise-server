@@ -25,6 +25,7 @@ public enum ErrorCode {
     EXCEEDS_KICK_OUT_LIMIT_EXCEPTION(-1205, "그룹에 다시 가입할 수 없습니다."),
     NOT_STARTED_GROUP_EXCEPTION(-1206, "그룹이 아직 시작하지 않았습니다."),
     INVALID_GROUP_TIME_EXCEPTION(-1207, "그룹 운영시간이 아닙니다."),
+    DUPLICATE_GROUP_EXCEPTION(-1208, "중복된 그룹명입니다."),
 
     /* JoinList */
     JOIN_LIST_NOT_FOUND_EXCEPTION(-1300, "회원_운동그룹이 존재하지 않습니다."),
