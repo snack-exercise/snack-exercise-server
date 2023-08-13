@@ -1,8 +1,11 @@
 package com.soma.snackexercise.repository.group;
 
 import com.soma.snackexercise.domain.group.Group;
+import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.util.constant.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -10,6 +13,14 @@ import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
     Boolean existsByCodeAndStatus(String code, Status status);
+
+    @Query("SELECT CASE COUNT(*)" +
+            "   WHEN 1 THEN TRUE" +
+            "   ELSE FALSE" +
+            "   END" +
+            "   FROM Group g JOIN JoinList j ON g.id = j.group.id" +
+            "   WHERE j.joinType = 'HOST' AND j.member = :member AND g.name = :groupName AND g.status = :status")
+    Boolean existsByHostMemberAndGroupNameAndStaus(@Param("member") Member member, @Param("groupName") String groupName, @Param("status") Status status);
 
     Boolean existsByIdAndStatus(Long id, Status status);
 
