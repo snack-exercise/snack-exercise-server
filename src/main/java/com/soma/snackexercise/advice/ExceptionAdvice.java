@@ -110,6 +110,13 @@ public class ExceptionAdvice {
         Sentry.captureException(e);
         return Response.failure(INVALID_GROUP_TIME_EXCEPTION);
     }
+    @ExceptionHandler(DuplicateGroupNameException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response duplicateGroupNameExceptionHandler (DuplicateGroupNameException e){
+        Sentry.captureException(e);
+        return Response.failure(DUPLICATE_GROUP_EXCEPTION);
+    }
+
 
     /*
     JoinList
