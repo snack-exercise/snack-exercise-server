@@ -22,6 +22,7 @@ public class Exercise extends BaseEntity {
 
     private String emozi;
 
+    @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
 
     private String videoLink;
