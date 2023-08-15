@@ -2,6 +2,7 @@ package com.soma.snackexercise.domain.exercise;
 
 import com.soma.snackexercise.domain.BaseEntity;
 import com.soma.snackexercise.dto.exercise.request.ExerciseUpdateRequest;
+import com.soma.snackexercise.util.constant.Difficulty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,10 @@ public class Exercise extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private ExerciseCategory exerciseCategory;
+
+    private String emozi;
+
+    private Difficulty difficulty;
 
     private String videoLink;
 

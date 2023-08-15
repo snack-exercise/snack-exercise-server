@@ -171,8 +171,6 @@ public class MissionService {
             log.info("[회원 랜덤 미션 시작시각] {}", mission.getStartAt());
         }
 
-
-
         return MissionStartResponse.toDto(mission);
     }
 

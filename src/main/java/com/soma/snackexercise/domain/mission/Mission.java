@@ -52,6 +52,10 @@ public class Mission extends BaseTimeEntity {
         this.alarmCount = 0;
     }
 
+    public void updateExercise(Exercise exercise) {
+        this.exercise = exercise;
+    }
+
     /**
      * 독촉 알람 횟수 1 증가
      */
