@@ -171,8 +171,6 @@ public class MissionService {
             log.info("[회원 랜덤 미션 시작시각] {}", mission.getStartAt());
         }
 
-
-
         return MissionStartResponse.toDto(mission);
     }
 
@@ -237,10 +235,6 @@ public class MissionService {
                 .build());
         group.updateCurrentDoingMemberId(nextMissionMember.getId());
 
-        // 아직 fcm 프론트와 연동 전이라서 주석 처리
-//        if(nextMissionMember.getFcmToken() == null){
-//            throw new FcmTokenEmptyException();
-//        }
         if(nextMissionMember.getFcmToken() != null){
             firebaseCloudMessageService.sendByToken(nextMissionMember.getFcmToken(), ALLOCATE.getTitleWithGroupName(group.getName()), ALLOCATE.getBody());
         }
