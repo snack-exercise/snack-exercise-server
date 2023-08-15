@@ -64,12 +64,12 @@ public class MissionService {
         Group group = groupRepository.findByIdAndStatus(groupId, ACTIVE).orElseThrow(GroupNotFoundException::new);
 
         // 2. 그룹이 현재 완료한 릴레이 횟수
+        Integer currentFinishedRelayCount = joinListRepository.findMinExecutedMissionCountByGroupAndStatus(group, ACTIVE);
+
+        // 3. 모든 그룹원의 오늘 수행한 미션 현황
         LocalDateTime now = LocalDateTime.now();// 현재 날짜와 시간 가져오기
         LocalDateTime todayMidnight = now.with(LocalTime.MIN);// 오늘 자정일 구하기
         LocalDateTime tomorrowMidnight = now.plusDays(1).with(LocalTime.MIN);// 내일 자정 구하기
-        Integer currentFinishedRelayCount = missionRepository.findCurrentFinishedRelayCountByGroupId(groupId, todayMidnight, tomorrowMidnight);
-
-        // 3. 모든 그룹원의 오늘 수행한 미션 현황
         List<Mission> missions = missionRepository.findMissionsByGroupIdWithinDateRange(groupId, todayMidnight, tomorrowMidnight);
         List<MemberMissionDto> missionFlow = missions.stream().map(MemberMissionDto::toDto).toList();
 
