@@ -6,6 +6,7 @@ import com.soma.snackexercise.domain.group.Group;
 import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
+import com.soma.snackexercise.exception.member.FcmTokenEmptyException;
 import com.soma.snackexercise.repository.exercise.ExerciseRepository;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
@@ -57,7 +58,6 @@ public class MissionSchedulerService {
         log.info("============= 그룹 시작 시간 미션 할당 스케줄러 =============");
         // 종료 여부가 false이고, 시작한 그룹에 대해서
         List<Group> groupList = groupRepository.findAllByStartDateNotNullAndIsGoalAchievedAndStatus(false, Status.ACTIVE);
-        List<String> tokenList = new ArrayList<>();
         List<Exercise> exerciseList = exerciseRepository.findAll();
 
         // 모든 그룹에 대해서 현재 시각이 그룹의 시작시간과 시간차이가 5초 이하인 그룹에 대해서 미션 할당 및 알림 보내기
@@ -76,8 +76,8 @@ public class MissionSchedulerService {
                 continue;
             }
             Member targetMember = missionUtil.getMissionAllocatedMember(group);
-            if (targetMember.getFcmToken() != null) { // TODO 만약 회원의 fcm token이 null인 경우 처리 필요
-                tokenList.add(targetMember.getFcmToken());
+            if (targetMember.getFcmToken() != null) {
+                throw new FcmTokenEmptyException();
             }
 
             missionRepository.save(Mission.builder()
@@ -88,9 +88,8 @@ public class MissionSchedulerService {
 
             log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
 
-            if (!tokenList.isEmpty()) {
-                // tokenList로 알림 보내기
-                firebaseCloudMessageService.sendByTokenList(tokenList, ALLOCATE.getTitleWithGroupName(group.getName()), ALLOCATE.getBody());
+            if (!targetMember.getFcmToken().isEmpty()) {
+                firebaseCloudMessageService.sendByToken(targetMember.getFcmToken(), ALLOCATE.getTitleWithGroupName(group.getName()), ALLOCATE.getBody());
             }
         }
 
