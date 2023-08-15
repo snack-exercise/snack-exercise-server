@@ -77,10 +77,10 @@ public class Mission extends BaseTimeEntity {
     /**
      * 운동 종료시, 소모 칼로리와 운동 종료 시각을 기록
      * @param calory 소모 칼로리
-     * @param lengthOfVideo 운동 영상 길이
+     * @param secondsOfExercise 운동 수행 초단위 시간
      */
-    public void endMission(Integer calory, Long lengthOfVideo){
-        this.endAt = this.startAt.plusMinutes(lengthOfVideo);
+    public void endMission(Integer calory, Long secondsOfExercise){
+        this.endAt = this.startAt.plusSeconds(secondsOfExercise);
         this.calory = calory;
     }
 
