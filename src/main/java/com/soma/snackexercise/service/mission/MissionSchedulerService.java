@@ -7,6 +7,7 @@ import com.soma.snackexercise.domain.joinlist.JoinList;
 import com.soma.snackexercise.domain.member.Member;
 import com.soma.snackexercise.domain.mission.Mission;
 import com.soma.snackexercise.exception.member.FcmTokenEmptyException;
+import com.soma.snackexercise.exception.mission.MissionNotFoundException;
 import com.soma.snackexercise.repository.exercise.ExerciseRepository;
 import com.soma.snackexercise.repository.group.GroupRepository;
 import com.soma.snackexercise.repository.joinlist.JoinListRepository;
@@ -80,11 +81,17 @@ public class MissionSchedulerService {
                 throw new FcmTokenEmptyException();
             }
 
-            missionRepository.save(Mission.builder()
-                    .exercise(exerciseList.get(random.nextInt(exerciseList.size())))
-                    .member(targetMember)
-                    .group(group)
-                    .build());
+            if (group.getCurrentDoingMemberId() != null) {
+                Mission mission = missionRepository.findFirstByGroupAndMemberOrderByCreatedAtDesc(group, targetMember).orElseThrow(MissionNotFoundException::new);
+                mission.updateCreatedAt(LocalDateTime.now());
+            }
+            else{
+                missionRepository.save(Mission.builder()
+                        .exercise(exerciseList.get(random.nextInt(exerciseList.size())))
+                        .member(targetMember)
+                        .group(group)
+                        .build());
+            }
 
             log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
 
@@ -92,8 +99,6 @@ public class MissionSchedulerService {
                 firebaseCloudMessageService.sendByToken(targetMember.getFcmToken(), ALLOCATE.getTitleWithGroupName(group.getName()), ALLOCATE.getBody());
             }
         }
-
-
     }
 
     /**
