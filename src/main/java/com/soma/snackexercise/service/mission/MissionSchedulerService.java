@@ -84,6 +84,7 @@ public class MissionSchedulerService {
             if (group.getCurrentDoingMemberId() != null) {
                 Mission mission = missionRepository.findFirstByGroupAndMemberOrderByCreatedAtDesc(group, targetMember).orElseThrow(MissionNotFoundException::new);
                 mission.updateCreatedAt(LocalDateTime.now());
+                log.info("시작시간 스케줄러 (미션 기존 할당 시간 변경) : 그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
             }
             else{
                 missionRepository.save(Mission.builder()
@@ -91,6 +92,7 @@ public class MissionSchedulerService {
                         .member(targetMember)
                         .group(group)
                         .build());
+                log.info("시작시간 스케줄러 (미션 생성) : 그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
             }
 
             log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
