@@ -54,7 +54,6 @@ public class MissionSchedulerService {
     //@Scheduled(fixedRate = 5000) // 이전 Task 시작 시점으로부터 5초가 지난 후 Task 실행
     //@Async
     @Scheduled(cron = "1 * * * * *") // 1분마다 실행, cron 표현식
-    @Transactional
     public void allocateMissionAtGroupStartTime() {
         log.info("============= 그룹 시작 시간 미션 할당 스케줄러 =============");
         // 종료 여부가 false이고, 시작한 그룹에 대해서
@@ -160,7 +159,7 @@ public class MissionSchedulerService {
     }
 
     @Transactional
-    private void allocateMissionForGroup(LocalTime now, Group group, List<Exercise> exerciseList) {
+    public void allocateMissionForGroup(LocalTime now, Group group, List<Exercise> exerciseList) {
         long timeDiff = ChronoUnit.MINUTES.between(now, group.getStartTime()); // group.getStartTime - now
 
         // 현재 시간이 시작 시간보다 이전이라면 continue
