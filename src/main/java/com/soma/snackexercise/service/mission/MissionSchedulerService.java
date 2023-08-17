@@ -77,7 +77,7 @@ public class MissionSchedulerService {
                 continue;
             }
             Member targetMember = missionUtil.getMissionAllocatedMember(group);
-            if (targetMember.getFcmToken() != null) {
+            if (targetMember.getFcmToken() == null) {
                 throw new FcmTokenEmptyException();
             }
 
