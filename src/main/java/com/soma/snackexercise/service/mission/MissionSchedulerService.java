@@ -65,41 +65,7 @@ public class MissionSchedulerService {
         System.out.println("not test : " + groupList.size());
         LocalTime now = LocalTime.now();
         for (Group group : groupList) {
-            long timeDiff = ChronoUnit.MINUTES.between(now, group.getStartTime()); // group.getStartTime - now
-
-            // 현재 시간이 시작 시간보다 이전이라면 continue
-            if(now.isBefore(group.getStartTime())){
-                continue;
-            }
-            log.info("[시각 차이] : {}분, [그룹명] : {}", timeDiff, group.getName());
-            // 그룹 시작시각과 현재시각의 차이가 5이상이거나 음수라면 알림을 보내지 않음
-            if (timeDiff >= 1 || timeDiff < 0) {
-                continue;
-            }
-            Member targetMember = missionUtil.getMissionAllocatedMember(group);
-            if (targetMember.getFcmToken() == null) {
-                throw new FcmTokenEmptyException();
-            }
-
-            if (group.getCurrentDoingMemberId() != null) {
-                Mission mission = missionRepository.findFirstByGroupAndMemberOrderByCreatedAtDesc(group, targetMember).orElseThrow(MissionNotFoundException::new);
-                mission.updateCreatedAt(LocalDateTime.now());
-                log.info("시작시간 스케줄러 (미션 기존 할당 시간 변경) : 그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
-            }
-            else{
-                missionRepository.save(Mission.builder()
-                        .exercise(exerciseList.get(random.nextInt(exerciseList.size())))
-                        .member(targetMember)
-                        .group(group)
-                        .build());
-                log.info("시작시간 스케줄러 (미션 생성) : 그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
-            }
-
-            log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
-
-            if (!targetMember.getFcmToken().isEmpty()) {
-                firebaseCloudMessageService.sendByToken(targetMember.getFcmToken(), ALLOCATE.getTitleWithGroupName(group.getName()), ALLOCATE.getBody());
-            }
+            allocateMissionForGroup(now, group, exerciseList);
         }
     }
 
@@ -191,6 +157,45 @@ public class MissionSchedulerService {
             joinLists.forEach(BaseEntity::inActive);
         }
 
+    }
+
+    @Transactional
+    private void allocateMissionForGroup(LocalTime now, Group group, List<Exercise> exerciseList) {
+        long timeDiff = ChronoUnit.MINUTES.between(now, group.getStartTime()); // group.getStartTime - now
+
+        // 현재 시간이 시작 시간보다 이전이라면 continue
+        if(now.isBefore(group.getStartTime())){
+            return;
+        }
+        log.info("[시각 차이] : {}분, [그룹명] : {}", timeDiff, group.getName());
+        // 그룹 시작시각과 현재시각의 차이가 5이상이거나 음수라면 알림을 보내지 않음
+        if (timeDiff >= 1 || timeDiff < 0) {
+            return;
+        }
+        Member targetMember = missionUtil.getMissionAllocatedMember(group);
+        if (targetMember.getFcmToken() == null) {
+            throw new FcmTokenEmptyException();
+        }
+
+        if (group.getCurrentDoingMemberId() != null) {
+            Mission mission = missionRepository.findFirstByGroupAndMemberOrderByCreatedAtDesc(group, targetMember).orElseThrow(MissionNotFoundException::new);
+            mission.updateCreatedAt(LocalDateTime.now());
+            log.info("시작시간 스케줄러 (미션 기존 할당 시간 변경) : 그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
+        }
+        else{
+            missionRepository.save(Mission.builder()
+                    .exercise(exerciseList.get(random.nextInt(exerciseList.size())))
+                    .member(targetMember)
+                    .group(group)
+                    .build());
+            log.info("시작시간 스케줄러 (미션 생성) : 그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
+        }
+
+        log.info("그룹명 : {}, 그룹원 : {}, 할당 시각 : {}", group.getName(), targetMember.getNickname(), LocalDateTime.now());
+
+        if (!targetMember.getFcmToken().isEmpty()) {
+            firebaseCloudMessageService.sendByToken(targetMember.getFcmToken(), ALLOCATE.getTitleWithGroupName(group.getName()), ALLOCATE.getBody());
+        }
     }
 
     private void sendNotificationsToJoinList(Group group, List<JoinList> joinLists) {
