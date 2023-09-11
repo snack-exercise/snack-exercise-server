@@ -7,6 +7,14 @@ on:
     branches:
       - main
 
+# 리전, 버킷 이름, CodeDeploy 앱 이름, CodeDeploy 배포 그룹 이름
+env:
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: snackpot-bucket
+  CODE_DEPLOY_APPLICATION_NAME: snackpot-deploy-application
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: snackpot-deploy-auto-scaling-group
+
+
 jobs:
   production-cd:
     runs-on: ubuntu-22.04 # 필수, 실행환경 지정
@@ -60,21 +68,21 @@ jobs:
         run: echo "${{ secrets.FCM_JSON_SECRET }}" | base64 --decode > ./src/main/resources/snackpot-fcm.json
         shell: bash
 
-      ## (3-5) application-sentry.yml 생성
-      - name: make application-sentry.yml
-        run: |
-          cd ./src/main/resources
-          touch ./application-sentry.yml
-          echo "${{ secrets.APPLICATION_SENTRY_YML }}" > ./application-sentry.yml
-        shell: bash
+      # (4) ./gradlew 권한 설정
+      - name: ./gradlew 권한 설정
+        run: chmod +x ./gradlew
+
+      # (5) Gradle build (Test 제외)
+      - name: Build with Gradle
+        run: ./gradlew build -x test
 
       # (4) ./gradlew 권한 설정
       - name: ./gradlew 권한 설정
         run: chmod +x ./gradlew
 
-      # (5) Gradle clean && Gradle build (Test 제외)
+      # (5) Gradle build (Test 제외)
       - name: Build with Gradle
-        run: ./gradlew clean && ./gradlew build -x test
+        run: ./gradlew build -x test
 
       # (6) docker build & push to production
       - name: Docker build & push to DockerHub
@@ -91,36 +99,38 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      # snackpotApp라는 폴더 생성 및 docker-compose-prod.yml, appspec.yml 파일과 scripts 폴더 이동하기
-      - name: Create snackpotApp folder에 move appspec.yml and scripts folder
+      # app-deploy라는 폴더 생성 및 appspec.yml 파일과 scripts 폴더 이동하기
+      - name: Create app-deploy folder에 move appspec.yml and scripts folder and zip app-deploy folder
         run: |
-          mkdir snackpotApp
-          cp docker-compose-prod.yml snackpotApp/
-          cp -r scripts snackpotApp/
-          cp -r ./src/main/resources snackpotApp/
+          mkdir app-deploy
+          cp appspec.yml app-deploy/
+          cd app-deploy
+          mkdir scripts
+          cd ..
+          cp scripts/*.sh app-deploy/scripts/
+          zip -r app-deploy.zip app-deploy
 
-      # (8) 로컬 snackpotApp 폴더 EC2로 복사
-      - name: Copy snackpotApp folder to EC2 via SCP
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: 22
-          source : "./snackpotApp"
-          target : "."
-          debug: true
+      - name: Check files and folders
+        run: |
+          ls -al
+          ls -al scripts/
+          cat appspec.yml
+      
 
-      # (9) 서버에 접속하여 deploy.sh 실행하기
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: 22
-          script: |
-            cd snackpotApp
-            chmod +x ./scripts/deploy.sh
-            chmod +x ./scripts/switch.sh
-            sudo bash ./scripts/deploy.sh
+      # (8) appspec.yml, scripts 파일을 S3 버킷에 업로드
+      - name: Upload to AWS S3
+        run: |
+          aws deploy push \
+            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+            --ignore-hidden-files \
+            --s3-location s3://${{ env.S3_BUCKET_NAME }}/deploy/$GITHUB_SHA.zip \
+            --source app-deploy
+
+      # (8) S3 버킷에 있는 파일을 대상으로 CodeDeploy 실행
+      - name: Deploy to AWS EC2 from S3
+        run: |
+          aws deploy create-deployment \
+          --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+          --s3-location bucket=$S3_BUCKET_NAME,key=deploy/$GITHUB_SHA.zip,bundleType=zip
