@@ -104,7 +104,6 @@ jobs:
         run: |
           mkdir app-deploy
           cp appspec.yml app-deploy/
-          cd app-deploy
           cp scripts/*.sh app-deploy/
           cp docker-compose-prod.yml app-deploy/
           zip -r app-deploy.zip app-deploy
