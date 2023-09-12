@@ -105,9 +105,8 @@ jobs:
           mkdir app-deploy
           cp appspec.yml app-deploy/
           cd app-deploy
-          mkdir scripts
-          cd ..
-          cp scripts/*.sh app-deploy/scripts/
+          cp scripts/*.sh app-deploy/
+          cp docker-compose-prod.yml app-deploy/
           zip -r app-deploy.zip app-deploy
 
       - name: Check files and folders
